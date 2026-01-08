@@ -11,9 +11,4 @@ public class DashboardController {
         return "dashboard";
     }
 
-    @GetMapping("/test-notifications")
-    public String testNotifications() {
-        return "test-notifications";
-    }
-
 }
