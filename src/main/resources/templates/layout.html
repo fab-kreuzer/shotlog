@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(title)">
+<head>
+    <title th:text="${title} ?: 'Private Site'">Private Site</title>
+
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script th:src="@{/js/notifications.js}"></script>
+</head>
+<body>
+
+<header>
+    <nav>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/test-notifications}">Test Notifications</a>
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button>Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main>
+    <!-- page content goes here -->
+    <div th:replace="~{::content}"></div>
+</main>
+
+</body>
+</html>
