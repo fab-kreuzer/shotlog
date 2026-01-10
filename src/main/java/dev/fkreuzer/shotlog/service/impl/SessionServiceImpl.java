@@ -4,6 +4,7 @@ import dev.fkreuzer.shotlog.domain.Series;
 import dev.fkreuzer.shotlog.domain.Session;
 import dev.fkreuzer.shotlog.domain.Shot;
 import dev.fkreuzer.shotlog.domain.UserAccount;
+import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
 import dev.fkreuzer.shotlog.repository.SessionRepository;
 import dev.fkreuzer.shotlog.service.SessionService;
 import jakarta.transaction.Transactional;
@@ -36,8 +37,8 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public List<Session> findAllByUser(UserAccount user) {
-        return sessionRepository.findAllByUserOrderBySessionDateAscSessionTimeAsc(user);
+    public List<Session> findAllByUserAndType(UserAccount user, SessionType type) {
+        return sessionRepository.findAllByUserAndSessionTypeOrderBySessionDateAscSessionTimeAsc(user, type);
     }
 
     @Override
