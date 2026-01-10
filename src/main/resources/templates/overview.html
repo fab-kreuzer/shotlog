@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(title='Übersicht - ' + ${type.getType()})}">
+<body>
+<div th:fragment="content">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1 th:text="'Übersicht deiner ' + ${type.getType()} + '-Sessions'"></h1>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#createSessionModal">Neue Session anlegen</button>
+    </div>
+
+    <div th:replace="~{fragments/createSessionModal :: sessionModalContent}"></div>
+</div>
+</body>
+</html>
