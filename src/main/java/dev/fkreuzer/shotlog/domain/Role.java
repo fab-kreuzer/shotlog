@@ -17,6 +17,12 @@ public class Role {
     @Column(unique = true, nullable = false)
     private String name;
 
+    public Role(String name) {
+        this.name = name;
+    }
+
+    protected Role() {}
+
     public String authority() {
         return "ROLE_" + name;
     }

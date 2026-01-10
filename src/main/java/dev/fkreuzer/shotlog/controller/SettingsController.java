@@ -148,8 +148,7 @@ public class SettingsController {
             return "redirect:/settings";
         }
 
-        Role role = new Role();
-        role.setName(name);
+        Role role = new Role(name);
         roleRepository.save(role);
 
         redirectAttributes.addFlashAttribute("success", "Rolle erfolgreich erstellt");
