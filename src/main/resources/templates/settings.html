@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout :: layout(title='Einstellungen')}">
+<body>
+<div th:fragment="content">
+    <h1>Einstellungen</h1>
+
+    <div class="settings-container">
+        <!-- Tabs navigation -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'profile-tab')">Profil</button>
+            <button class="tab-button" sec:authorize="hasAuthority('ROLE_ADMIN')" onclick="openTab(event, 'admin-tab')">Admin</button>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profile-tab" class="tab-content active">
+            <h2>Mein Profil</h2>
+            <p>Benutzername: <span th:text="${currentUser.username}"></span></p>
+            <p>Rollen: 
+                <span th:each="role, iterStat : ${currentUser.roles}">
+                    <span th:text="${role.name}"></span><span th:if="${!iterStat.last}">, </span>
+                </span>
+            </p>
+            <p>In zukünftigen Versionen können Sie hier Ihr Profil bearbeiten.</p>
+        </div>
+
+        <!-- Admin Tab -->
+        <div id="admin-tab" class="tab-content" sec:authorize="hasAuthority('ROLE_ADMIN')">
+            <h2>Benutzerverwaltung</h2>
+
+            <!-- Notification area for success/error messages -->
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <!-- User Management Section -->
+            <div class="user-management">
+                <h3>Benutzer</h3>
+
+                <!-- Create User Form -->
+                <div class="create-form">
+                    <h4>Neuen Benutzer erstellen</h4>
+                    <form th:action="@{/settings/users}" method="post">
+                        <div class="form-group">
+                            <label for="username">Benutzername:</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Passwort:</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Rollen:</label>
+                            <div class="checkbox-group">
+                                <div th:each="role : ${roles}">
+                                    <input type="checkbox" name="roleIds" th:value="${role.id}" th:id="'role-' + ${role.id}">
+                                    <label th:for="'role-' + ${role.id}" th:text="${role.name}"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Benutzer erstellen</button>
+                    </form>
+                </div>
+
+                <!-- User List -->
+                <div class="user-list">
+                    <h4>Benutzerliste</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Benutzername</th>
+                                <th>Rollen</th>
+                                <th>Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user : ${users}" th:data-user-id="${user.id}">
+                                <td th:text="${user.id}"></td>
+                                <td th:text="${user.username}"></td>
+                                <td>
+                                    <span th:each="role, iterStat : ${user.roles}">
+                                        <span th:text="${role.name}"></span><span th:if="${!iterStat.last}">, </span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-edit" th:onclick="'editUser(' + ${user.id} + ')'">Bearbeiten</button>
+                                    <button class="btn btn-delete" th:onclick="'deleteUser(' + ${user.id} + ')'">Löschen</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Edit User Modal (hidden by default) -->
+                <div id="editUserModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeUserModal()">&times;</span>
+                        <h4>Benutzer bearbeiten</h4>
+                        <form id="editUserForm">
+                            <input type="hidden" id="editUserId" name="id">
+                            <div class="form-group">
+                                <label for="editUsername">Benutzername:</label>
+                                <input type="text" id="editUsername" name="username">
+                            </div>
+                            <div class="form-group">
+                                <label for="editPassword">Neues Passwort (leer lassen, um beizubehalten):</label>
+                                <input type="password" id="editPassword" name="password">
+                            </div>
+                            <div class="form-group">
+                                <label>Rollen:</label>
+                                <div class="checkbox-group" id="editUserRoles">
+                                    <!-- Roles will be added dynamically -->
+                                </div>
+                            </div>
+                            <button type="button" onclick="updateUser()" class="btn btn-primary">Speichern</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role Management Section -->
+            <div class="role-management">
+                <h3>Rollen</h3>
+
+                <!-- Create Role Form -->
+                <div class="create-form">
+                    <h4>Neue Rolle erstellen</h4>
+                    <form th:action="@{/settings/roles}" method="post">
+                        <div class="form-group">
+                            <label for="roleName">Rollenname:</label>
+                            <input type="text" id="roleName" name="name" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Rolle erstellen</button>
+                    </form>
+                </div>
+
+                <!-- Role List -->
+                <div class="role-list">
+                    <h4>Rollenliste</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="role : ${roles}" th:data-role-id="${role.id}">
+                                <td th:text="${role.id}"></td>
+                                <td th:text="${role.name}"></td>
+                                <td>
+                                    <button class="btn btn-edit" th:onclick="'editRole(' + ${role.id} + ')'">Bearbeiten</button>
+                                    <button class="btn btn-delete" th:onclick="'deleteRole(' + ${role.id} + ')'">Löschen</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Edit Role Modal (hidden by default) -->
+                <div id="editRoleModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeRoleModal()">&times;</span>
+                        <h4>Rolle bearbeiten</h4>
+                        <form id="editRoleForm">
+                            <input type="hidden" id="editRoleId" name="id">
+                            <div class="form-group">
+                                <label for="editRoleName">Rollenname:</label>
+                                <input type="text" id="editRoleName" name="name" required>
+                            </div>
+                            <button type="button" onclick="updateRole()" class="btn btn-primary">Speichern</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function openTab(evt, tabId) {
+            // Hide all tab content
+            var tabContents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+
+            // Remove active class from all tab buttons
+            var tabButtons = document.getElementsByClassName("tab-button");
+            for (var i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("active");
+            }
+
+            // Show the selected tab and add active class to the button
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // User management functions
+        function editUser(userId) {
+            // Get user data
+            const userRow = document.querySelector('tr[data-user-id="' + userId + '"]');
+            const username = userRow.querySelector('td:nth-child(2)').textContent;
+
+            // Set values in the form
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('editUsername').value = username;
+            document.getElementById('editPassword').value = ''; // Clear password field
+
+            // Get roles for this user
+            const userRoles = userRow.querySelector('td:nth-child(3)').textContent.split(',').map(r => r.trim());
+
+            // Populate roles checkboxes
+            const rolesContainer = document.getElementById('editUserRoles');
+            rolesContainer.innerHTML = '';
+
+            // Get all roles from the roles table
+            const roleRows = document.querySelectorAll('.role-list table tbody tr');
+            roleRows.forEach(row => {
+                const roleId = row.querySelector('td:first-child').textContent;
+                const roleName = row.querySelector('td:nth-child(2)').textContent;
+
+                const isChecked = userRoles.includes(roleName);
+
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <input type="checkbox" name="roleIds" value="${roleId}" id="edit-role-${roleId}" ${isChecked ? 'checked' : ''}>
+                    <label for="edit-role-${roleId}">${roleName}</label>
+                `;
+                rolesContainer.appendChild(div);
+            });
+
+            // Show the modal
+            document.getElementById('editUserModal').style.display = 'block';
+        }
+
+        function closeUserModal() {
+            document.getElementById('editUserModal').style.display = 'none';
+        }
+
+        function updateUser() {
+            const userId = document.getElementById('editUserId').value;
+            const username = document.getElementById('editUsername').value;
+            const password = document.getElementById('editPassword').value;
+
+            // Get selected roles
+            const roleCheckboxes = document.querySelectorAll('#editUserRoles input[type="checkbox"]:checked');
+            const roleIds = Array.from(roleCheckboxes).map(cb => cb.value);
+
+            // Build form data
+            const formData = new FormData();
+            formData.append('username', username);
+            if (password) {
+                formData.append('password', password);
+            }
+            roleIds.forEach(id => formData.append('roleIds', id));
+
+            // Send PUT request
+            fetch(`/settings/users/${userId}`, {
+                method: 'PUT',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    showNotification('Benutzer erfolgreich aktualisiert', 'success');
+                    closeUserModal();
+                    // Reload page to see changes
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    response.text().then(text => {
+                        showNotification(`Fehler: ${text}`, 'error');
+                    });
+                }
+            })
+            .catch(error => {
+                showNotification(`Fehler: ${error.message}`, 'error');
+            });
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?')) {
+                fetch(`/settings/users/${userId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showNotification('Benutzer erfolgreich gelöscht', 'success');
+                        // Reload page to see changes
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        response.text().then(text => {
+                            showNotification(`Fehler: ${text}`, 'error');
+                        });
+                    }
+                })
+                .catch(error => {
+                    showNotification(`Fehler: ${error.message}`, 'error');
+                });
+            }
+        }
+
+        // Role management functions
+        function editRole(roleId) {
+            // Get role data
+            const roleRow = document.querySelector('tr[data-role-id="' + roleId + '"]');
+            const roleName = roleRow.querySelector('td:nth-child(2)').textContent;
+
+            // Set values in the form
+            document.getElementById('editRoleId').value = roleId;
+            document.getElementById('editRoleName').value = roleName;
+
+            // Show the modal
+            document.getElementById('editRoleModal').style.display = 'block';
+        }
+
+        function closeRoleModal() {
+            document.getElementById('editRoleModal').style.display = 'none';
+        }
+
+        function updateRole() {
+            const roleId = document.getElementById('editRoleId').value;
+            const roleName = document.getElementById('editRoleName').value;
+
+            // Build form data
+            const formData = new FormData();
+            formData.append('name', roleName);
+
+            // Send PUT request
+            fetch(`/settings/roles/${roleId}`, {
+                method: 'PUT',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    showNotification('Rolle erfolgreich aktualisiert', 'success');
+                    closeRoleModal();
+                    // Reload page to see changes
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    response.text().then(text => {
+                        showNotification(`Fehler: ${text}`, 'error');
+                    });
+                }
+            })
+            .catch(error => {
+                showNotification(`Fehler: ${error.message}`, 'error');
+            });
+        }
+
+        function deleteRole(roleId) {
+            if (confirm('Sind Sie sicher, dass Sie diese Rolle löschen möchten?')) {
+                fetch(`/settings/roles/${roleId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showNotification('Rolle erfolgreich gelöscht', 'success');
+                        // Reload page to see changes
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        response.text().then(text => {
+                            showNotification(`Fehler: ${text}`, 'error');
+                        });
+                    }
+                })
+                .catch(error => {
+                    showNotification(`Fehler: ${error.message}`, 'error');
+                });
+            }
+        }
+    </script>
+</div>
+</body>
+</html>

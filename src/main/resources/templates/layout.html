@@ -4,6 +4,7 @@
     <title th:text="${title} ?: 'Private Site'">Private Site</title>
 
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/settings.css}">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script th:src="@{/js/notifications.js}"></script>
 </head>
@@ -12,7 +13,7 @@
 <header>
     <nav>
         <a th:href="@{/dashboard}">Dashboard</a>
-        <a th:href="@{/test-notifications}">Test Notifications</a>
+        <a th:href="@{/settings}">Einstellungen</a>
         <form th:action="@{/logout}" method="post" style="display:inline">
             <button>Logout</button>
         </form>
