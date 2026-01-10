@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -29,6 +31,14 @@ public class Series {
     )
     @OrderBy("shotNumber ASC")
     private List<Shot> shots = new ArrayList<>();
+
+    public double calculateShotSum() {
+        return shots.stream()
+                .map(Shot::getValue)
+                .filter(Objects::nonNull)
+                .mapToDouble(BigDecimal::doubleValue)
+                .sum();
+    }
 
 
 }
