@@ -1,0 +1,41 @@
+/* CSS for the overview page */
+
+.overview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sessions-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.session-card {
+    background-color: #d1d1d1;
+    padding: 16px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.session-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: none;
+}
+
+.session-card:hover .session-actions {
+    display: block;
+}
+
+.edit-button {
+    margin-right: 4px;
+    background-color: orange;
+}
+
+.remove-button {
+    margin-right: 4px;
+    background-color: red;
+}

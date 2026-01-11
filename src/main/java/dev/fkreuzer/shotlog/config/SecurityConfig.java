@@ -21,7 +21,8 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/dashboard", true)
                         .permitAll())
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/settings/**")); // Disable CSRF for settings endpoints to allow PUT/DELETE
+                        .ignoringRequestMatchers("/settings/**")
+                        .ignoringRequestMatchers("/sessions/delete/**")); // Disable CSRF for settings endpoints to allow PUT/DELETE
         return http.build();
     }
 }

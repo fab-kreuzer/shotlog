@@ -4,12 +4,11 @@ import dev.fkreuzer.shotlog.domain.Session;
 import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
 import dev.fkreuzer.shotlog.service.SessionService;
 import java.util.ArrayList;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class OverviewController extends DefaultShotLogController {
@@ -39,5 +38,11 @@ public class OverviewController extends DefaultShotLogController {
 
         sessionService.save(session);
         return "redirect:/overview?type=training";
+    }
+
+    @DeleteMapping("/sessions/delete/{id}")
+    public ResponseEntity<Void> deleteSession(@PathVariable Long id) {
+        sessionService.deleteByIdAndUser(id, getCurrentUser());
+        return ResponseEntity.noContent().build();
     }
 }

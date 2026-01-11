@@ -3,7 +3,7 @@
       th:replace="~{layout :: layout(title='Übersicht - ' + ${type.getType()})}">
 <body>
 <div th:fragment="content">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="overview-header">
         <h1 th:text="'Übersicht deiner ' + ${type.getType()} + '-Sessions'"></h1>
         <button type="button" data-bs-toggle="modal" data-bs-target="#createSessionModal">Neue Session anlegen</button>
     </div>
@@ -11,15 +11,43 @@
     <div th:replace="~{fragments/createSessionModal :: sessionModalContent}"></div>
 
     <div th:if="${!sessions.isEmpty()}">
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
-            <div th:each="singleSession : ${sessions}" style="background-color: #f0f0f0; padding: 16px; border-radius: 8px;">
+        <div class="sessions-grid">
+            <div th:each="singleSession : ${sessions}"
+                 class="session-card">
+                <div class="session-actions">
+                    <button class="edit-button"><i class="bi bi-pencil"></i></button>
+                    <button class="remove-button" th:attr="data-session-id=${singleSession.getId()}"
+                            onclick="deleteSession(this.getAttribute('data-session-id'))"><i class="bi bi-trash"></i>
+                    </button>
+                </div>
                 <p th:text="'Ort: ' + ${singleSession.getLocation()}"></p>
                 <p th:text="'Datum: ' + ${#temporals.format(singleSession.getSessionDate(), 'dd.MM.yyyy')} + ' ' + ${#temporals.format(singleSession.getSessionTime(), 'HH:mm')} + ' Uhr'"></p>
                 <p th:text="'Summe: ' + (${singleSession.isDecimalScoring()} ? ${#numbers.formatDecimal(singleSession.getShotSum(), 2, 1)} : ${singleSession.getShotSum().intValue()})"></p>
-                <button>Details</button>
             </div>
         </div>
     </div>
     <p th:text="${sessions.isEmpty() ? 'No sessions available' : ''}"></p>
-</div></body>
+    <script th:inline="javascript">
+        function deleteSession(sessionId) {
+            if (confirm('Sind Sie sicher, dass Sie diese Session mit allen zugehörigen Daten löschen möchten?')) {
+                fetch('/sessions/delete/' + sessionId, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then( response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        console.error(response);
+                        alert ('Fehler beim Löschen der Session!');
+                    }}).catch(error => {
+                    console.error(error);
+                    alert('Fehler beim Löschen der Session!')
+                });
+            }
+        }
+    </script>
+</div>
+</body>
 </html>
