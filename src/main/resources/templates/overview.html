@@ -47,7 +47,7 @@
 
                             <div class="d-flex align-items-center">
                                 <i class="bi bi-bullseye text-muted me-2"></i>
-                                <span class="fw-bold" th:text="'Summe: ' + (${singleSession.isDecimalScoring()} ? ${#numbers.formatDecimal(singleSession.getShotSum(), 2, 1)} : ${singleSession.getShotSum().intValue()})"></span>
+                                <span class="fw-bold" th:text="'Summe: ' + ${singleSession.getFormattedShotSum()} + ' (' + ${singleSession.getFormattedShotSumOfTestShots()} + ')'"></span>
                             </div>
                         </div>
                     </div>

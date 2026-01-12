@@ -38,7 +38,26 @@ public class Session {
     @OrderBy("seriesNumber ASC")
     private List<Series> series = new ArrayList<>();
 
-    public double getShotSum() {
-        return series.stream().map(Series::calculateShotSum).reduce(0.0, Double::sum);
+    double getShotSum() {
+        return series.stream()
+                .map(Series::calculateShotSum)
+                .reduce(0.0, Double::sum);
     }
+
+    double getShotSumOfTestShots() {
+        return series.stream()
+                .map(Series::calculateShotSumForTestShots)
+                .reduce(0.0, Double::sum);
+    }
+
+    public String getFormattedShotSum() {
+        double sum = getShotSum();
+        return decimalScoring ? String.format("%.1f", sum) : String.format("%.0f", sum);
+    }
+
+    public String getFormattedShotSumOfTestShots() {
+        double sum = getShotSumOfTestShots();
+        return decimalScoring ? String.format("%.1f", sum) : String.format("%.0f", sum);
+    }
+
 }

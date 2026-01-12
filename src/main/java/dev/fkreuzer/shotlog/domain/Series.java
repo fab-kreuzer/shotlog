@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -42,6 +41,17 @@ public class Series {
         if (testShot) {
             return 0;
         }
+        return sumShots();
+    }
+
+    public double calculateShotSumForTestShots() {
+        if (!testShot) {
+            return 0;
+        }
+        return sumShots();
+    }
+
+    private double sumShots() {
         return shots.stream()
                 .map(Shot::getValue)
                 .filter(Objects::nonNull)
