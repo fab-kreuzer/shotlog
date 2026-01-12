@@ -208,7 +208,8 @@ main {
   animation: slideOut 0.3s ease-in forwards;
 }
 
-button {
+/* Apply these styles only to non-Bootstrap buttons */
+button:not(.btn):not(.btn-close) {
   cursor: pointer;
   background-color: var(--primary-color);
   color: var(--text-on-primary);
@@ -218,7 +219,7 @@ button {
   font-weight: bold;
 }
 
-button:hover {
+button:not(.btn):not(.btn-close):hover {
   background-color: var(--primary-light);
 }
 

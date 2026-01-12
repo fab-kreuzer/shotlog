@@ -8,11 +8,11 @@
 <body>
 
 <div th:fragment="sessionModalContent">
-  <div class="modal fade" id="createSessionModal" tabindex="-1" data-bs-backdrop="false">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+  <div class="modal fade" id="createSessionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
 
-        <form th:action="@{/sessions/create}" method="post">
+        <form th:action="@{/sessions/create}" method="post" id="createSessionForm">
 
           <!-- HEADER -->
           <div class="modal-header">
@@ -21,7 +21,7 @@
           </div>
 
           <!-- BODY -->
-          <div class="modal-body">
+          <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
 
             <!-- SESSION DATA -->
             <div class="row g-3 mb-4">
@@ -132,23 +132,47 @@
     let seriesIndex = 1;
 
     function addSeries() {
-      const container = document.getElementById('seriesContainer');
+      try {
+        const container = document.getElementById('seriesContainer');
+        if (!container) {
+          console.error('Series container not found');
+          return;
+        }
 
-      const template = container.querySelector('.series-block');
-      const clone = template.cloneNode(true);
+        const template = container.querySelector('.series-block');
+        if (!template) {
+          console.error('Series template not found');
+          return;
+        }
 
-      // Update series number
-      clone.querySelector('.series-number').innerText = seriesIndex + 1;
-      clone.querySelector('input[name^="series"]').value = seriesIndex + 1;
+        const clone = template.cloneNode(true);
 
-      // Update all input names
-      clone.querySelectorAll('input').forEach(input => {
-        input.name = input.name.replace('series[0]', `series[${seriesIndex}]`);
-        if (input.type === 'number') input.value = '';
-      });
+        // Update series number
+        const seriesNumberElement = clone.querySelector('.series-number');
+        if (seriesNumberElement) {
+          seriesNumberElement.innerText = seriesIndex + 1;
+        }
 
-      container.appendChild(clone);
-      seriesIndex++;
+        const seriesInput = clone.querySelector('input[name^="series"]');
+        if (seriesInput) {
+          seriesInput.value = seriesIndex + 1;
+        }
+
+        // Update all input names
+        clone.querySelectorAll('input').forEach(input => {
+          input.name = input.name.replace('series[0]', `series[${seriesIndex}]`);
+          if (input.type === 'number') input.value = '';
+        });
+
+        container.appendChild(clone);
+        seriesIndex++;
+
+        setTimeout(() => {
+          clone.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }, 100);
+      } catch (error) {
+        console.error('Error adding series:', error);
+      }
     }
   </script>
 
