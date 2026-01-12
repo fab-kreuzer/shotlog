@@ -22,7 +22,7 @@
                     <div class="card h-100 shadow-sm session-card">
                         <div class="card-body position-relative">
                             <div class="session-actions position-absolute top-0 end-0 mt-2 me-2">
-                                <button class="btn btn-sm btn-warning me-1" title="Bearbeiten">
+                                <button class="btn btn-sm btn-warning me-1" th:attr="data-session-id=${singleSession.getId()}" onclick="loadFormBySessionId(this.getAttribute('data-session-id'))" title="Bearbeiten">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                                 <button class="btn btn-sm btn-danger" 
@@ -85,6 +85,90 @@
                         alert('Fehler beim Löschen der Session!')
                     });
                 }
+            }
+
+            function loadFormBySessionId(sessionId) {
+                fetch('/sessions/get/' + sessionId)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Session not found');
+                        }
+                        return response.json();
+                    })
+                    .then(session => {
+                        // Reset the form first
+                        resetModal();
+
+                        // Set session data
+                        document.querySelector('input[name="sessionDate"]').value = session.sessionDate;
+                        document.querySelector('input[name="sessionTime"]').value = session.sessionTime;
+                        document.querySelector('input[name="location"]').value = session.location;
+                        document.querySelector('select[name="sessionType"]').value = session.sessionType;
+                        document.querySelector('input[name="decimalScoring"]').checked = session.decimalScoring;
+
+                        // Handle series
+                        const seriesContainer = document.getElementById('seriesContainer');
+                        const templateSeries = seriesContainer.querySelector('.series-block');
+
+                        // Clear existing series
+                        while (seriesContainer.firstChild) {
+                            seriesContainer.removeChild(seriesContainer.firstChild);
+                        }
+
+                        // Add series from session data
+                        session.series.forEach((series, index) => {
+                            // Clone template for first series or create new for additional series
+                            let seriesBlock;
+                            if (index === 0) {
+                                seriesBlock = templateSeries.cloneNode(true);
+                            } else {
+                                seriesBlock = templateSeries.cloneNode(true);
+                                // Update series number and inputs for additional series
+                                const seriesNumberElement = seriesBlock.querySelector('.series-number');
+                                if (seriesNumberElement) {
+                                    seriesNumberElement.innerText = index + 1;
+                                }
+
+                                seriesBlock.querySelectorAll('input').forEach(input => {
+                                    if (input.name) {
+                                        input.name = input.name.replace('series[0]', `series[${index}]`);
+                                    }
+                                });
+                            }
+
+                            // Set series data
+                            seriesBlock.querySelector('input[name^="series"][name$="seriesNumber"]').value = series.seriesNumber;
+                            seriesBlock.querySelector('.testShot').checked = series.testShot;
+
+                            // Set shot values
+                            series.shots.forEach((shot, shotIndex) => {
+                                const shotInput = seriesBlock.querySelector(`input[name="series[${index}].shots[${shotIndex}].value"]`);
+                                if (shotInput) {
+                                    shotInput.value = shot.value;
+                                }
+                            });
+
+                            seriesContainer.appendChild(seriesBlock);
+                        });
+
+                        // Update seriesIndex for addSeries function
+                        seriesIndex = session.series.length;
+
+                        // Update form action to edit instead of create
+                        const form = document.getElementById('createSessionForm');
+                        form.action = '/sessions/update/' + sessionId;
+
+                        // Update modal title
+                        document.querySelector('.modal-title').textContent = 'Schießabend bearbeiten';
+
+                        // Open the modal
+                        const modal = new bootstrap.Modal(document.getElementById('createSessionModal'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        console.error('Error loading session:', error);
+                        alert('Fehler beim Laden der Session!');
+                    });
             }
         </script>
     </div>

@@ -32,7 +32,7 @@
 
               <div class="col-md-4">
                 <label class="form-label">Startzeit</label>
-                <input type="time" name="startTime" class="form-control" required>
+                <input type="time" name="sessionTime" class="form-control" required>
               </div>
 
               <div class="col-md-4">
@@ -191,7 +191,8 @@
       }
     }
 
-    function resetModal() {
+    // Make resetModal function globally accessible
+    window.resetModal = function() {
       try {
         // Reset form
         document.getElementById('createSessionForm').reset();
@@ -218,6 +219,16 @@
 
         // Reset seriesIndex
         seriesIndex = 1;
+
+        // Reset form action to create
+        const form = document.getElementById('createSessionForm');
+        form.action = '/sessions/create';
+
+        // Reset modal title
+        const modalTitle = document.querySelector('.modal-title');
+        if (modalTitle) {
+          modalTitle.textContent = 'Neuen Schießabend erstellen';
+        }
       } catch (error) {
         console.error('Error resetting modal:', error);
       }

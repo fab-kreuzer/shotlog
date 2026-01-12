@@ -13,4 +13,8 @@ public enum SessionType {
         this.type = type;
     }
 
+    public String toUrlFormat() {
+        return this.name().toLowerCase();
+    }
+
 }

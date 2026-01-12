@@ -37,12 +37,35 @@ public class OverviewController extends DefaultShotLogController {
         session.setUser(getCurrentUser());
 
         sessionService.save(session);
-        return "redirect:/overview?type=training";
+        return "redirect:/overview?type=" + session.getSessionType().toUrlFormat();
     }
 
     @DeleteMapping("/sessions/delete/{id}")
     public ResponseEntity<Void> deleteSession(@PathVariable Long id) {
         sessionService.deleteByIdAndUser(id, getCurrentUser());
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/sessions/get/{id}")
+    @ResponseBody
+    public ResponseEntity<Session> getSessionById(@PathVariable Long id) {
+        return sessionService.findByIdAndUser(id, getCurrentUser())
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/sessions/update/{id}")
+    public String updateSession(@PathVariable Long id, @ModelAttribute Session updatedSession) {
+        // Update the existing session with the new data
+        updatedSession.setId(id);
+        updatedSession.setUser(getCurrentUser());
+
+        // Ensure series list is initialized
+        if (updatedSession.getSeries() == null) {
+            updatedSession.setSeries(new ArrayList<>());
+        }
+
+        sessionService.save(updatedSession);
+        return "redirect:/overview?type=" + updatedSession.getSessionType().toUrlFormat();
     }
 }

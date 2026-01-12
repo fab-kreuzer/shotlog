@@ -10,7 +10,9 @@ import dev.fkreuzer.shotlog.service.SessionService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -25,11 +27,60 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public Session save(Session session) {
+        // Check if this is an update (session has an ID) and the session exists in the database
+        if (session.getId() != null) {
+            Optional<Session> existingSessionOpt = sessionRepository.findById(session.getId());
 
-        for (Series series : session.getSeries()) {
-            series.setSession(session);
-            for (Shot shot : series.getShots()) {
-                shot.setSeries(series);
+            if (existingSessionOpt.isPresent()) {
+                Session existingSession = existingSessionOpt.get();
+
+                // Create a map of existing series by seriesNumber for quick lookup
+                Map<Integer, Series> existingSeriesMap = new HashMap<>();
+                for (Series existingSeries : existingSession.getSeries()) {
+                    existingSeriesMap.put(existingSeries.getSeriesNumber(), existingSeries);
+                }
+
+                // Process each series in the updated session
+                for (Series updatedSeries : session.getSeries()) {
+                    // Check if this series already exists (by seriesNumber)
+                    Series existingSeries = existingSeriesMap.get(updatedSeries.getSeriesNumber());
+
+                    if (existingSeries != null) {
+                        // Update existing series - preserve its ID
+                        updatedSeries.setId(existingSeries.getId());
+
+                        // Create a map of existing shots by shotNumber for quick lookup
+                        Map<Integer, Shot> existingShotsMap = new HashMap<>();
+                        for (Shot existingShot : existingSeries.getShots()) {
+                            existingShotsMap.put(existingShot.getShotNumber(), existingShot);
+                        }
+
+                        // Process each shot in the updated series
+                        for (Shot updatedShot : updatedSeries.getShots()) {
+                            // Check if this shot already exists (by shotNumber)
+                            Shot existingShot = existingShotsMap.get(updatedShot.getShotNumber());
+
+                            if (existingShot != null) {
+                                // Update existing shot - preserve its ID
+                                updatedShot.setId(existingShot.getId());
+                            }
+
+                            // Set the series reference
+                            updatedShot.setSeries(updatedSeries);
+                        }
+                    }
+
+                    // Set the session reference
+                    updatedSeries.setSession(session);
+                }
+            }
+        } else {
+            // This is a new session, just set the references
+            for (Series series : session.getSeries()) {
+                series.setSession(session);
+                for (Shot shot : series.getShots()) {
+                    shot.setSeries(series);
+                }
             }
         }
 
