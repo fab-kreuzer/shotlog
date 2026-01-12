@@ -3,6 +3,7 @@ package dev.fkreuzer.shotlog.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ public class Series {
 
     private int seriesNumber;
 
+    @Column(nullable = false)
+    private boolean testShot;
+
     @OneToMany(
             mappedBy = "series",
             cascade = CascadeType.ALL,
@@ -33,6 +37,9 @@ public class Series {
     private List<Shot> shots = new ArrayList<>();
 
     public double calculateShotSum() {
+        if (testShot) {
+            return 0;
+        }
         return shots.stream()
                 .map(Shot::getValue)
                 .filter(Objects::nonNull)

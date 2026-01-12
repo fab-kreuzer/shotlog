@@ -70,6 +70,14 @@
                 <div class="card-header">
                   <strong>Serie <span class="series-number">1</span></strong>
                   <input type="hidden" name="series[0].seriesNumber" value="1">
+                  <div class="float-end">
+                    <input class="form-check-input testShot"
+                           type="checkbox"
+                           th:name="'series[0].testShot'"
+                           value="true">
+                    <label class="form-check-label">Probe</label>
+                    <input type="hidden" th:name="'_series[0].testShot'" value="on">
+                  </div>
                 </div>
 
                 <div class="card-body">
@@ -161,7 +169,12 @@
 
         // Update all input names
         clone.querySelectorAll('input').forEach(input => {
-          input.name = input.name.replace('series[0]', `series[${seriesIndex}]`);
+          if (input.name) {
+            input.name = input.name.replace('series[0]', `series[${seriesIndex}]`);
+          }
+          if (input.getAttribute('th:name')) {
+            input.setAttribute('th:name', input.getAttribute('th:name').replace('series[0]', `series[${seriesIndex}]`));
+          }
           if (input.type === 'number') {
             input.value = '0';
           }
