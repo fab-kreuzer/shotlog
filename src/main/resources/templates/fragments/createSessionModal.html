@@ -16,7 +16,7 @@
 
           <!-- HEADER -->
           <div class="modal-header">
-            <h5 class="modal-title">Create New Session</h5>
+            <h5 class="modal-title">Neuen Schießabend erstellen</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
 
@@ -26,22 +26,22 @@
             <!-- SESSION DATA -->
             <div class="row g-3 mb-4">
               <div class="col-md-4">
-                <label class="form-label">Date</label>
+                <label class="form-label">Datum</label>
                 <input type="date" name="sessionDate" class="form-control" required>
               </div>
 
               <div class="col-md-4">
-                <label class="form-label">Start Time</label>
+                <label class="form-label">Startzeit</label>
                 <input type="time" name="startTime" class="form-control" required>
               </div>
 
               <div class="col-md-4">
-                <label class="form-label">Location</label>
+                <label class="form-label">Ort</label>
                 <input type="text" name="location" class="form-control" required>
               </div>
 
               <div class="col-md-4">
-                <label class="form-label">Session Type</label>
+                <label class="form-label">Art des Schießens</label>
                 <select name="sessionType" class="form-select" required>
                   <option value="TRAINING">Training</option>
                   <option value="COMPETITION">Wettkampf</option>
@@ -55,9 +55,7 @@
                          name="decimalScoring"
                          value="true"
                          id="decimalScoring">
-                  <label class="form-check-label" for="decimalScoring">
-                    Decimal scoring (Zehntel)
-                  </label>
+                  <label class="form-check-label" for="decimalScoring">Zehntelwertung</label>
                 </div>
               </div>
             </div>
@@ -70,7 +68,7 @@
               <!-- ONE SERIES TEMPLATE -->
               <div class="card mb-4 series-block">
                 <div class="card-header">
-                  <strong>Series <span class="series-number">1</span></strong>
+                  <strong>Serie <span class="series-number">1</span></strong>
                   <input type="hidden" name="series[0].seriesNumber" value="1">
                 </div>
 
@@ -80,7 +78,7 @@
                     <!-- SHOTS 1–10 -->
                     <div class="col-6 col-md-3"
                          th:each="i : ${#numbers.sequence(1,10)}">
-                      <label class="form-label">Shot [[${i}]]</label>
+                      <label class="form-label">Schuss [[${i}]]</label>
 
                       <input type="hidden"
                              th:name="'series[0].shots[' + (${i}-1) + '].shotNumber'"
@@ -90,6 +88,7 @@
                              step="0.1"
                              min="0"
                              max="10.9"
+                             value="0"
                              class="form-control"
                              th:name="'series[0].shots[' + (${i}-1) + '].value'"
                              required>
@@ -104,7 +103,7 @@
             <!-- ADD SERIES BUTTON -->
             <button type="button" class="btn btn-outline-secondary"
                     onclick="addSeries()">
-              + Add Series
+              + Serie hinzufügen
             </button>
 
           </div>
@@ -114,11 +113,11 @@
             <button type="button"
                     class="btn btn-secondary"
                     data-bs-dismiss="modal">
-              Cancel
+              Abbrechen
             </button>
 
             <button type="submit" class="btn btn-success">
-              Save Session
+              Speichern
             </button>
           </div>
 
@@ -147,6 +146,8 @@
 
         const clone = template.cloneNode(true);
 
+        clone.querySelector(".testShot").checked = false;
+
         // Update series number
         const seriesNumberElement = clone.querySelector('.series-number');
         if (seriesNumberElement) {
@@ -161,7 +162,9 @@
         // Update all input names
         clone.querySelectorAll('input').forEach(input => {
           input.name = input.name.replace('series[0]', `series[${seriesIndex}]`);
-          if (input.type === 'number') input.value = '';
+          if (input.type === 'number') {
+            input.value = '0';
+          }
         });
 
         container.appendChild(clone);
@@ -174,6 +177,46 @@
         console.error('Error adding series:', error);
       }
     }
+
+    function resetModal() {
+      try {
+        // Reset form
+        document.getElementById('createSessionForm').reset();
+
+        // Reset shot values to 0
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+          input.value = '0';
+        });
+
+        // Reset testShot checkbox in the first series
+        const firstSeriesTestShot = document.querySelector('.series-block .testShot');
+        if (firstSeriesTestShot) {
+          firstSeriesTestShot.checked = false;
+        }
+
+        // Remove additional series
+        const container = document.getElementById('seriesContainer');
+        const seriesBlocks = container.querySelectorAll('.series-block');
+
+        // Keep only the first series block and remove the rest
+        for (let i = 1; i < seriesBlocks.length; i++) {
+          container.removeChild(seriesBlocks[i]);
+        }
+
+        // Reset seriesIndex
+        seriesIndex = 1;
+      } catch (error) {
+        console.error('Error resetting modal:', error);
+      }
+    }
+
+    // Add event listener for modal close
+    document.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('createSessionModal');
+      if (modal) {
+        modal.addEventListener('hidden.bs.modal', resetModal);
+      }
+    });
   </script>
 
 </div>
