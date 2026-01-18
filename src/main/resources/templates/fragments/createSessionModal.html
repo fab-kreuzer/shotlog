@@ -27,12 +27,12 @@
             <div class="row g-3 mb-4">
               <div class="col-md-4">
                 <label class="form-label">Datum</label>
-                <input type="date" name="sessionDate" class="form-control" required>
+                <input type="date" id="sessionDate" name="sessionDate" class="form-control" required>
               </div>
 
               <div class="col-md-4">
                 <label class="form-label">Startzeit</label>
-                <input type="time" name="sessionTime" class="form-control" required>
+                <input type="time" id="sessionTime" name="sessionTime" class="form-control" required>
               </div>
 
               <div class="col-md-4">
@@ -151,6 +151,7 @@
   </div>
 
   <script>
+
     let seriesIndex = 1;
 
     function addSeries() {
@@ -208,6 +209,7 @@
 
     // Make resetModal function globally accessible
     window.resetModal = function() {
+      console.log('resetModal');
       try {
         // Reset form
         document.getElementById('createSessionForm').reset();
@@ -253,7 +255,48 @@
     document.addEventListener('DOMContentLoaded', function() {
       const modal = document.getElementById('createSessionModal');
       if (modal) {
-        modal.addEventListener('hidden.bs.modal', resetModal);
+        modal.addEventListener('show.bs.modal', function (event) {
+          // Check if the button that triggered the modal has data-action="create"
+          const button = event.relatedTarget;
+          const isCreateAction = button && button.getAttribute('data-action') === 'create';
+
+          if (isCreateAction) {
+            // Reset the form first for new sessions
+            resetModal();
+
+            const form = document.getElementById('createSessionForm');
+            form.action = '/sessions/create';
+
+            const modalTitle = document.querySelector('.modal-title');
+            if (modalTitle) {
+              modalTitle.textContent = 'Neuen Schießabend erstellen';
+            }
+          }
+
+          // Only set date and time for new sessions, not when editing existing ones
+          const form = document.getElementById('createSessionForm');
+          const isNewSession = form.action.endsWith('/sessions/create');
+
+          if (isNewSession) {
+            console.log('new session');
+            const sessionInput = document.getElementById('sessionDate');
+            if (sessionInput) {
+              console.log(new Date().toISOString());
+              sessionInput.value = new Date().toISOString().split('T')[0];
+            }
+
+            const sessionTimeInput = document.getElementById('sessionTime');
+            if (sessionTimeInput) {
+              const now = new Date();
+              const hh = String(now.getHours()).padStart(2, '0');
+              const mm = String(now.getMinutes()).padStart(2, '0');
+
+              sessionTimeInput.value = `${hh}:${mm}`;
+            }
+          } else {
+            console.log('edit session');
+          }
+        });
       }
     });
   </script>
