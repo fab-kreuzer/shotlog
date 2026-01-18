@@ -37,7 +37,22 @@
 
               <div class="col-md-4">
                 <label class="form-label">Ort</label>
-                <input type="text" name="location" class="form-control" required>
+                <select name="location" class="form-select" required>
+                  <script>
+                    fetch('/locations')
+                            .then(response => response.json())
+                            .then(data => {
+                              const select = document.querySelector('select[name="location"]');
+                              data.forEach(location => {
+                                const option = document.createElement('option');
+                                option.value = location.id;
+                                option.textContent = location.club;
+                                select.appendChild(option);
+                              });
+                            })
+                            .catch(error => console.error('Error fetching locations:', error));
+                  </script>
+              </select>
               </div>
 
               <div class="col-md-4">

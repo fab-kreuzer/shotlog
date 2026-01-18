@@ -1,10 +1,13 @@
 package dev.fkreuzer.shotlog.controller;
 
 import dev.fkreuzer.shotlog.domain.Session;
+import dev.fkreuzer.shotlog.domain.ShootingPlace;
 import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
 import dev.fkreuzer.shotlog.service.SessionService;
 import java.util.ArrayList;
+import java.util.List;
 
+import dev.fkreuzer.shotlog.service.ShootingPlaceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,9 +17,11 @@ import org.springframework.web.bind.annotation.*;
 public class OverviewController extends DefaultShotLogController {
 
     private final SessionService sessionService;
+    private final ShootingPlaceService shootingPlaceService;
 
-    public OverviewController(SessionService sessionService) {
+    public OverviewController(SessionService sessionService, ShootingPlaceService shootingPlaceService) {
         this.sessionService = sessionService;
+        this.shootingPlaceService = shootingPlaceService;
     }
 
     @GetMapping("/overview")
@@ -67,5 +72,10 @@ public class OverviewController extends DefaultShotLogController {
 
         sessionService.save(updatedSession);
         return "redirect:/overview?type=" + updatedSession.getSessionType().toUrlFormat();
+    }
+
+    @GetMapping("/locations")
+    public ResponseEntity<List<ShootingPlace>> getLocations() {
+        return ResponseEntity.ok(shootingPlaceService.findAll());
     }
 }

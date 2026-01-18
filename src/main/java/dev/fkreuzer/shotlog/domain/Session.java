@@ -4,7 +4,6 @@ import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -27,7 +26,10 @@ public class Session {
 
     private LocalDate sessionDate;
     private LocalTime sessionTime;
-    private String location;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name= "shooting_place_id")
+    private ShootingPlace location;
 
     @Enumerated(EnumType.STRING)
     private SessionType sessionType;
@@ -58,6 +60,10 @@ public class Session {
     public String getFormattedShotSumOfTestShots() {
         double sum = getShotSumOfTestShots();
         return decimalScoring ? String.format("%.1f", sum) : String.format("%.0f", sum);
+    }
+
+    public String getTranslatedLocation() {
+        return location.getClub();
     }
 
 }

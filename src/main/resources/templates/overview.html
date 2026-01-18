@@ -7,7 +7,7 @@
         <!-- Header with title and action button -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h2 mb-0" th:text="'Übersicht deiner ' + ${type.getType()} + '-Sessions'"></h1>
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createSessionModal">
+            <button th:if="${!sessions.isEmpty()}" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createSessionModal">
                 <i class="bi bi-plus-circle me-2"></i>Neue Session anlegen
             </button>
         </div>
@@ -33,7 +33,7 @@
                                 </button>
                             </div>
 
-                            <h5 class="card-title mb-3" th:text="${singleSession.getLocation()}"></h5>
+                            <h5 class="card-title mb-3" th:text="${singleSession.getTranslatedLocation()}"></h5>
 
                             <div class="d-flex align-items-center mb-2">
                                 <i class="bi bi-calendar-event text-muted me-2"></i>
@@ -98,11 +98,12 @@
                     .then(session => {
                         // Reset the form first
                         resetModal();
+                        console.log(session);
 
                         // Set session data
                         document.querySelector('input[name="sessionDate"]').value = session.sessionDate;
                         document.querySelector('input[name="sessionTime"]').value = session.sessionTime;
-                        document.querySelector('input[name="location"]').value = session.location;
+                        document.querySelector('select[name="location"]').value = session.location.id;
                         document.querySelector('select[name="sessionType"]').value = session.sessionType;
                         document.querySelector('input[name="decimalScoring"]').checked = session.decimalScoring;
 
