@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
-public class SettingsController {
+public class SettingsController extends DefaultShotLogController {
 
     private final UserAccountRepository userAccountRepository;
     private final RoleRepository roleRepository;
@@ -45,6 +45,9 @@ public class SettingsController {
         String username = authentication.getName();
         UserAccount currentUser = userAccountRepository.findByUsername(username).orElseThrow();
         model.addAttribute("currentUser", currentUser);
+
+        // Set current page
+        setCurrentPage(model, "/settings");
 
         return "settings";
     }
