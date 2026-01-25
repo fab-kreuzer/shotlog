@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dev.fkreuzer.shotlog.service.ShootingPlaceService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -61,7 +63,7 @@ public class OverviewController extends DefaultShotLogController {
     }
 
     @PostMapping("/sessions/update/{id}")
-    public String updateSession(@PathVariable Long id, @ModelAttribute Session updatedSession) {
+    public String updateSession(@PathVariable Long id, @ModelAttribute Session updatedSession, HttpServletRequest request) {
         // Update the existing session with the new data
         updatedSession.setId(id);
         updatedSession.setUser(getCurrentUser());
@@ -72,7 +74,8 @@ public class OverviewController extends DefaultShotLogController {
         }
 
         sessionService.save(updatedSession);
-        return "redirect:/overview?type=" + updatedSession.getSessionType().toUrlFormat();
+
+        return "redirect:" + request.getHeader("Referer");
     }
 
     @GetMapping("/locations")
