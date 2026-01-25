@@ -12,4 +12,5 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     List<Session> findAllByUserAndSessionTypeOrderBySessionDateAscSessionTimeAsc(UserAccount user, SessionType type);
     Optional<Session> findByIdAndUser(Long id, UserAccount user);
     void deleteByIdAndUser(Long id, UserAccount user);
+    List<Session> findAllByUser(UserAccount user);
 }

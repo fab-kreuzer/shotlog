@@ -1,0 +1,37 @@
+/* Month view day numbers */
+.fc .fc-daygrid-day-number {
+    color: black !important;
+}
+
+/* Weekday headers (Mo, Di, …) */
+.fc .fc-col-header-cell-cushion {
+    color: black !important;
+}
+
+/* Prevent hover from turning blue */
+.fc a {
+    color: black;
+    text-decoration: none;
+}
+
+.fc a:hover {
+    color: black;
+}
+
+.fc-scroller {
+    overflow: visible !important;
+}
+.fc-daygrid-day-frame {
+    min-height: 7rem;
+}
+
+#calender-div {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#calendar {
+    width: 100%;
+    height: 100%;
+}

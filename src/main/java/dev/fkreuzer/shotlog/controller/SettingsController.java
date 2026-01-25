@@ -31,7 +31,7 @@ public class SettingsController extends DefaultShotLogController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping("/settings")
+    @GetMapping("settings")
     public String settings(Model model, Authentication authentication) {
         // Get all users for admin panel
         List<UserAccount> users = userAccountRepository.findAll();
@@ -47,7 +47,7 @@ public class SettingsController extends DefaultShotLogController {
         model.addAttribute("currentUser", currentUser);
 
         // Set current page
-        setCurrentPage(model, "/settings");
+        setCurrentPage(model, "settings");
 
         return "settings";
     }

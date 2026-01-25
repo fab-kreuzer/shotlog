@@ -66,4 +66,7 @@ public class Session {
         return location.getClub();
     }
 
+    public String getFormattedType() {
+        return sessionType.getType();
+    }
 }

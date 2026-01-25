@@ -9,7 +9,7 @@ public class DashboardController extends DefaultShotLogController {
 
     @GetMapping("/dashboard")
     public String login(Model model) {
-        setCurrentPage(model, "/dashboard");
+        setCurrentPage(model, "dashboard");
         return "dashboard";
     }
 

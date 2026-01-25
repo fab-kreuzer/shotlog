@@ -101,4 +101,9 @@ public class SessionServiceImpl implements SessionService {
     public void deleteByIdAndUser(Long id, UserAccount user) {
         sessionRepository.deleteByIdAndUser(id, user);
     }
+
+    @Override
+    public List<Session> findAllByUser(UserAccount user) {
+        return sessionRepository.findAllByUser(user);
+    }
 }

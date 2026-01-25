@@ -11,7 +11,9 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <link rel="stylesheet" th:href="@{/css/settings.css}">
     <link rel="stylesheet" th:href="@{/css/overview.css}">
+    <link rel="stylesheet" th:href="@{/css/calender.css}">
 
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script th:src="@{/js/notifications.js}"></script>
 </head>
@@ -21,7 +23,7 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
 
-            <a class="navbar-brand text-decoration-none" th:classappend="${currentPage != null && currentPage == '/dashboard'} ? 'active' : ''" href="/dashboard">ShotLog</a>
+            <a class="navbar-brand text-decoration-none" th:classappend="${currentPage != null && currentPage == 'dashboard'} ? 'active' : ''" href="/dashboard">ShotLog</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarNav">
@@ -30,9 +32,10 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav me-auto">
-                    <a class="nav-link" th:classappend="${currentPage != null && currentPage == '/overview' && currentPageParam != null && currentPageParam == 'type' && currentPageValue != null && currentPageValue == 'training'} ? 'active' : ''" href="/overview?type=training">Training</a>
-                    <a class="nav-link" th:classappend="${currentPage != null && currentPage == '/overview' && currentPageParam != null && currentPageParam == 'type' && currentPageValue != null && currentPageValue == 'competition'} ? 'active' : ''" href="/overview?type=competition">Wettkampf</a>
-                    <a class="nav-link" th:classappend="${currentPage != null && currentPage == '/settings'} ? 'active' : ''" href="/settings">Einstellungen</a>
+                    <a class="nav-link" th:classappend="${currentPage != null && currentPage == 'overview' && currentPageParam != null && currentPageParam == 'type' && currentPageValue != null && currentPageValue == 'training'} ? 'active' : ''" href="/overview?type=training">Training</a>
+                    <a class="nav-link" th:classappend="${currentPage != null && currentPage == 'overview' && currentPageParam != null && currentPageParam == 'type' && currentPageValue != null && currentPageValue == 'competition'} ? 'active' : ''" href="/overview?type=competition">Wettkampf</a>
+                    <a class="nav-link" th:classappend="${currentPage != null && currentPage == 'settings'} ? 'active' : ''" href="/settings">Einstellungen</a>
+                    <a class="nav-link" th:classappend="${currentPage != null && currentPage == 'calender'} ? 'active' : ''" href="/calender">Kalender</a>
                 </div>
 
                 <div class="navbar-nav">

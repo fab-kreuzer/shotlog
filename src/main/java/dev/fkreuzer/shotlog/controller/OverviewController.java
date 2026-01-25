@@ -29,7 +29,7 @@ public class OverviewController extends DefaultShotLogController {
         SessionType sessionType = SessionType.valueOf(type.toUpperCase());
         model.addAttribute("type", sessionType);
         model.addAttribute("sessions", sessionService.findAllByUserAndType(getCurrentUser(), sessionType));
-        setCurrentPage(model, "/overview", "type", type);
+        setCurrentPage(model, "overview", "type", type);
         return "overview";
     }
 

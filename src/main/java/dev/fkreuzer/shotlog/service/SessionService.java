@@ -13,5 +13,6 @@ public interface SessionService {
     List<Session> findAllByUserAndType(UserAccount user, SessionType type);
     Optional<Session> findByIdAndUser(Long id, UserAccount user);
     void deleteByIdAndUser(Long id, UserAccount user);
+    List<Session> findAllByUser(UserAccount user);
 
 }
