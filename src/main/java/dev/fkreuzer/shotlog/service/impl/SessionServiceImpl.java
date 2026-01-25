@@ -56,17 +56,27 @@ public class SessionServiceImpl implements SessionService {
                         }
 
                         // Process each shot in the updated series
-                        for (Shot updatedShot : updatedSeries.getShots()) {
-                            // Check if this shot already exists (by shotNumber)
-                            Shot existingShot = existingShotsMap.get(updatedShot.getShotNumber());
+                        if (updatedSeries.getShots() != null) {
+                            for (Shot updatedShot : updatedSeries.getShots()) {
+                                // Check if this shot already exists (by shotNumber)
+                                Shot existingShot = existingShotsMap.get(updatedShot.getShotNumber());
 
-                            if (existingShot != null) {
-                                // Update existing shot - preserve its ID
-                                updatedShot.setId(existingShot.getId());
+                                if (existingShot != null) {
+                                    // Update existing shot - preserve its ID
+                                    updatedShot.setId(existingShot.getId());
+                                }
+
+                                // Set the series reference
+                                updatedShot.setSeries(updatedSeries);
                             }
-
-                            // Set the series reference
-                            updatedShot.setSeries(updatedSeries);
+                        }
+                    } else {
+                        // This is a new series being added during an update
+                        // Ensure all shots have their series reference set
+                        if (updatedSeries.getShots() != null) {
+                            for (Shot updatedShot : updatedSeries.getShots()) {
+                                updatedShot.setSeries(updatedSeries);
+                            }
                         }
                     }
 
@@ -78,8 +88,11 @@ public class SessionServiceImpl implements SessionService {
             // This is a new session, just set the references
             for (Series series : session.getSeries()) {
                 series.setSession(session);
-                for (Shot shot : series.getShots()) {
-                    shot.setSeries(series);
+                // Ensure all shots have their series reference set
+                if (series.getShots() != null) {
+                    for (Shot shot : series.getShots()) {
+                        shot.setSeries(series);
+                    }
                 }
             }
         }
