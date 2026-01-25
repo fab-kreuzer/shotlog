@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -27,5 +28,12 @@ public class CalenderController extends DefaultShotLogController {
     @GetMapping("/api/sessions")
     public ResponseEntity<List<Session>> sessions(Model model) {
         return ResponseEntity.ok(sessionService.findAllByUser(getCurrentUser()));
+    }
+
+    @GetMapping("/api/sessions/{id}")
+    public ResponseEntity<Session> getSession(@PathVariable Long id) {
+        return sessionService.findByIdAndUser(id, getCurrentUser())
+                .map(session -> ResponseEntity.ok(session))
+                .orElse(ResponseEntity.notFound().build());
     }
 }

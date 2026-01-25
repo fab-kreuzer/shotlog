@@ -8,6 +8,9 @@
                 <div id='calendar'></div>
             </div>
 
+            <!-- Create Session Modal -->
+            <div th:replace="~{fragments/createSessionModal :: sessionModalContent}"></div>
+
             <script>
 
                 document.addEventListener('DOMContentLoaded', function() {
@@ -55,7 +58,97 @@
                                     }));
                                 }
                             }
-                        ]
+                        ],
+                        eventClick: function(info) {
+                            // Get the session ID from the clicked event
+                            const sessionId = info.event.id;
+
+                            // Fetch the session data from the server
+                            fetch(`/api/sessions/${sessionId}`)
+                                .then(response => response.json())
+                                .then(session => {
+                                    // Open the modal
+                                    const modal = new bootstrap.Modal(document.getElementById('createSessionModal'));
+
+                                    // Reset the modal first
+                                    window.resetModal();
+
+                                    // Set the form action to update
+                                    const form = document.getElementById('createSessionForm');
+                                    form.action = `/sessions/update/${sessionId}`;
+
+                                    // Set the modal title
+                                    const modalTitle = document.querySelector('.modal-title');
+                                    if (modalTitle) {
+                                        modalTitle.textContent = 'Schießabend bearbeiten';
+                                    }
+
+                                    // Populate form fields with session data
+                                    document.getElementById('sessionDate').value = session.sessionDate;
+                                    document.getElementById('sessionTime').value = session.sessionTime;
+
+                                    // Set location dropdown
+                                    const locationSelect = document.querySelector('select[name="location"]');
+                                    if (locationSelect) {
+                                        for (let i = 0; i < locationSelect.options.length; i++) {
+                                            if (locationSelect.options[i].value == session.location.id) {
+                                                locationSelect.selectedIndex = i;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    // Set session type
+                                    const sessionTypeSelect = document.querySelector('select[name="sessionType"]');
+                                    if (sessionTypeSelect) {
+                                        for (let i = 0; i < sessionTypeSelect.options.length; i++) {
+                                            if (sessionTypeSelect.options[i].value === session.sessionType) {
+                                                sessionTypeSelect.selectedIndex = i;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    // Set decimal scoring checkbox
+                                    document.getElementById('decimalScoring').checked = session.decimalScoring;
+
+                                    // Remove all series except the first template
+                                    const container = document.getElementById('seriesContainer');
+                                    const seriesBlocks = container.querySelectorAll('.series-block');
+                                    for (let i = 1; i < seriesBlocks.length; i++) {
+                                        container.removeChild(seriesBlocks[i]);
+                                    }
+
+                                    // Add series from the session data
+                                    session.series.forEach((series, index) => {
+                                        if (index > 0) {
+                                            // Add a new series block for each series after the first one
+                                            addSeries();
+                                        }
+
+                                        // Get the current series block
+                                        const seriesBlock = container.querySelectorAll('.series-block')[index];
+
+                                        // Set test shot checkbox
+                                        const testShotCheckbox = seriesBlock.querySelector('.testShot');
+                                        if (testShotCheckbox) {
+                                            testShotCheckbox.checked = series.testShot;
+                                        }
+
+                                        // Set shot values
+                                        series.shots.forEach((shot, shotIndex) => {
+                                            const shotInput = seriesBlock.querySelector(`input[name="series[${index}].shots[${shotIndex}].value"]`);
+                                            if (shotInput) {
+                                                shotInput.value = shot.value;
+                                            }
+                                        });
+                                    });
+
+                                    // Show the modal
+                                    modal.show();
+                                })
+                                .catch(error => console.error('Error fetching session:', error));
+                        }
                     });
                     calendar.render();
                 });
