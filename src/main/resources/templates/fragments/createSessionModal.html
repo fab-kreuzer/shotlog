@@ -86,6 +86,9 @@
                   <strong>Serie <span class="series-number">1</span></strong>
                   <input type="hidden" name="series[0].seriesNumber" value="1">
                   <div class="float-end">
+                    <button type="button" class="btn btn-sm btn-outline-danger me-2 remove-series-btn" onclick="removeSeries(this)" title="Serie entfernen">
+                      <i class="bi bi-trash"></i> Entfernen
+                    </button>
                     <input class="form-check-input testShot"
                            type="checkbox"
                            th:name="'series[0].testShot'"
@@ -113,8 +116,7 @@
                              max="10.9"
                              value="0"
                              class="form-control"
-                             th:name="'series[0].shots[' + (${i}-1) + '].value'"
-                             required>
+                             th:name="'series[0].shots[' + (${i}-1) + '].value'">
 
                     </div>
 
@@ -126,6 +128,7 @@
 
             <!-- ADD SERIES BUTTON -->
             <button type="button" class="btn btn-outline-secondary"
+                    id="addSeriesButton"
                     onclick="addSeries()">
               + Serie hinzufügen
             </button>
@@ -155,6 +158,58 @@
 
     let seriesIndex = 1;
 
+    function removeSeries(button) {
+      try {
+        const seriesBlock = button.closest('.series-block');
+        const container = document.getElementById('seriesContainer');
+        const allSeries = container.querySelectorAll('.series-block');
+
+        // Allow removing series even if it's the last one (sessions can have 0 series)
+        if (seriesBlock) {
+          container.removeChild(seriesBlock);
+
+          // Update series numbers and indices for remaining series
+          updateSeriesNumbers();
+        }
+      } catch (error) {
+        console.error('Error removing series:', error);
+      }
+    }
+
+    function updateSeriesNumbers() {
+      try {
+        const container = document.getElementById('seriesContainer');
+        const seriesBlocks = container.querySelectorAll('.series-block');
+
+        seriesBlocks.forEach((block, index) => {
+          // Update series number display
+          const seriesNumberElement = block.querySelector('.series-number');
+          if (seriesNumberElement) {
+            seriesNumberElement.innerText = index + 1;
+          }
+
+          // Update all input names and values
+          block.querySelectorAll('input').forEach(input => {
+            if (input.name) {
+              input.name = input.name.replace(/series\[\d+\]/, `series[${index}]`);
+            }
+            if (input.getAttribute('th:name')) {
+              input.setAttribute('th:name', input.getAttribute('th:name').replace(/series\[\d+\]/, `series[${index}]`));
+            }
+            // Update series number hidden input
+            if (input.name && input.name.includes('.seriesNumber')) {
+              input.value = index + 1;
+            }
+          });
+        });
+
+        // Update global series index
+        seriesIndex = seriesBlocks.length;
+      } catch (error) {
+        console.error('Error updating series numbers:', error);
+      }
+    }
+
     function addSeries() {
       try {
         const container = document.getElementById('seriesContainer');
@@ -163,9 +218,11 @@
           return;
         }
 
-        const template = container.querySelector('.series-block');
+        // If no series exist, create from template, otherwise clone the first series
+        let template = container.querySelector('.series-block');
         if (!template) {
-          console.error('Series template not found');
+          // Create a new series from scratch if none exist
+          createFirstSeries();
           return;
         }
 
@@ -187,16 +244,16 @@
         // Update all input names
         clone.querySelectorAll('input').forEach(input => {
           if (input.name) {
-            input.name = input.name.replace('series[0]', `series[${seriesIndex}]`);
+            input.name = input.name.replace(/series\[\d+\]/, `series[${seriesIndex}]`);
           }
           if (input.getAttribute('th:name')) {
-            input.setAttribute('th:name', input.getAttribute('th:name').replace('series[0]', `series[${seriesIndex}]`));
+            input.setAttribute('th:name', input.getAttribute('th:name').replace(/series\[\d+\]/, `series[${seriesIndex}]`));
           }
           if (input.type === 'number') {
             input.value = '0';
+            input.required = false; // Make shots optional by default
           }
         });
-
 
         container.appendChild(clone);
         seriesIndex++;
@@ -209,6 +266,43 @@
       }
     }
 
+    function createFirstSeries() {
+      // This function creates the first series when none exist
+      const container = document.getElementById('seriesContainer');
+
+      // Create the series HTML structure
+      const seriesHtml = `
+        <div class="card mb-4 series-block">
+          <div class="card-header">
+            <strong>Serie <span class="series-number">1</span></strong>
+            <input type="hidden" name="series[0].seriesNumber" value="1">
+            <div class="float-end">
+              <button type="button" class="btn btn-sm btn-outline-danger me-2 remove-series-btn" onclick="removeSeries(this)" title="Serie entfernen">
+                <i class="bi bi-trash"></i> Entfernen
+              </button>
+              <input class="form-check-input testShot" type="checkbox" name="series[0].testShot" value="true">
+              <label class="form-check-label">Probe</label>
+              <input type="hidden" name="_series[0].testShot" value="on">
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row g-2">
+              ${Array.from({length: 10}, (_, i) => `
+                <div class="col-6 col-md-3">
+                  <label class="form-label">Schuss ${i + 1}</label>
+                  <input type="hidden" name="series[0].shots[${i}].shotNumber" value="${i + 1}"/>
+                  <input type="number" step="0.1" min="0" max="10.9" value="0" class="form-control" name="series[0].shots[${i}].value">
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = seriesHtml;
+      seriesIndex = 1;
+    }
+
     // Make resetModal function globally accessible
     window.resetModal = function() {
       console.log('resetModal');
@@ -216,9 +310,15 @@
         // Reset form
         document.getElementById('createSessionForm').reset();
 
-        // Reset shot values to 0
+        // Re-enable all inputs that might have been disabled
+        document.querySelectorAll('#seriesContainer input, #seriesContainer select, #seriesContainer textarea').forEach(input => {
+          input.disabled = false;
+        });
+
+        // Reset shot values to 0 and make them optional
         document.querySelectorAll('input[type="number"]').forEach(input => {
           input.value = '0';
+          input.required = false;
         });
 
         // Reset testShot checkbox in the first series
@@ -255,6 +355,11 @@
 
     // Add event listener for modal close
     document.addEventListener('DOMContentLoaded', function() {
+      // Initialize shots as optional by default
+      document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.required = false;
+      });
+
       const modal = document.getElementById('createSessionModal');
       if (modal) {
         modal.addEventListener('show.bs.modal', function (event) {
