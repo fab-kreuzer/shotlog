@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/shotlog_prod
+    url: jdbc:postgresql://postgres:5432/shotlog_prod
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: postgres
