@@ -27,10 +27,9 @@ public class DevSecurityConfig {
             return;
         }
 
-        Role adminRole = new Role("ADMIN");
-        roleRepo.save(adminRole);
+        Role adminRole = roleRepo.findByName("ADMIN")
+                .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
         UserAccount admin = new UserAccount("admin", passwordEncoder.encode("admin"), Set.of(adminRole));
-        userRepo.save(admin);
         userRepo.save(admin);
     }
 }
