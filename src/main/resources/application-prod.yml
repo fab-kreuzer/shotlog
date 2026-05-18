@@ -2,8 +2,8 @@ spring:
   datasource:
     url: jdbc:postgresql://postgres_db:5432/shotlog_prod
     driver-class-name: org.postgresql.Driver
-    username: admin
-    password: admin
+    username: shotlog
+    password: shotlog
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
