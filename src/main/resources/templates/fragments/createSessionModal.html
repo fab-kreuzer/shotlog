@@ -39,7 +39,7 @@
                 <label class="form-label">Ort</label>
                 <select name="location" class="form-select" required>
                   <script>
-                    fetch('/locations')
+                    fetch('/api/locations')
                             .then(response => response.json())
                             .then(data => {
                               const select = document.querySelector('select[name="location"]');

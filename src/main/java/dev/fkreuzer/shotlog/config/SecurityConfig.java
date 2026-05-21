@@ -15,12 +15,8 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/login",
-                                "/css/**",
-                                "/js/**",
-                                "/api/sessions/**"
-                        ).permitAll()
+                        .requestMatchers("/login", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/settings/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -32,7 +28,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers(
                                 "/settings/**",
-                                "/api/sessions/**"
+                                "/api/**"
                         )
                 );
 

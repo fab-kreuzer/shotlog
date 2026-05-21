@@ -77,9 +77,4 @@ public class OverviewController extends DefaultShotLogController {
 
         return "redirect:" + request.getHeader("Referer");
     }
-
-    @GetMapping("/locations")
-    public ResponseEntity<List<ShootingPlace>> getLocations() {
-        return ResponseEntity.ok(shootingPlaceService.findAll());
-    }
 }
