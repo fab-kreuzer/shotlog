@@ -28,13 +28,13 @@ public class Session {
     private LocalTime sessionTime;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name= "shooting_place_id")
-    private ShootingPlace location;
+    private ShootingPlace enemy;
 
     @Enumerated(EnumType.STRING)
     private SessionType sessionType;
 
     private boolean decimalScoring;
+    private boolean isHome;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("seriesNumber ASC")
@@ -63,7 +63,7 @@ public class Session {
     }
 
     public String getTranslatedLocation() {
-        return location.getClub();
+        return this.getEnemy().getClub();
     }
 
     public String getFormattedType() {

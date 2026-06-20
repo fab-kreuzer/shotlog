@@ -36,13 +36,13 @@
               </div>
 
               <div class="col-md-4">
-                <label class="form-label">Ort</label>
-                <select name="location" class="form-select" required>
+                <label class="form-label">Gegner</label>
+                <select name="enemy" class="form-select" required>
                   <script>
                     fetch('/api/locations')
                             .then(response => response.json())
                             .then(data => {
-                              const select = document.querySelector('select[name="location"]');
+                              const select = document.querySelector('select[name="enemy"]');
                               data.forEach(location => {
                                 const option = document.createElement('option');
                                 option.value = location.id;
@@ -52,7 +52,7 @@
                             })
                             .catch(error => console.error('Error fetching locations:', error));
                   </script>
-              </select>
+                </select>
               </div>
 
               <div class="col-md-4">
@@ -71,6 +71,14 @@
                          value="true"
                          id="decimalScoring">
                   <label class="form-check-label" for="decimalScoring">Zehntelwertung</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input"
+                         type="checkbox"
+                         name="home"
+                         value="true"
+                         id="isHomeCheckbox">
+                  <label class="form-check-label" for="isHomeCheckbox">Heimwettkampf</label>
                 </div>
               </div>
             </div>

@@ -99,11 +99,13 @@
                         // Reset the form first
                         resetModal();
                         // Set session data
+                        console.log(session)
                         document.querySelector('input[name="sessionDate"]').value = session.sessionDate;
                         document.querySelector('input[name="sessionTime"]').value = session.sessionTime;
-                        document.querySelector('select[name="location"]').value = session.location.id;
+                        document.querySelector('select[name="enemy"]').value = session.enemy.id;
                         document.querySelector('select[name="sessionType"]').value = session.sessionType;
                         document.querySelector('input[name="decimalScoring"]').checked = session.decimalScoring;
+                        document.querySelector('input[name="home"]').checked = session.home;
 
                         // Handle series
                         const seriesContainer = document.getElementById('seriesContainer');
