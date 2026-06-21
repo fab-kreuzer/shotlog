@@ -167,3 +167,7 @@
         transform: scale(1);
     }
 }
+
+button {
+    cursor: pointer !important;
+}
