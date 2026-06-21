@@ -5,7 +5,7 @@ import LoginView from '@/views/LoginView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import OverviewView from '@/views/OverviewView.vue'
 import CalenderView from '@/views/CalenderView.vue'
-import SettingsView from '@/views/SettingsView.vue'
+import SettingsView from "@/views/settings/SettingsView.vue";
 
 const routes = [
     {

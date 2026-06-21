@@ -4,80 +4,20 @@
 
     <!-- --- USER MANAGEMENT --- -->
     <section class="space-y-6">
-      <h3 class="text-base font-semibold text-surface-700">Benutzer</h3>
-
       <!-- Create User Form -->
-      <div class="bg-surface-50 rounded-xl border border-surface-200 p-5">
-        <h4 class="text-sm font-semibold text-surface-700 mb-4">
-          Neuen Benutzer erstellen
-        </h4>
-
-        <form class="space-y-4" @submit.prevent="handleCreateUser">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-surface-700 mb-1.5">
-                Benutzername
-              </label>
-              <input
-                  v-model="newUser.username"
-                  class="w-full px-3 py-2 rounded-lg border border-surface-300 text-sm"
-                  required
-                  type="text"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-surface-700 mb-1.5">
-                Passwort
-              </label>
-              <input
-                  v-model="newUser.password"
-                  class="w-full px-3 py-2 rounded-lg border border-surface-300 text-sm"
-                  required
-                  type="password"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-surface-700 mb-2">
-              Rollen
-            </label>
-
-            <div class="flex flex-wrap gap-3">
-              <label
-                  v-for="role in roles"
-                  :key="role.id"
-                  class="flex items-center gap-2 cursor-pointer"
-              >
-                <input
-                    v-model="newUser.roleIds"
-                    :value="role.id"
-                    class="w-4 h-4"
-                    type="checkbox"
-                />
-                <span class="text-sm text-surface-700">
-                  {{ role.name }}
-                </span>
-              </label>
-            </div>
-          </div>
-
-          <button
-              class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-700 hover:bg-primary-800"
-              type="submit"
-          >
-            Benutzer erstellen
-          </button>
-        </form>
-      </div>
-
-      <!-- User Table -->
-      <div>
-        <h4 class="text-sm font-semibold text-surface-700 mb-3">
+      <div class="flex justify-between items-center">
+        <h4 class="text-sm font-semibold text-surface-700">
           Benutzerliste
         </h4>
 
+        <button
+            class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-700 hover:bg-primary-800 cursor-pointer"
+            @click="showCreateUserModal = true"
+        >
+          + Benutzer
+        </button>
+      </div>
+      <!-- User Table -->
         <div class="overflow-x-auto rounded-xl border border-surface-200">
           <table class="w-full text-sm">
             <thead>
@@ -135,7 +75,6 @@
             </tr>
             </tbody>
           </table>
-        </div>
       </div>
     </section>
 
@@ -144,17 +83,9 @@
       <h3 class="text-base font-semibold text-surface-700">Rollen</h3>
 
       <form class="flex gap-3" @submit.prevent="handleCreateRole">
-        <input
-            v-model="newRoleName"
-            class="flex-1 px-3 py-2 rounded-lg border border-surface-300 text-sm"
-            placeholder="Rollenname"
-        />
-
-        <button
-            class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-700"
-            type="submit"
-        >
-          Erstellen
+        <input v-model="newRoleName" class="flex-1 px-3 py-2 rounded-lg border border-surface-300 text-sm"
+               placeholder="Rollenname"/>
+        <button class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-700" type="submit">Erstellen
         </button>
       </form>
 
@@ -180,8 +111,12 @@
 
             <td class="px-4 py-3 text-right">
               <div class="flex justify-end gap-2">
-                <button @click="openEditRole(role)">Bearbeiten</button>
-                <button @click="handleDeleteRole(role.id)">Löschen</button>
+                <button class="px-3 py-1.5 text-xs rounded-lg text-info-600 bg-info-50" @click="openEditRole(role)">
+                  Bearbeiten
+                </button>
+                <button class="px-3 py-1.5 text-xs rounded-lg text-danger-600 bg-danger-50"
+                        @click="handleDeleteRole(role.id)">Löschen
+                </button>
               </div>
             </td>
           </tr>
@@ -310,7 +245,14 @@
       </Transition>
     </Teleport>
 
+    <CreateUserModal
+        v-model="showCreateUserModal"
+        :roles="roles"
+        @create="handleCreateUser"
+    />
+
   </div>
+
 </template>
 
 <script setup>
@@ -318,12 +260,15 @@ import {onMounted, ref} from 'vue'
 import {useAuthStore} from '@/stores/auth'
 import {useNotificationStore} from '@/stores/notifications'
 import {api} from '@/api/http'
+import CreateUserModal from "@/components/settings/CreateUserModal.vue";
 
 const auth = useAuthStore()
 const notify = useNotificationStore()
 
 const users = ref([])
 const roles = ref([])
+
+const showCreateUserModal = ref(false)
 
 const newUser = ref({
   username: '',
@@ -340,16 +285,16 @@ async function loadData() {
   if (!auth.isAdmin) return
 
   users.value = await api.getUsers()
+  console.log(users.value)
   roles.value = await api.getRoles()
 }
 
 /* ───────── USERS ───────── */
 
-async function handleCreateUser() {
+async function handleCreateUser(user) {
   try {
-    await api.createUser(newUser.value)
+    await api.createUser(user)
     notify.success('Benutzer erstellt')
-    newUser.value = {username: '', password: '', roleIds: []}
     await loadData()
   } catch (e) {
     notify.error(e.error || 'Fehler')
