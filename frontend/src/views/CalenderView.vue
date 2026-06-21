@@ -1,7 +1,13 @@
 <template>
   <div>
-    <h1>Kalender</h1>
-    <div id="calender-div">
+    <!-- Page header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-surface-800">Kalender</h1>
+      <p class="mt-1 text-surface-500">Alle Sessions im Überblick</p>
+    </div>
+
+    <!-- Calendar -->
+    <div class="bg-white rounded-xl border border-surface-200 shadow-sm p-4 sm:p-6">
       <div ref="calendarEl"></div>
     </div>
 

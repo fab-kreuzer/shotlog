@@ -1,57 +1,112 @@
 <template>
-  <div class="container-fluid p-0">
-    <!-- Header with title and action button -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="h2 mb-0">Übersicht deiner {{ typeLabel }}-Sessions</h1>
-      <button v-if="sessions.length > 0" class="btn btn-success" type="button" @click="sessionModal?.openCreate()">
-        <i class="bi bi-plus-circle me-2"></i>Neue Session anlegen
+  <div>
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-surface-800">Übersicht deiner {{ typeLabel }}-Sessions</h1>
+        <p class="mt-1 text-surface-500">{{ sessions.length }} Session{{ sessions.length !== 1 ? 's' : '' }}
+          gefunden</p>
+      </div>
+      <button
+          v-if="sessions.length > 0"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-primary-700 hover:bg-primary-800 shadow-sm transition-colors"
+          type="button"
+          @click="sessionModal?.openCreate()"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        </svg>
+        Neue Session anlegen
       </button>
     </div>
 
-    <!-- Sessions Display -->
-    <div v-if="sessions.length > 0" class="mt-4">
-      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-        <div v-for="session in sessions" :key="session.id" class="col">
-          <div class="card h-100 shadow-sm session-card">
-            <div class="card-body position-relative">
-              <div class="session-actions position-absolute top-0 end-0 mt-2 me-2">
-                <button class="btn btn-sm btn-warning me-1" title="Bearbeiten" @click="editSession(session.id)">
-                  <i class="bi bi-pencil"></i>
-                </button>
-                <button class="btn btn-sm btn-danger" title="Löschen" @click="handleDelete(session.id)">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </div>
+    <!-- Session cards grid -->
+    <div v-if="sessions.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div
+          v-for="session in sessions"
+          :key="session.id"
+          class="group bg-white rounded-xl border border-surface-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
+      >
+        <div class="p-5">
+          <!-- Card header with actions -->
+          <div class="flex items-start justify-between mb-4">
+            <h3 class="text-base font-semibold text-surface-800 leading-tight">{{ session.translatedLocation }}</h3>
+            <div
+                class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity sm:opacity-0 max-sm:opacity-100">
+              <button
+                  class="p-1.5 rounded-lg text-warning-500 hover:bg-warning-50 transition-colors"
+                  title="Bearbeiten"
+                  @click="editSession(session.id)"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"/>
+                </svg>
+              </button>
+              <button
+                  class="p-1.5 rounded-lg text-danger-500 hover:bg-danger-50 transition-colors"
+                  title="Löschen"
+                  @click="handleDelete(session.id)"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
 
-              <h5 class="card-title mb-3">{{ session.translatedLocation }}</h5>
+          <!-- Session details -->
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-2.5 text-sm text-surface-600">
+              <svg class="w-4 h-4 text-surface-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"
+                      stroke-width="2"/>
+              </svg>
+              <span>{{ formatDate(session.sessionDate) }}</span>
+            </div>
 
-              <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-calendar-event text-muted me-2"></i>
-                <span>{{ formatDate(session.sessionDate) }}</span>
-              </div>
+            <div class="flex items-center gap-2.5 text-sm text-surface-600">
+              <svg class="w-4 h-4 text-surface-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"
+                      stroke-width="2"/>
+              </svg>
+              <span>{{ formatTime(session.sessionTime) }} Uhr</span>
+            </div>
 
-              <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-clock text-muted me-2"></i>
-                <span>{{ formatTime(session.sessionTime) }} Uhr</span>
-              </div>
-
-              <div class="d-flex align-items-center">
-                <i class="bi bi-bullseye text-muted me-2"></i>
-                <span class="fw-bold">Summe: {{ session.formattedShotSum }} ({{
-                    session.formattedShotSumOfTestShots
-                  }})</span>
-              </div>
+            <div class="flex items-center gap-2.5 text-sm">
+              <svg class="w-4 h-4 text-surface-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                <circle cx="12" cy="12" r="6" stroke-width="2"/>
+                <circle cx="12" cy="12" r="2" stroke-width="2"/>
+              </svg>
+              <span class="font-semibold text-surface-800">Summe: {{ session.formattedShotSum }}
+                <span class="font-normal text-surface-500">({{ session.formattedShotSumOfTestShots }})</span>
+              </span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Empty state message -->
-    <div v-else class="text-center mt-5 pt-5">
-      <i class="bi bi-inbox fs-1 text-muted"></i>
-      <p class="mt-3 text-muted">Keine Sessions verfügbar</p>
-      <button class="btn btn-outline-success mt-3" type="button" @click="sessionModal?.openCreate()">
+    <!-- Empty state -->
+    <div v-else class="text-center py-20">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-surface-100 mb-4">
+        <svg class="w-8 h-8 text-surface-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" stroke-linecap="round" stroke-linejoin="round"
+                stroke-width="1.5"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-medium text-surface-700 mb-1">Keine Sessions verfügbar</h3>
+      <p class="text-surface-500 mb-6">Erstellen Sie Ihre erste Session, um loszulegen.</p>
+      <button
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-primary-700 hover:bg-primary-800 shadow-sm transition-colors"
+          type="button"
+          @click="sessionModal?.openCreate()"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        </svg>
         Erste Session anlegen
       </button>
     </div>
