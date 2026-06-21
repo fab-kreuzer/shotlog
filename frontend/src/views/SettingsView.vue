@@ -44,6 +44,10 @@
             <span class="text-sm text-surface-500 w-32">Benutzername:</span>
             <span class="text-sm font-medium text-surface-800">{{ auth.user?.username }}</span>
           </div>
+          <div class="flex items-center gap-3">
+            <span class="text-sm text-surface-500 w-32">Anzeigename:</span>
+            <span class="text-sm font-medium text-surface-800">{{ auth.user?.displayName }}</span>
+          </div>
           <div class="flex items-start gap-3">
             <span class="text-sm text-surface-500 w-32">Rollen:</span>
             <div class="flex flex-wrap gap-1.5">
