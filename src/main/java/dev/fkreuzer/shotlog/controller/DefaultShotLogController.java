@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 
 public class DefaultShotLogController {
 
-    UserAccount getCurrentUser() {
+    protected UserAccount getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof SecurityUser securityUser) {
             return securityUser.domain();

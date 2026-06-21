@@ -21,6 +21,7 @@
 .fc-scroller {
     overflow: visible !important;
 }
+
 .fc-daygrid-day-frame {
     min-height: 7rem;
 }
