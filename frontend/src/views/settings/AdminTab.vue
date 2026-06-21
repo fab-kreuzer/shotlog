@@ -80,14 +80,16 @@
 
     <!-- ---- ROLE MODAL ----- -->
     <section class="space-y-6">
-      <h3 class="text-base font-semibold text-surface-700">Rollen</h3>
+      <div class="flex justify-between items-center">
+        <h3 class="text-base font-semibold text-surface-700">Rollenliste</h3>
 
-      <form class="flex gap-3" @submit.prevent="handleCreateRole">
-        <input v-model="newRoleName" class="flex-1 px-3 py-2 rounded-lg border border-surface-300 text-sm"
-               placeholder="Rollenname"/>
-        <button class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-700" type="submit">Erstellen
+        <button
+            class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-primary-700 hover:bg-primary-800"
+            @click="showCreateRoleModal = true"
+        >
+          + Rolle
         </button>
-      </form>
+      </div>
 
       <div class="overflow-x-auto rounded-xl border border-surface-200">
         <table class="w-full text-sm">
@@ -251,6 +253,11 @@
         @create="handleCreateUser"
     />
 
+    <CreateRoleModal
+        v-model="showCreateRoleModal"
+        @create="handleCreateRole"
+    />
+
   </div>
 
 </template>
@@ -261,6 +268,7 @@ import {useAuthStore} from '@/stores/auth'
 import {useNotificationStore} from '@/stores/notifications'
 import {api} from '@/api/http'
 import CreateUserModal from "@/components/settings/CreateUserModal.vue";
+import CreateRoleModal from "@/components/settings/CreateRoleModal.vue";
 
 const auth = useAuthStore()
 const notify = useNotificationStore()
@@ -269,6 +277,7 @@ const users = ref([])
 const roles = ref([])
 
 const showCreateUserModal = ref(false)
+const showCreateRoleModal = ref(false)
 
 const newUser = ref({
   username: '',
@@ -333,9 +342,9 @@ async function handleDeleteUser(id) {
 
 /* ───────── ROLES ───────── */
 
-async function handleCreateRole() {
-  await api.createRole({name: newRoleName.value})
-  newRoleName.value = ''
+async function handleCreateRole(role) {
+  await api.createRole(role)
+  notify.success('Rolle erstellt')
   await loadData()
 }
 
