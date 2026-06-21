@@ -196,6 +196,7 @@ public class ApiSettingsController {
         Map<String, Object> map = new HashMap<>();
         map.put("id", user.getId());
         map.put("username", user.getUsername());
+        map.put("displayName", user.getDisplayName());
         map.put("roles", user.getRoles()
                 .stream()
                 .map(role -> {

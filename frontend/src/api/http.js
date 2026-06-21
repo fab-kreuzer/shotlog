@@ -44,6 +44,7 @@ export const api = {
     delete: (url) => request('DELETE', url),
 
     // Auth
+    register: (data) => request('POST', '/api/auth/register', data),
     login: (username, password) => {
         const formData = new URLSearchParams()
         formData.append('username', username)

@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+/* ── Design Tokens ── */
+@theme {
+    --color-primary-50: #f0fdf0;
+    --color-primary-100: #dcfce7;
+    --color-primary-200: #bbf7d0;
+    --color-primary-300: #86efac;
+    --color-primary-400: #4ade80;
+    --color-primary-500: #22c55e;
+    --color-primary-600: #16a34a;
+    --color-primary-700: #15803d;
+    --color-primary-800: #166534;
+    --color-primary-900: #14532d;
+    --color-primary-950: #052e16;
+
+    --color-surface-50: #f8fafc;
+    --color-surface-100: #f1f5f9;
+    --color-surface-200: #e2e8f0;
+    --color-surface-300: #cbd5e1;
+    --color-surface-400: #94a3b8;
+    --color-surface-500: #64748b;
+    --color-surface-600: #475569;
+    --color-surface-700: #334155;
+    --color-surface-800: #1e293b;
+    --color-surface-900: #0f172a;
+    --color-surface-950: #020617;
+
+    --color-danger-50: #fef2f2;
+    --color-danger-100: #fee2e2;
+    --color-danger-400: #f87171;
+    --color-danger-500: #ef4444;
+    --color-danger-600: #dc2626;
+    --color-danger-700: #b91c1c;
+
+    --color-warning-50: #fffbeb;
+    --color-warning-400: #fbbf24;
+    --color-warning-500: #f59e0b;
+    --color-warning-600: #d97706;
+
+    --color-info-50: #eff6ff;
+    --color-info-400: #60a5fa;
+    --color-info-500: #3b82f6;
+    --color-info-600: #2563eb;
+}
+
+/* ── Base Styles ── */
+@layer base {
+    body {
+        @apply bg-surface-50 text-surface-800 antialiased;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* FullCalendar overrides */
+    .fc .fc-daygrid-day-number {
+        color: theme(--color-surface-800) !important;
+    }
+
+    .fc .fc-col-header-cell-cushion {
+        color: theme(--color-surface-700) !important;
+        font-weight: 600;
+    }
+
+    .fc a {
+        color: theme(--color-surface-800);
+        text-decoration: none;
+    }
+
+    .fc a:hover {
+        color: theme(--color-surface-800);
+    }
+
+    .fc-scroller {
+        overflow: visible !important;
+    }
+
+    .fc-daygrid-day-frame {
+        min-height: 7rem;
+    }
+
+    .fc .fc-button {
+        @apply bg-primary-700 border-primary-700 text-white rounded-lg px-4 py-2 font-medium text-sm;
+    }
+
+    .fc .fc-button:hover {
+        @apply bg-primary-800;
+    }
+
+    .fc .fc-button-active {
+        @apply bg-primary-900 border-primary-900;
+    }
+
+    .fc .fc-toolbar-title {
+        @apply text-xl font-bold text-surface-800;
+    }
+
+    .fc .fc-day-today {
+        background-color: theme(--color-primary-50) !important;
+    }
+
+    .fc .fc-event {
+        @apply rounded-md px-2 py-1 text-xs font-medium border-0 cursor-pointer;
+    }
+
+    .fc th {
+        @apply bg-surface-100 text-surface-600 font-semibold text-sm py-3;
+    }
+
+    .fc td {
+        border-color: theme(--color-surface-200);
+    }
+
+    .fc th {
+        border-color: theme(--color-surface-200);
+    }
+}
+
+/* ── Transitions ── */
+@layer utilities {
+    .slide-in {
+        animation: slideIn 0.3s ease-out forwards;
+    }
+
+    .slide-out {
+        animation: slideOut 0.3s ease-in forwards;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(1rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(1rem);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
