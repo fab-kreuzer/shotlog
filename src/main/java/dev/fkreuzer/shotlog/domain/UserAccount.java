@@ -23,11 +23,21 @@ public class UserAccount {
     @Column(nullable = false)
     private String passwordHash;
 
-    private final boolean enabled = true;
+    @Column(name = "display_name")
+    private String displayName;
+
+    private boolean enabled = true;
 
     public UserAccount(String username, String passwordHash, Set<Role> roles) {
         this.username = username;
         this.passwordHash = passwordHash;
+        this.roles = roles;
+    }
+
+    public UserAccount(String username, String passwordHash, String displayName, Set<Role> roles) {
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.displayName = displayName;
         this.roles = roles;
     }
 

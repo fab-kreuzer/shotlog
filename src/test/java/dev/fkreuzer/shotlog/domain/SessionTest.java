@@ -1,11 +1,13 @@
 package dev.fkreuzer.shotlog.domain;
 
+import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SessionTest {
 
@@ -86,5 +88,121 @@ class SessionTest {
 
         // Assert
         assertEquals(41.5, result, 0.001, "Shot sum should correctly calculate total even with empty or mixed series");
+    }
+
+    // --- getShotSumOfTestShots ---
+
+    @Test
+    void testGetShotSumOfTestShots_onlyTestShotSeriesAreSummed() {
+        Session session = new Session();
+
+        Series testSeries = new Series();
+        testSeries.setTestShot(true);
+        Shot ts1 = new Shot();
+        ts1.setValue(BigDecimal.valueOf(8.0));
+        testSeries.setShots(List.of(ts1));
+
+        Series normalSeries = new Series();
+        normalSeries.setTestShot(false);
+        Shot ns1 = new Shot();
+        ns1.setValue(BigDecimal.valueOf(10.0));
+        normalSeries.setShots(List.of(ns1));
+
+        session.setSeries(List.of(testSeries, normalSeries));
+
+        assertEquals(8.0, session.getShotSumOfTestShots(), 0.001);
+    }
+
+    // --- getFormattedShotSum ---
+
+    @Test
+    void testGetFormattedShotSum_decimalScoring() {
+        Session session = new Session();
+        session.setDecimalScoring(true);
+        Series s = new Series();
+        Shot shot = new Shot();
+        shot.setValue(BigDecimal.valueOf(9.5));
+        s.setShots(List.of(shot));
+        session.setSeries(List.of(s));
+
+        String result = session.getFormattedShotSum();
+        // Locale-dependent: may use '.' or ',' as decimal separator
+        assertTrue(result.equals("9.5") || result.equals("9,5"), "Expected 9.5 or 9,5 but was: " + result);
+    }
+
+    @Test
+    void testGetFormattedShotSum_integerScoring() {
+        Session session = new Session();
+        session.setDecimalScoring(false);
+        Series s = new Series();
+        Shot shot = new Shot();
+        shot.setValue(BigDecimal.valueOf(9.5));
+        s.setShots(List.of(shot));
+        session.setSeries(List.of(s));
+
+        String result = session.getFormattedShotSum();
+        assertTrue(result.equals("10") || result.equals("10"), "Expected 10 but was: " + result);
+    }
+
+    // --- getFormattedShotSumOfTestShots ---
+
+    @Test
+    void testGetFormattedShotSumOfTestShots_decimalScoring() {
+        Session session = new Session();
+        session.setDecimalScoring(true);
+        Series s = new Series();
+        s.setTestShot(true);
+        Shot shot = new Shot();
+        shot.setValue(BigDecimal.valueOf(7.3));
+        s.setShots(List.of(shot));
+        session.setSeries(List.of(s));
+
+        String result = session.getFormattedShotSumOfTestShots();
+        assertTrue(result.equals("7.3") || result.equals("7,3"), "Expected 7.3 or 7,3 but was: " + result);
+    }
+
+    @Test
+    void testGetFormattedShotSumOfTestShots_integerScoring() {
+        Session session = new Session();
+        session.setDecimalScoring(false);
+        Series s = new Series();
+        s.setTestShot(true);
+        Shot shot = new Shot();
+        shot.setValue(BigDecimal.valueOf(7.3));
+        s.setShots(List.of(shot));
+        session.setSeries(List.of(s));
+
+        String result = session.getFormattedShotSumOfTestShots();
+        assertEquals("7", result);
+    }
+
+    // --- getTranslatedLocation ---
+
+    @Test
+    void testGetTranslatedLocation() {
+        Session session = new Session();
+        ShootingPlace place = new ShootingPlace();
+        place.setClub("SV Musterstadt");
+        session.setEnemy(place);
+
+        assertEquals("SV Musterstadt", session.getTranslatedLocation());
+    }
+
+    // --- getFormattedType ---
+
+    @Test
+    void testGetFormattedType_training() {
+        Session session = new Session();
+        session.setSessionType(SessionType.TRAINING);
+
+        assertEquals("Training", session.getFormattedType());
+    }
+
+    @Test
+    void testGetFormattedType_competition() {
+        Session session = new Session();
+        session.setSessionType(SessionType.COMPETITION);
+
+        assertEquals("Wettkampf", session.getFormattedType());
     }
 }
