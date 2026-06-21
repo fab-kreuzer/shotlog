@@ -26,7 +26,7 @@ public class UserAccount {
     @Column(name = "display_name")
     private String displayName;
 
-    private final boolean enabled = true;
+    private boolean enabled = true;
 
     public UserAccount(String username, String passwordHash, Set<Role> roles) {
         this.username = username;
