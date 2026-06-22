@@ -44,7 +44,9 @@
 
 <script setup>
 import {ref, watch} from 'vue'
+import {useNotificationStore} from "@/stores/notifications.js";
 
+const notify = useNotificationStore()
 const props = defineProps({
   modelValue: Boolean
 })
@@ -60,6 +62,13 @@ watch(() => props.modelValue, (open) => {
 })
 
 function submit() {
+
+  if (!name.value?.trim()) {
+    notify.warn('Bitte geben Sie einen Rollennamen ein.')
+    return
+  }
+
+
   emit('create', {name: name.value})
   emit('update:modelValue', false)
 }

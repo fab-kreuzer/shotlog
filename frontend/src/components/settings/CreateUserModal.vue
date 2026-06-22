@@ -52,6 +52,9 @@
 import {ref, watch} from 'vue'
 import Multiselect from 'vue-multiselect'
 import 'vue-multiselect/dist/vue-multiselect.css'
+import {useNotificationStore} from "@/stores/notifications.js";
+
+const notify = useNotificationStore()
 
 const props = defineProps({
   modelValue: Boolean,
@@ -79,6 +82,30 @@ watch(() => props.modelValue, (open) => {
 })
 
 function submit() {
+  const errors = []
+
+  const username = user.value.username?.trim()
+  const password = user.value.password
+
+  if (!username) {
+    errors.push('Benutzername darf nicht leer sein')
+  } else if (username.length < 3) {
+    errors.push('Benutzername muss mindestens 3 Zeichen haben')
+  }
+
+  if (!password) {
+    errors.push('Passwort darf nicht leer sein')
+  } else if (password.length < 6) {
+    errors.push('Passwort muss mindestens 6 Zeichen haben')
+  }
+
+  if (errors.length) {
+    errors.forEach(msg => {
+      notify.warn(msg);
+    })
+    return
+  }
+
   emit('create', user.value)
   emit('update:modelValue', false)
 }

@@ -32,5 +32,9 @@ export const useNotificationStore = defineStore('notifications', () => {
         show(message, 'error')
     }
 
-    return {notifications, show, remove, success, error}
+    function warn(message) {
+        show(message, 'warn')
+    }
+
+    return {notifications, show, remove, success, error, warn}
 })
