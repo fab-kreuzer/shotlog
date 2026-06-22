@@ -113,6 +113,13 @@
 
     <!-- Session Modal -->
     <SessionModal ref="sessionModal" @saved="loadSessions"/>
+    <ConfirmModal
+        v-model="showDeleteSessionConfirm"
+        confirmText="Ja, löschen"
+        message="Willst du diesen Eintrag wirklich löschen?"
+        title="Eintrag löschen"
+        @confirm="confirmDeleteUser"
+    />
   </div>
 </template>
 
@@ -121,6 +128,13 @@ import {computed, onMounted, ref, watch} from 'vue'
 import {useRoute} from 'vue-router'
 import {api} from '@/api/http'
 import SessionModal from '@/components/SessionModal.vue'
+import ConfirmModal from '@/components/ConfirmModal.vue'
+import {useNotificationStore} from '@/stores/notifications'
+
+const notify = useNotificationStore()
+
+const showDeleteSessionConfirm = ref(false)
+const sessionToDelete = ref(null)
 
 const route = useRoute()
 const sessions = ref([])
@@ -145,6 +159,7 @@ async function loadSessions() {
     sessions.value = await api.getSessionsByType(route.query.type || 'training')
   } catch (err) {
     console.error('Error loading sessions:', err)
+    notify.error('Fehler beim Laden der Sessions!')
   }
 }
 
@@ -154,19 +169,22 @@ async function editSession(id) {
     sessionModal.value?.openEdit(session)
   } catch (err) {
     console.error('Error loading session:', err)
-    alert('Fehler beim Laden der Session!')
+    notify.error('Fehler beim Laden der Session!')
   }
 }
 
 async function handleDelete(id) {
-  if (confirm('Sind Sie sicher, dass Sie diese Session mit allen zugehörigen Daten löschen möchten?')) {
-    try {
-      await api.deleteSession(id)
-      await loadSessions()
-    } catch (err) {
-      console.error('Error deleting session:', err)
-      alert('Fehler beim Löschen der Session!')
-    }
+  sessionToDelete.value = id
+  showDeleteSessionConfirm.value = true
+}
+
+async function confirmDeleteUser() {
+  try {
+    await api.deleteSession(id)
+    await loadSessions()
+  } catch (err) {
+    console.error('Error deleting session:', err)
+    notify.error('Fehler beim Löschen der Session!')
   }
 }
 
