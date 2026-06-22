@@ -260,6 +260,22 @@
 
   </div>
 
+  <ConfirmModal
+      v-model="showConfirmUser"
+      confirmText="Ja, löschen"
+      message="Willst du diesen Benutzer wirklich löschen?"
+      title="Benutzer löschen"
+      @confirm="confirmDeleteUser"
+  />
+
+  <ConfirmModal
+      v-model="showConfirmRole"
+      confirmText="Ja, löschen"
+      message="Willst du diese Rolle wirklich löschen?"
+      title="Rolle löschen"
+      @confirm="confirmDeleteRole"
+  />
+
 </template>
 
 <script setup>
@@ -269,6 +285,13 @@ import {useNotificationStore} from '@/stores/notifications'
 import {api} from '@/api/http'
 import CreateUserModal from "@/components/settings/CreateUserModal.vue";
 import CreateRoleModal from "@/components/settings/CreateRoleModal.vue";
+import ConfirmModal from '@/components/ConfirmModal.vue'
+
+const showConfirmUser = ref(false)
+const userToDelete = ref(null)
+
+const showConfirmRole = ref(false)
+const roleToDelete = ref(null)
 
 const auth = useAuthStore()
 const notify = useNotificationStore()
@@ -335,8 +358,12 @@ async function handleUpdateUser() {
 }
 
 async function handleDeleteUser(id) {
-  if (!confirm('Löschen?')) return
-  await api.deleteUser(id)
+  userToDelete.value = id
+  showConfirmUser.value = true
+}
+
+async function confirmDeleteUser() {
+  await api.deleteUser(userToDelete.value)
   await loadData()
 }
 
@@ -362,8 +389,12 @@ async function handleUpdateRole() {
 }
 
 async function handleDeleteRole(id) {
-  if (!confirm('Löschen?')) return
-  await api.deleteRole(id)
+  roleToDelete.value = id
+  showConfirmRole.value = true
+}
+
+async function confirmDeleteRole() {
+  await api.deleteRole(userToDelete.value)
   await loadData()
 }
 
