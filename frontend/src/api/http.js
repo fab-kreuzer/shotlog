@@ -8,8 +8,13 @@ async function request(method, url, body = null) {
     }
 
     if (body !== null) {
-        options.headers['Content-Type'] = 'application/json'
-        options.body = JSON.stringify(body)
+        if (body instanceof FormData) {
+            // Let the browser set Content-Type with the multipart boundary
+            options.body = body
+        } else {
+            options.headers['Content-Type'] = 'application/json'
+            options.body = JSON.stringify(body)
+        }
     }
 
     const response = await fetch(BASE + url, options)
@@ -66,6 +71,11 @@ export const api = {
     createSession: (data) => request('POST', '/api/sessions', data),
     updateSession: (id, data) => request('PUT', `/api/sessions/${id}`, data),
     deleteSession: (id) => request('DELETE', `/api/sessions/${id}`),
+    importSessions: (file) => {
+        const formData = new FormData()
+        formData.append('file', file)
+        return request('POST', '/api/sessions/import', formData)
+    },
 
     // Locations
     getLocations: () => request('GET', '/api/locations'),
