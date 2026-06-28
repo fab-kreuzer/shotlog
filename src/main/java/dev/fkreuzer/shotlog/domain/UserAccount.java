@@ -28,6 +28,10 @@ public class UserAccount {
 
     private boolean enabled = true;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "home_club")
+    private ShootingPlace homeClub;
+
     public UserAccount(String username, String passwordHash, Set<Role> roles) {
         this.username = username;
         this.passwordHash = passwordHash;

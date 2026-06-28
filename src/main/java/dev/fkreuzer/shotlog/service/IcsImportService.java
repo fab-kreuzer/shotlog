@@ -133,13 +133,13 @@ public class IcsImportService {
         session.setUser(user);
         session.setSessionDate(start.toLocalDate());
         session.setSessionTime(start.toLocalTime());
-        session.setSessionType(inferType(event));
+        session.setSessionType(determineSessionType(event));
         session.setDecimalScoring(false);
         session.setTitle(unescape(event.get("SUMMARY")));
         session.setEnemy(resolvePlace(unescape(event.get("LOCATION"))));
         session.setHome(session.getEnemy()
                 .getId()
-                .equals(3L));
+                .equals(user.getHomeClub().getId()));
         session.setSeries(new ArrayList<>());
         return session;
     }
@@ -170,11 +170,10 @@ public class IcsImportService {
         }
     }
 
-    private SessionType inferType(Map<String, String> event) {
+    private SessionType determineSessionType(Map<String, String> event) {
         String haystack = (event.getOrDefault("SUMMARY", "") + " " + event.getOrDefault("DESCRIPTION", ""))
                 .toLowerCase();
-        if (haystack.contains("wettkampf") || haystack.contains("competition")
-                || haystack.contains("liga") || haystack.contains("meisterschaft")) {
+        if (haystack.contains("rwk")) {
             return SessionType.COMPETITION;
         }
         return SessionType.TRAINING;

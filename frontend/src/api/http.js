@@ -63,6 +63,7 @@ export const api = {
     },
     logout: () => fetch('/api/auth/logout', {method: 'POST', credentials: 'same-origin'}),
     me: () => request('GET', '/api/auth/me'),
+    updateProfile: (data) => request('PUT', '/api/auth/me', data),
 
     // Sessions
     getSessions: () => request('GET', '/api/sessions'),
