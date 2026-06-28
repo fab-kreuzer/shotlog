@@ -25,35 +25,65 @@
       <div
           v-for="session in sessions"
           :key="session.id"
-          class="group bg-white rounded-xl border border-surface-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
+          class="group relative bg-white rounded-xl border border-surface-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
       >
-        <div class="p-5">
-          <!-- Card header with actions -->
-          <div class="flex items-start justify-between mb-4">
+        <!-- Actions overlay -->
+        <div
+            class="absolute top-2 right-2 flex items-center rounded-lg bg-white shadow-md gap-1 opacity-0 group-hover:opacity-100 transition-opacity sm:opacity-0 max-sm:opacity-100">
+          <button
+              class="p-1.5 rounded-lg text-warning-500 hover:bg-warning-50 transition-colors"
+              title="Bearbeiten"
+              @click="editSession(session.id)"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2"/>
+            </svg>
+          </button>
+          <button
+              class="p-1.5 rounded-lg text-danger-500 hover:bg-danger-50 transition-colors"
+              title="Löschen"
+              @click="handleDelete(session.id)"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="p-2">
+          <!-- Card header -->
+          <div class="flex items-center gap-2 mb-4">
+            <!-- Home / Away Icon -->
+            <svg v-if="session.home"
+                 class="w-4 h-4 text-surface-400 shrink-0"
+                 fill="none"
+                 stroke="currentColor"
+                 viewBox="0 0 24 24">
+              <!-- Home (house) -->
+              <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 10.5L12 3l9 7.5M5 9.75V21h5.25v-6h3.5v6H19V9.75"/>
+            </svg>
+
+            <svg v-else
+                 class="w-4 h-4 text-surface-400 shrink-0"
+                 fill="none"
+                 stroke="currentColor"
+                 viewBox="0 0 24 24">
+              <!-- Away (location pin) -->
+              <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
             <h3 class="text-base font-semibold text-surface-800 leading-tight">{{ session.title }}</h3>
-            <div
-                class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity sm:opacity-0 max-sm:opacity-100">
-              <button
-                  class="p-1.5 rounded-lg text-warning-500 hover:bg-warning-50 transition-colors"
-                  title="Bearbeiten"
-                  @click="editSession(session.id)"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2"/>
-                </svg>
-              </button>
-              <button
-                  class="p-1.5 rounded-lg text-danger-500 hover:bg-danger-50 transition-colors"
-                  title="Löschen"
-                  @click="handleDelete(session.id)"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2"/>
-                </svg>
-              </button>
-            </div>
           </div>
 
           <!-- Session details -->
