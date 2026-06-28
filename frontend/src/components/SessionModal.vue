@@ -30,6 +30,15 @@
               <!-- Session data -->
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
+                  <label class="block text-sm font-medium text-surface-700 mb-1.5">Beschreibung</label>
+                  <input
+                      v-model="form.title"
+                      class="w-full px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
+                      required
+                      type="text"
+                  >
+                </div>
+                <div>
                   <label class="block text-sm font-medium text-surface-700 mb-1.5">Datum</label>
                   <input
                       v-model="form.sessionDate"
@@ -195,6 +204,7 @@ const form = reactive({
   sessionDate: '',
   sessionTime: '',
   enemyId: null,
+  title: '',
   sessionType: 'TRAINING',
   decimalScoring: false,
   home: false,
@@ -233,6 +243,7 @@ function resetForm() {
   form.sessionDate = now.toISOString().split('T')[0]
   form.sessionTime = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0')
   form.enemyId = locations.value.length > 0 ? locations.value[0].id : null
+  form.title = ''
   form.sessionType = 'TRAINING'
   form.decimalScoring = false
   form.home = false
@@ -251,6 +262,7 @@ function openEdit(session) {
   editingId.value = session.id
   form.sessionDate = session.sessionDate
   form.sessionTime = session.sessionTime
+  form.title = session.title
   form.enemyId = session.enemy ? session.enemy.id : null
   form.sessionType = session.sessionType
   form.decimalScoring = session.decimalScoring
@@ -284,6 +296,7 @@ async function handleSubmit() {
     sessionTime: form.sessionTime,
     enemyId: form.enemyId,
     sessionType: form.sessionType,
+    title: form.title,
     decimalScoring: form.decimalScoring,
     home: form.home,
     series: form.series.map((s, i) => ({

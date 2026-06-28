@@ -100,6 +100,7 @@ public class ApiSessionController extends DefaultShotLogController {
         Session session = new Session();
         session.setSessionDate(LocalDate.parse((String) body.get("sessionDate")));
         session.setSessionTime(LocalTime.parse((String) body.get("sessionTime")));
+        session.setTitle((String) body.get("title"));
         session.setSessionType(SessionType.valueOf((String) body.get("sessionType")));
         session.setDecimalScoring(Boolean.TRUE.equals(body.get("decimalScoring")));
         session.setHome(Boolean.TRUE.equals(body.get("home")));

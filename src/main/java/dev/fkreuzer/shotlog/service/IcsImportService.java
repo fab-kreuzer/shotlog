@@ -135,6 +135,7 @@ public class IcsImportService {
         session.setSessionTime(start.toLocalTime());
         session.setSessionType(inferType(event));
         session.setDecimalScoring(false);
+        session.setTitle(unescape(event.get("SUMMARY")));
         session.setEnemy(resolvePlace(unescape(event.get("LOCATION"))));
         session.setHome(session.getEnemy()
                 .getId()

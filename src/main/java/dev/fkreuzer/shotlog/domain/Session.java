@@ -36,6 +36,8 @@ public class Session {
     private boolean decimalScoring;
     private boolean isHome;
 
+    private String title;
+
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("seriesNumber ASC")
     private List<Series> series = new ArrayList<>();

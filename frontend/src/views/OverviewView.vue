@@ -30,7 +30,7 @@
         <div class="p-5">
           <!-- Card header with actions -->
           <div class="flex items-start justify-between mb-4">
-            <h3 class="text-base font-semibold text-surface-800 leading-tight">{{ session.translatedLocation }}</h3>
+            <h3 class="text-base font-semibold text-surface-800 leading-tight">{{ session.title }}</h3>
             <div
                 class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity sm:opacity-0 max-sm:opacity-100">
               <button
