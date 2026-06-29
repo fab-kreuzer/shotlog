@@ -174,9 +174,6 @@ class ApiAuthControllerTest {
     @Test
     void register_shouldReturnBadRequest_whenUsernameAlreadyExists() {
         // Arrange
-        UserAccount existing = new UserAccount("existingUser", "hash", Set.of());
-        when(userAccountRepository.findByUsername("existingUser")).thenReturn(Optional.of(existing));
-
         Map<String, String> body = Map.of(
                 "username", "existingUser",
                 "password", "password123"

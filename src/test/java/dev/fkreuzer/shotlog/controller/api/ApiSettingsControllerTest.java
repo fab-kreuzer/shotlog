@@ -68,6 +68,7 @@ class ApiSettingsControllerTest {
         Map<String, Object> body = new HashMap<>();
         body.put("username", "newUser");
         body.put("password", "pass123");
+        body.put("displayName", "New User");
         body.put("roleIds", List.of());
 
         // Act
@@ -80,6 +81,38 @@ class ApiSettingsControllerTest {
     }
 
     @Test
+    void createUser_shouldReturnBadRequest_whenUsernameMissing() {
+        // Arrange
+        Map<String, Object> body = new HashMap<>();
+        body.put("password", "pass123");
+        body.put("displayName", "New User");
+
+        // Act
+        ResponseEntity<?> response = controller.createUser(body);
+
+        // Assert
+        assertEquals(400, response.getStatusCode()
+                .value());
+        verify(userAccountRepository, never()).save(any());
+    }
+
+    @Test
+    void createUser_shouldReturnBadRequest_whenDisplayNameMissing() {
+        // Arrange
+        Map<String, Object> body = new HashMap<>();
+        body.put("username", "newUser");
+        body.put("password", "pass123");
+
+        // Act
+        ResponseEntity<?> response = controller.createUser(body);
+
+        // Assert
+        assertEquals(400, response.getStatusCode()
+                .value());
+        verify(userAccountRepository, never()).save(any());
+    }
+
+    @Test
     void createUser_shouldReturnBadRequest_whenUsernameExists() {
         // Arrange
         UserAccount existing = new UserAccount("taken", "hash", Set.of());
@@ -88,6 +121,7 @@ class ApiSettingsControllerTest {
         Map<String, Object> body = new HashMap<>();
         body.put("username", "taken");
         body.put("password", "pass123");
+        body.put("displayName", "Taken User");
 
         // Act
         ResponseEntity<?> response = controller.createUser(body);
@@ -110,6 +144,7 @@ class ApiSettingsControllerTest {
         Map<String, Object> body = new HashMap<>();
         body.put("username", "newUser");
         body.put("password", "pass123");
+        body.put("displayName", "New User");
         body.put("roleIds", List.of(1));
 
         // Act
@@ -227,7 +262,9 @@ class ApiSettingsControllerTest {
     @Test
     void deleteUser_shouldDelete_whenUserExists() {
         // Arrange
-        when(userAccountRepository.existsById(1L)).thenReturn(true);
+        UserAccount user = new UserAccount("user1", "hash", "Display", Set.of());
+        user.setId(1L);
+        when(userAccountRepository.findById(1L)).thenReturn(Optional.of(user));
 
         // Act
         ResponseEntity<?> response = controller.deleteUser(1L);
@@ -241,7 +278,7 @@ class ApiSettingsControllerTest {
     @Test
     void deleteUser_shouldReturn404_whenUserNotFound() {
         // Arrange
-        when(userAccountRepository.existsById(99L)).thenReturn(false);
+        when(userAccountRepository.findById(99L)).thenReturn(Optional.empty());
 
         // Act
         ResponseEntity<?> response = controller.deleteUser(99L);
@@ -356,7 +393,9 @@ class ApiSettingsControllerTest {
     @Test
     void deleteRole_shouldDelete_whenRoleExistsAndNotAssigned() {
         // Arrange
-        when(roleRepository.existsById(1L)).thenReturn(true);
+        Role role = new Role("USER");
+        role.setId(1L);
+        when(roleRepository.findById(1L)).thenReturn(Optional.of(role));
         when(userAccountRepository.findAll()).thenReturn(List.of());
 
         // Act
@@ -371,7 +410,7 @@ class ApiSettingsControllerTest {
     @Test
     void deleteRole_shouldReturn404_whenRoleNotFound() {
         // Arrange
-        when(roleRepository.existsById(99L)).thenReturn(false);
+        when(roleRepository.findById(99L)).thenReturn(Optional.empty());
 
         // Act
         ResponseEntity<?> response = controller.deleteRole(99L);
@@ -386,9 +425,9 @@ class ApiSettingsControllerTest {
         // Arrange
         Role role = new Role("USER");
         role.setId(1L);
-        UserAccount user = new UserAccount("user1", "hash", Set.of(role));
+        UserAccount user = new UserAccount("user1", "hash", "Display", Set.of(role));
 
-        when(roleRepository.existsById(1L)).thenReturn(true);
+        when(roleRepository.findById(1L)).thenReturn(Optional.of(role));
         when(userAccountRepository.findAll()).thenReturn(List.of(user));
 
         // Act
