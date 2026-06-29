@@ -127,6 +127,6 @@ public class ApiAuthController extends DefaultShotLogController {
         );
 
         userAccountRepository.save(newUser);
-        return ResponseEntity.ok(Map.of("message", "Benutzer erfolgreich erstellt"));
+        return ResponseEntity.ok().body(Map.of("success", "Konto erfolgreich erstellt! Sie können sich jetzt anmelden."));
     }
 }

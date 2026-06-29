@@ -24,7 +24,6 @@ async function loadData() {
 
 async function handleCreateRole(role) {
   await api.createRole(role)
-  notify.success('Rolle erstellt')
   await loadData()
 }
 

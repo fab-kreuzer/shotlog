@@ -72,7 +72,7 @@ public class ApiSettingsController {
         );
 
         userAccountRepository.save(newUser);
-        return ResponseEntity.ok(Map.of("message", "Benutzer erfolgreich erstellt"));
+        return ResponseEntity.ok().body(Map.of("success", "Benutzer \"" + newUser.getDisplayName() + "\" erfolgreich erstellt"));
     }
 
     @PutMapping("/users/{id}")
@@ -127,13 +127,13 @@ public class ApiSettingsController {
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        if (!userAccountRepository.existsById(id)) {
+        Optional<UserAccount> userAccounts = userAccountRepository.findById(id);
+        if (userAccounts.isEmpty()) {
             return ResponseEntity.notFound()
                     .build();
         }
         userAccountRepository.deleteById(id);
-        return ResponseEntity.ok()
-                .build();
+        return ResponseEntity.ok().body(Map.of("success", "Benutzer \"" + userAccounts.get().getUsername() + "\"erfolgreich gelöscht"));
     }
 
     // ---- Role Management ----
@@ -163,7 +163,7 @@ public class ApiSettingsController {
 
         Role role = new Role(name);
         roleRepository.save(role);
-        return ResponseEntity.ok(Map.of("message", "Rolle erfolgreich erstellt"));
+        return ResponseEntity.ok().body(Map.of("success", "Rolle \"" + role.getName() + "\" erfolgreich erstellt"));
     }
 
     @PutMapping("/roles/{id}")
@@ -192,7 +192,8 @@ public class ApiSettingsController {
 
     @DeleteMapping("/roles/{id}")
     public ResponseEntity<?> deleteRole(@PathVariable Long id) {
-        if (!roleRepository.existsById(id)) {
+        Optional<Role> roleToDelete = roleRepository.findById(id);
+        if (roleToDelete.isEmpty()) {
             return ResponseEntity.notFound()
                     .build();
         }
@@ -211,7 +212,7 @@ public class ApiSettingsController {
         }
 
         roleRepository.deleteById(id);
-        return ResponseEntity.ok().body(Map.of("success", "Rolle wurde erfolgreich gelöscht!"));
+        return ResponseEntity.ok().body(Map.of("success", "Rolle \"" + roleToDelete.get().getName() + "\" wurde erfolgreich gelöscht!"));
     }
 
     // ---- Helpers ----

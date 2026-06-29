@@ -146,7 +146,6 @@ async function handleSignup() {
       password: form.password,
       displayName: form.displayName.trim()
     })
-    notify.success('Konto erfolgreich erstellt! Sie können sich jetzt anmelden.')
     emit('success')
   } catch (err) {
     const message = err.error || 'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.'

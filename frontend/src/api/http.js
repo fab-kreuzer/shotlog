@@ -43,9 +43,20 @@ async function request(method, url, body = null, {notify = true} = {}) {
 
     const contentType = response.headers.get('content-type')
     if (contentType && contentType.includes('application/json')) {
-        return response.json()
+        const data = await response.json()
+        if (notify && hasMessage(data)) useNotificationStore().fromApi(data)
+        return data
     }
     return null
+}
+
+const MESSAGE_KEYS = ['error', 'warn', 'success', 'info', 'message']
+
+// Only treat a successful response as a notification when its body
+// explicitly carries a message — never for plain data (arrays, etc.).
+function hasMessage(data) {
+    return data && !Array.isArray(data) && typeof data === 'object'
+        && MESSAGE_KEYS.some(k => data[k])
 }
 
 export const api = {

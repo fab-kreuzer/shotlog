@@ -35,7 +35,6 @@ async function loadData() {
 async function handleCreateUser(user) {
   try {
     await api.createUser(user)
-    notify.success('Benutzer erstellt')
     await loadData()
   } catch (e) {
     notify.error(e.error || 'Fehler')
