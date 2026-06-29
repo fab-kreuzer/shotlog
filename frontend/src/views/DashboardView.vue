@@ -41,7 +41,8 @@ async function onFileSelected(event) {
     const count = result?.imported ?? 0
     notify.success(`${count} Termin${count === 1 ? '' : 'e'} importiert`)
   } catch (err) {
-    notify.error(err.message || 'Import fehlgeschlagen')
+    console.error('Error importing sessions:', err)
+    notify.error('Import fehlgeschlagen')
   } finally {
     importing.value = false
     event.target.value = ''
