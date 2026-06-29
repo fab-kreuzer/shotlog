@@ -1,25 +1,5 @@
 <template>
   <div>
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-      <div>
-        <h1 class="text-2xl font-bold text-surface-800">Übersicht deiner {{ typeLabel }}-Sessions</h1>
-        <p class="mt-1 text-surface-500">{{ sessions.length }} Session{{ sessions.length !== 1 ? 's' : '' }}
-          gefunden</p>
-      </div>
-      <button
-          v-if="sessions.length > 0"
-          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-primary-700 hover:bg-primary-800 shadow-sm transition-colors"
-          type="button"
-          @click="sessionModal?.openCreate()"
-      >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-        </svg>
-        Neue Session anlegen
-      </button>
-    </div>
-
     <!-- Session cards grid -->
     <div v-if="sessions.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
       <div
@@ -33,7 +13,7 @@
           <button
               class="p-1.5 rounded-lg text-warning-500 hover:bg-warning-50 transition-colors"
               title="Bearbeiten"
-              @click="editSession(session.id)"
+              @click="emit('edit', session.id)"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round"
@@ -43,7 +23,7 @@
           <button
               class="p-1.5 rounded-lg text-danger-500 hover:bg-danger-50 transition-colors"
               title="Löschen"
-              @click="handleDelete(session.id)"
+              @click="emit('delete', session.id)"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round"
@@ -132,7 +112,7 @@
       <button
           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-primary-700 hover:bg-primary-800 shadow-sm transition-colors"
           type="button"
-          @click="sessionModal?.openCreate()"
+          @click="emit('create')"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -140,38 +120,15 @@
         Erste Session anlegen
       </button>
     </div>
-
-    <!-- Session Modal -->
-    <SessionModal ref="sessionModal" @saved="loadSessions"/>
-    <ConfirmModal
-        v-model="showDeleteSessionConfirm"
-        confirmText="Ja, löschen"
-        message="Willst du diesen Eintrag wirklich löschen?"
-        title="Eintrag löschen"
-        @confirm="confirmDeleteUser"
-    />
   </div>
 </template>
 
 <script setup>
-import {computed, onMounted, ref, watch} from 'vue'
-import {useRoute} from 'vue-router'
-import {api} from '@/api/http'
-import SessionModal from '@/components/SessionModal.vue'
-import ConfirmModal from '@/components/ConfirmModal.vue'
-import {useNotificationStore} from '@/stores/notifications'
+defineProps({
+  sessions: {type: Array, required: true}
+})
 
-const notify = useNotificationStore()
-
-const showDeleteSessionConfirm = ref(false)
-const sessionToDelete = ref(null)
-
-const route = useRoute()
-const sessions = ref([])
-const sessionModal = ref(null)
-
-const sessionType = computed(() => (route.query.type || 'training').toUpperCase())
-const typeLabel = computed(() => sessionType.value === 'COMPETITION' ? 'Wettkampf' : 'Training')
+const emit = defineEmits(['edit', 'delete', 'create'])
 
 function formatDate(dateStr) {
   if (!dateStr) return ''
@@ -183,46 +140,4 @@ function formatTime(timeStr) {
   if (!timeStr) return ''
   return timeStr.substring(0, 5)
 }
-
-async function loadSessions() {
-  try {
-    sessions.value = await api.getSessionsByType(route.query.type || 'training')
-  } catch (err) {
-    console.error('Error loading sessions:', err)
-    if (!err._notified) notify.error('Fehler beim Laden der Sessions!')
-  }
-}
-
-async function editSession(id) {
-  try {
-    const session = await api.getSession(id)
-    sessionModal.value?.openEdit(session)
-  } catch (err) {
-    console.error('Error loading session:', err)
-    if (!err._notified) notify.error('Fehler beim Laden der Session!')
-  }
-}
-
-async function handleDelete(id) {
-  sessionToDelete.value = id
-  showDeleteSessionConfirm.value = true
-}
-
-async function confirmDeleteUser() {
-  try {
-    await api.deleteSession(id)
-    await loadSessions()
-  } catch (err) {
-    console.error('Error deleting session:', err)
-    if (!err._notified) notify.error('Fehler beim Löschen der Session!')
-  }
-}
-
-watch(() => route.query.type, () => {
-  loadSessions()
-})
-
-onMounted(() => {
-  loadSessions()
-})
 </script>

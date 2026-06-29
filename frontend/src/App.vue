@@ -118,16 +118,13 @@ const mobileMenuOpen = ref(false)
 
 const navLinks = [
   {to: '/dashboard', name: 'dashboard', label: 'Dashboard'},
-  {to: '/overview?type=training', name: 'overview', query: 'training', label: 'Training'},
-  {to: '/overview?type=competition', name: 'overview', query: 'competition', label: 'Wettkampf'},
+  {to: '/training', name: 'training', label: 'Training'},
+  {to: '/competition', name: 'competition', label: 'Wettkampf'},
   {to: '/settings', name: 'settings', label: 'Einstellungen'},
   {to: '/calender', name: 'calender', label: 'Kalender'},
 ]
 
 function isActiveLink(link) {
-  if (link.query) {
-    return route.name === link.name && route.query.type === link.query
-  }
   return route.name === link.name
 }
 

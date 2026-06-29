@@ -252,8 +252,9 @@ function resetForm() {
   editingId.value = null
 }
 
-function openCreate() {
+function openCreate(type) {
   resetForm()
+  if (type) form.sessionType = type
   visible.value = true
 }
 

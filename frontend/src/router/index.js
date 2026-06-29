@@ -3,7 +3,8 @@ import {useAuthStore} from '@/stores/auth'
 
 import LoginView from '@/views/LoginView.vue'
 import DashboardView from '@/views/DashboardView.vue'
-import OverviewView from '@/views/OverviewView.vue'
+import TrainingPage from '@/views/TrainingPage.vue'
+import CompetitionPage from '@/views/CompetitionPage.vue'
 import CalenderView from '@/views/CalenderView.vue'
 import SettingsView from "@/views/settings/SettingsView.vue";
 
@@ -12,7 +13,7 @@ const routes = [
         path: '/login',
         name: 'login',
         component: LoginView,
-        meta: {public: true, title: 'Anmelden - ShotLog'}
+        meta: {public: true, title: 'ShotLog - Anmelden'}
     },
     {
         path: '/',
@@ -22,25 +23,35 @@ const routes = [
         path: '/dashboard',
         name: 'dashboard',
         component: DashboardView,
-        meta: {title: 'Dashboard'}
+        meta: {title: 'ShotLog - Dashboard'}
+    },
+    {
+        path: '/training',
+        name: 'training',
+        component: TrainingPage,
+        meta: {title: 'ShotLog - Training'}
+    },
+    {
+        path: '/competition',
+        name: 'competition',
+        component: CompetitionPage,
+        meta: {title: 'ShotLog - Wettkampf'}
     },
     {
         path: '/overview',
-        name: 'overview',
-        component: OverviewView,
-        meta: {title: 'Übersicht'}
+        redirect: (to) => (to.query.type === 'competition' ? '/competition' : '/training')
     },
     {
         path: '/calender',
         name: 'calender',
         component: CalenderView,
-        meta: {title: 'Kalender'}
+        meta: {title: 'ShotLog - Kalender'}
     },
     {
         path: '/settings',
         name: 'settings',
         component: SettingsView,
-        meta: {title: 'Einstellungen', requiresAdmin: false}
+        meta: {title: 'ShotLog - Einstellungen', requiresAdmin: false}
     }
 ]
 
