@@ -65,7 +65,7 @@ onMounted(() => {
         const sessions = await api.getSessions()
         const events = sessions.map(session => ({
           id: session.id,
-          title: `${session.formattedType} - ${session.series.length} Series`,
+          title: `${session.title}`,
           start: `${session.sessionDate}T${session.sessionTime}`,
           color: colorForSessionType(session.sessionType),
           extendedProps: {
