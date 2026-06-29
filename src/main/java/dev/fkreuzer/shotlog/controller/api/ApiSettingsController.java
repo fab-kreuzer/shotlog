@@ -182,7 +182,7 @@ public class ApiSettingsController {
 
         if (!usersWithRole.isEmpty()) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Rolle kann nicht gelöscht werden, da sie Benutzern zugewiesen ist"));
+                    .body(Map.of("error", "Rolle kann nicht gelöscht werden, da sie den Benutzern " + usersWithRole.stream().map(UserAccount::getDisplayName).collect(Collectors.joining(", ")) + " zugewiesen ist"));
         }
 
         roleRepository.deleteById(id);

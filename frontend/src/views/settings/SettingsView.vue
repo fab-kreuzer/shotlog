@@ -16,22 +16,34 @@
           >
             Profil
           </button>
-
           <button
               v-if="auth.isAdmin"
-              :class="tabClass('admin')"
-              @click="activeTab = 'admin'"
+              :class="tabClass('user-management')"
+              @click="activeTab = 'user-management'"
           >
-            Admin
+            Benutzerverwaltung
+          </button>
+          <button
+              v-if="auth.isAdmin"
+              :class="tabClass('role-management')"
+              @click="activeTab = 'role-management'"
+          >
+            Rollenverwalung
+          </button>
+          <button
+              v-if="auth.isAdmin"
+              :class="tabClass('club-management')"
+              @click="activeTab = 'club-management'"
+          >
+            Clubverwaltung
           </button>
         </nav>
       </div>
 
       <ProfileTab v-if="activeTab === 'profile'"/>
 
-      <AdminTab
-          v-if="activeTab === 'admin' && auth.isAdmin"
-      />
+      <UserTab v-if="activeTab === 'user-management' && auth.isAdmin"/>
+      <RoleTab v-if="activeTab === 'role-management' && auth.isAdmin"/>
     </div>
   </div>
 </template>
@@ -41,7 +53,8 @@ import {ref} from 'vue'
 import {useAuthStore} from '@/stores/auth'
 
 import ProfileTab from './ProfileTab.vue'
-import AdminTab from './AdminTab.vue'
+import UserTab from "@/views/settings/UserTab.vue";
+import RoleTab from "@/views/settings/RoleTab.vue";
 
 const auth = useAuthStore()
 const activeTab = ref('profile')

@@ -1,6 +1,8 @@
+import {useNotificationStore} from '@/stores/notifications'
+
 const BASE = ''
 
-async function request(method, url, body = null) {
+async function request(method, url, body = null, {notify = true} = {}) {
     const options = {
         method,
         headers: {},
@@ -20,7 +22,9 @@ async function request(method, url, body = null) {
     const response = await fetch(BASE + url, options)
 
     if (response.status === 401) {
-        throw {status: 401, message: 'Nicht authentifiziert'}
+        const error = {status: 401, message: 'Nicht authentifiziert'}
+        if (notify) useNotificationStore().fromApi(error)
+        throw error
     }
 
     if (!response.ok) {
@@ -30,7 +34,9 @@ async function request(method, url, body = null) {
         } catch {
             errorData = {error: await response.text()}
         }
-        throw {status: response.status, ...errorData}
+        const error = {status: response.status, ...errorData}
+        if (notify) useNotificationStore().fromApi(error)
+        throw error
     }
 
     if (response.status === 204) return null
@@ -43,10 +49,10 @@ async function request(method, url, body = null) {
 }
 
 export const api = {
-    get: (url) => request('GET', url),
-    post: (url, body) => request('POST', url, body),
-    put: (url, body) => request('PUT', url, body),
-    delete: (url) => request('DELETE', url),
+    get: (url, opts) => request('GET', url, null, opts),
+    post: (url, body, opts) => request('POST', url, body, opts),
+    put: (url, body, opts) => request('PUT', url, body, opts),
+    delete: (url, opts) => request('DELETE', url, null, opts),
 
     // Auth
     register: (data) => request('POST', '/api/auth/register', data),
@@ -62,7 +68,7 @@ export const api = {
         })
     },
     logout: () => fetch('/api/auth/logout', {method: 'POST', credentials: 'same-origin'}),
-    me: () => request('GET', '/api/auth/me'),
+    me: () => request('GET', '/api/auth/me', null, {notify: false}),
     updateProfile: (data) => request('PUT', '/api/auth/me', data),
 
     // Sessions

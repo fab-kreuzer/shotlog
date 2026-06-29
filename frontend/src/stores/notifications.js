@@ -36,5 +36,16 @@ export const useNotificationStore = defineStore('notifications', () => {
         show(message, 'warn')
     }
 
-    return {notifications, show, remove, success, error, warn}
+    const TYPES = ['error', 'warn', 'success', 'info']
+
+    function fromApi(err, fallback = 'Ein Fehler ist aufgetreten') {
+        if (typeof err === 'string') {
+            show(err, 'error')
+            return
+        }
+        const type = TYPES.find(t => err?.[t]) || 'error'
+        show(err?.[type] || err?.message || fallback, type)
+    }
+
+    return {notifications, show, remove, success, error, warn, fromApi}
 })
