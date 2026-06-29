@@ -103,6 +103,11 @@ public class ApiAuthController extends DefaultShotLogController {
                     .body(Map.of("error", "Passwort muss mindestens 6 Zeichen lang sein"));
         }
 
+        if (displayName == null || displayName.isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Anzeigename ist erforderlich"));
+        }
+
         if (userAccountRepository.findByUsername(username)
                 .isPresent()) {
             return ResponseEntity.badRequest()

@@ -46,14 +46,26 @@ function openEditUser(user) {
   editingUser.value = {
     id: user.id,
     username: user.username,
+    displayName: user.displayName,
     password: '',
     roleIds: user.roles.map(r => r.id)
   }
 }
 
 async function handleUpdateUser() {
+  if (!editingUser.value.username?.trim()) {
+    notify.warn('Benutzername darf nicht leer sein')
+    return
+  }
+
+  if (!editingUser.value.displayName?.trim()) {
+    notify.warn('Anzeigename darf nicht leer sein')
+    return
+  }
+
   const data = {
-    username: editingUser.value.username,
+    username: editingUser.value.username.trim(),
+    displayName: editingUser.value.displayName.trim(),
     roleIds: editingUser.value.roleIds
   }
 
@@ -103,6 +115,7 @@ onMounted(loadData)
           <tr class="bg-surface-50 border-b border-surface-200">
             <th class="text-left px-4 py-3">ID</th>
             <th class="text-left px-4 py-3">Benutzername</th>
+            <th class="text-left px-4 py-3">Anzeigename</th>
             <th class="text-left px-4 py-3">Rollen</th>
             <th class="text-right px-4 py-3">Aktionen</th>
           </tr>
@@ -120,6 +133,10 @@ onMounted(loadData)
 
             <td class="px-4 py-3 font-medium text-surface-800">
               {{ user.username }}
+            </td>
+
+            <td class="px-4 py-3 text-surface-600">
+              {{ user.displayName }}
             </td>
 
             <td class="px-4 py-3">
@@ -177,10 +194,20 @@ onMounted(loadData)
             <form class="space-y-4" @submit.prevent="handleUpdateUser">
               <div>
                 <label class="block text-sm font-medium text-surface-700 mb-1.5"
-                       for="editUsername">Benutzername</label>
+                       for="editUsername">Benutzername <span class="text-danger-500">*</span></label>
                 <input
                     id="editUsername"
                     v-model="editingUser.username"
+                    class="w-full px-3 py-2 rounded-lg border border-surface-300 text-sm text-surface-800 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
+                    type="text"
+                >
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-surface-700 mb-1.5"
+                       for="editDisplayName">Anzeigename <span class="text-danger-500">*</span></label>
+                <input
+                    id="editDisplayName"
+                    v-model="editingUser.displayName"
                     class="w-full px-3 py-2 rounded-lg border border-surface-300 text-sm text-surface-800 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
                     type="text"
                 >

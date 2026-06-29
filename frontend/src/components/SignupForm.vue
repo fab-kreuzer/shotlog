@@ -15,13 +15,17 @@
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-surface-700 mb-1.5" for="signup-displayname">Anzeigename</label>
+      <label class="block text-sm font-medium text-surface-700 mb-1.5" for="signup-displayname">Anzeigename <span
+          class="text-danger-500">*</span></label>
       <input
           id="signup-displayname"
           v-model="form.displayName"
-          class="w-full px-4 py-2.5 rounded-lg border border-surface-300 text-surface-800 placeholder-surface-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
-          placeholder="Ihr Anzeigename (optional)"
+          :class="errors.displayName ? 'border-danger-400' : 'border-surface-300'"
+          class="w-full px-4 py-2.5 rounded-lg border text-surface-800 placeholder-surface-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
+          placeholder="Ihr Anzeigename"
+          @input="clearError('displayName')"
       />
+      <p v-if="errors.displayName" class="mt-1 text-sm text-danger-500">{{ errors.displayName }}</p>
     </div>
 
     <div>
@@ -86,6 +90,7 @@ const form = reactive({
 
 const errors = reactive({
   username: '',
+  displayName: '',
   password: '',
   confirmPassword: ''
 })
@@ -104,6 +109,11 @@ function validate() {
     valid = false
   } else if (form.username.trim().length < 3) {
     errors.username = 'Benutzername muss mindestens 3 Zeichen lang sein'
+    valid = false
+  }
+
+  if (!form.displayName.trim()) {
+    errors.displayName = 'Anzeigename ist erforderlich'
     valid = false
   }
 
@@ -134,7 +144,7 @@ async function handleSignup() {
     await api.register({
       username: form.username.trim(),
       password: form.password,
-      displayName: form.displayName.trim() || null
+      displayName: form.displayName.trim()
     })
     notify.success('Konto erfolgreich erstellt! Sie können sich jetzt anmelden.')
     emit('success')

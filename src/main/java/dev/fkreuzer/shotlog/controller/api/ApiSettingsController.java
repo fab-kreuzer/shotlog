@@ -44,6 +44,17 @@ public class ApiSettingsController {
     public ResponseEntity<?> createUser(@RequestBody Map<String, Object> body) {
         String username = (String) body.get("username");
         String password = (String) body.get("password");
+        String displayName = (String) body.get("displayName");
+
+        if (username == null || username.isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Benutzername ist erforderlich"));
+        }
+
+        if (displayName == null || displayName.isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Anzeigename ist erforderlich"));
+        }
 
         if (userAccountRepository.findByUsername(username)
                 .isPresent()) {
@@ -56,6 +67,7 @@ public class ApiSettingsController {
         UserAccount newUser = new UserAccount(
                 username,
                 passwordEncoder.encode(password),
+                displayName,
                 roles
         );
 
@@ -73,8 +85,12 @@ public class ApiSettingsController {
 
         UserAccount user = userOpt.get();
 
-        String username = (String) body.get("username");
-        if (username != null && !username.isBlank()) {
+        if (body.containsKey("username")) {
+            String username = (String) body.get("username");
+            if (username == null || username.isBlank()) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "Benutzername ist erforderlich"));
+            }
             Optional<UserAccount> existingUser = userAccountRepository.findByUsername(username);
             if (existingUser.isPresent() && !existingUser.get()
                     .getId()
@@ -83,6 +99,15 @@ public class ApiSettingsController {
                         .body(Map.of("error", "Benutzername existiert bereits"));
             }
             user.setUsername(username);
+        }
+
+        if (body.containsKey("displayName")) {
+            String displayName = (String) body.get("displayName");
+            if (displayName == null || displayName.isBlank()) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "Anzeigename ist erforderlich"));
+            }
+            user.setDisplayName(displayName);
         }
 
         String password = (String) body.get("password");
@@ -186,8 +211,7 @@ public class ApiSettingsController {
         }
 
         roleRepository.deleteById(id);
-        return ResponseEntity.ok()
-                .build();
+        return ResponseEntity.ok().body(Map.of("success", "Rolle wurde erfolgreich gelöscht!"));
     }
 
     // ---- Helpers ----
