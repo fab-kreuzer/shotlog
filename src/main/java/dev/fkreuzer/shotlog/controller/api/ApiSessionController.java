@@ -9,6 +9,7 @@ import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
 import dev.fkreuzer.shotlog.service.IcsImportService;
 import dev.fkreuzer.shotlog.service.SessionService;
 import dev.fkreuzer.shotlog.service.ShootingPlaceService;
+import dev.fkreuzer.shotlog.web.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,10 +81,10 @@ public class ApiSessionController extends DefaultShotLogController {
     }
 
     @PostMapping("/sessions/import")
-    public ResponseEntity<Map<String, Object>> importSessions(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> importSessions(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Die Datei ist leer"));
+                    .body(ApiResponse.error("Die Datei ist leer"));
         }
 
         try {
@@ -91,7 +92,7 @@ public class ApiSessionController extends DefaultShotLogController {
             return ResponseEntity.ok(Map.of("imported", imported));
         } catch (IOException e) {
             return ResponseEntity.unprocessableEntity()
-                    .body(Map.of("error", "Die Datei konnte nicht gelesen werden"));
+                    .body(ApiResponse.error("Die Datei konnte nicht gelesen werden"));
         }
     }
 

@@ -7,6 +7,7 @@ import dev.fkreuzer.shotlog.domain.UserAccount;
 import dev.fkreuzer.shotlog.repository.RoleRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
 import dev.fkreuzer.shotlog.service.ShootingPlaceService;
+import dev.fkreuzer.shotlog.web.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +63,7 @@ public class ApiAuthController extends DefaultShotLogController {
 
     @PutMapping("/me")
     public ResponseEntity<?> updateCurrentUser(@RequestBody Map<String, Object> body) {
+        ApiResponse response = new ApiResponse();
         UserAccount user = getCurrentUser();
         if (user == null) {
             return ResponseEntity.status(401)
@@ -77,14 +79,16 @@ public class ApiAuthController extends DefaultShotLogController {
                 ShootingPlace homeClub = shootingPlaceService.findById(id);
                 if (homeClub == null || homeClub.getId() == null) {
                     return ResponseEntity.badRequest()
-                            .body(Map.of("error", "Verein nicht gefunden"));
+                            .body(ApiResponse.error("Verein nicht gefunden"));
                 }
                 user.setHomeClub(homeClub);
+                response.addSuccess("Der Verein " + homeClub.getClub() + " wurde als Home Club gesetzt!");
             }
         }
 
         userAccountRepository.save(user);
-        return ResponseEntity.ok(Map.of("message", "Profil aktualisiert"));
+        response.addSuccess("Das Profil wurde erfolgreich aktualisiert!");
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping("/register")
@@ -95,23 +99,23 @@ public class ApiAuthController extends DefaultShotLogController {
 
         if (username == null || username.isBlank()) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Benutzername ist erforderlich"));
+                    .body(ApiResponse.error("Benutzername ist erforderlich"));
         }
 
         if (password == null || password.length() < 6) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Passwort muss mindestens 6 Zeichen lang sein"));
+                    .body(ApiResponse.error("Passwort muss mindestens 6 Zeichen lang sein"));
         }
 
         if (displayName == null || displayName.isBlank()) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Anzeigename ist erforderlich"));
+                    .body(ApiResponse.error("Anzeigename ist erforderlich"));
         }
 
         if (userAccountRepository.findByUsername(username)
                 .isPresent()) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Benutzername existiert bereits"));
+                    .body(ApiResponse.error("Benutzername existiert bereits"));
         }
 
         // Assign default USER role
@@ -127,6 +131,7 @@ public class ApiAuthController extends DefaultShotLogController {
         );
 
         userAccountRepository.save(newUser);
-        return ResponseEntity.ok().body(Map.of("success", "Konto erfolgreich erstellt! Sie können sich jetzt anmelden."));
+        return ResponseEntity.ok()
+                .body(ApiResponse.success("Konto erfolgreich erstellt! Sie können sich jetzt anmelden."));
     }
 }

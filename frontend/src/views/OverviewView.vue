@@ -189,7 +189,7 @@ async function loadSessions() {
     sessions.value = await api.getSessionsByType(route.query.type || 'training')
   } catch (err) {
     console.error('Error loading sessions:', err)
-    notify.error('Fehler beim Laden der Sessions!')
+    if (!err._notified) notify.error('Fehler beim Laden der Sessions!')
   }
 }
 
@@ -199,7 +199,7 @@ async function editSession(id) {
     sessionModal.value?.openEdit(session)
   } catch (err) {
     console.error('Error loading session:', err)
-    notify.error('Fehler beim Laden der Session!')
+    if (!err._notified) notify.error('Fehler beim Laden der Session!')
   }
 }
 
@@ -214,7 +214,7 @@ async function confirmDeleteUser() {
     await loadSessions()
   } catch (err) {
     console.error('Error deleting session:', err)
-    notify.error('Fehler beim Löschen der Session!')
+    if (!err._notified) notify.error('Fehler beim Löschen der Session!')
   }
 }
 

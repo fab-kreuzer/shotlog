@@ -22,20 +22,28 @@ async function request(method, url, body = null, {notify = true} = {}) {
     const response = await fetch(BASE + url, options)
 
     if (response.status === 401) {
-        const error = {status: 401, message: 'Nicht authentifiziert'}
-        if (notify) useNotificationStore().fromApi(error)
+        const error = {status: 401, message: 'Nicht authentifiziert', _notified: false}
+        if (notify) {
+            useNotificationStore().error('Nicht authentifiziert')
+            error._notified = true
+        }
         throw error
     }
 
     if (!response.ok) {
-        let errorData
+        let errorData = null
         try {
             errorData = await response.json()
         } catch {
-            errorData = {error: await response.text()}
+            // non-JSON error body — leave errorData null
         }
-        const error = {status: response.status, ...errorData}
-        if (notify) useNotificationStore().fromApi(error)
+        const error = {
+            status: response.status,
+            ...(errorData && typeof errorData === 'object' ? errorData : {})
+        }
+        // _notified lets callers know the messages were already shown,
+        // so their catch blocks can avoid showing a duplicate toast.
+        error._notified = notify ? displayMessages(errorData) : false
         throw error
     }
 
@@ -44,19 +52,25 @@ async function request(method, url, body = null, {notify = true} = {}) {
     const contentType = response.headers.get('content-type')
     if (contentType && contentType.includes('application/json')) {
         const data = await response.json()
-        if (notify && hasMessage(data)) useNotificationStore().fromApi(data)
+        if (notify) displayMessages(data)
         return data
     }
     return null
 }
 
-const MESSAGE_KEYS = ['error', 'warn', 'success', 'info', 'message']
+const API_RESPONSE_KEYS = ['errors', 'warnings', 'successes', 'infos']
 
-// Only treat a successful response as a notification when its body
-// explicitly carries a message — never for plain data (arrays, etc.).
-function hasMessage(data) {
-    return data && !Array.isArray(data) && typeof data === 'object'
-        && MESSAGE_KEYS.some(k => data[k])
+// An ApiResponse envelope carries one or more message lists.
+function isApiResponse(data) {
+    return data && typeof data === 'object' && !Array.isArray(data)
+        && API_RESPONSE_KEYS.some(k => Array.isArray(data[k]))
+}
+
+// Auto-display all messages from an ApiResponse body. Returns true if it did.
+function displayMessages(data) {
+    if (!isApiResponse(data)) return false
+    useNotificationStore().fromApiResponse(data)
+    return true
 }
 
 export const api = {

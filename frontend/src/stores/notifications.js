@@ -47,5 +47,16 @@ export const useNotificationStore = defineStore('notifications', () => {
         show(err?.[type] || err?.message || fallback, type)
     }
 
-    return {notifications, show, remove, success, error, warn, fromApi}
+    // Display every message from an ApiResponse envelope
+    // ({errors, warnings, successes, infos}) with its matching type.
+    const API_LIST_TYPES = {errors: 'error', warnings: 'warn', successes: 'success', infos: 'info'}
+
+    function fromApiResponse(data) {
+        for (const [key, type] of Object.entries(API_LIST_TYPES)) {
+            const list = data?.[key]
+            if (Array.isArray(list)) list.forEach(message => show(message, type))
+        }
+    }
+
+    return {notifications, show, remove, success, error, warn, fromApi, fromApiResponse}
 })

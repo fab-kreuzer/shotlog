@@ -37,7 +37,7 @@ async function handleCreateUser(user) {
     await api.createUser(user)
     await loadData()
   } catch (e) {
-    notify.error(e.error || 'Fehler')
+    if (!e._notified) notify.error('Benutzer konnte nicht erstellt werden')
   }
 }
 

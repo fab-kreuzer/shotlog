@@ -148,10 +148,11 @@ async function handleSignup() {
     })
     emit('success')
   } catch (err) {
-    const message = err.error || 'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.'
+    const message = err.errors?.[0] || 'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.'
     if (message.toLowerCase().includes('benutzername')) {
+      // Surface username problems inline on the field
       errors.username = message
-    } else {
+    } else if (!err._notified) {
       notify.error(message)
     }
   } finally {

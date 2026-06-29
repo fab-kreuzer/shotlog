@@ -72,7 +72,6 @@ async function saveHomeClub() {
   try {
     await api.updateProfile({homeClubId: homeClubId.value})
     await auth.fetchUser()
-    notify.success('Stammverein aktualisiert!')
     setTimeout(() => (saved.value = false), 2000)
   } catch (err) {
     console.error('Error updating home club:', err)
