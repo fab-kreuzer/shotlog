@@ -137,9 +137,13 @@ public class IcsImportService {
         session.setDecimalScoring(false);
         session.setTitle(unescape(event.get("SUMMARY")));
         session.setEnemy(resolvePlace(unescape(event.get("LOCATION"))));
-        session.setHome(session.getEnemy()
-                .getId()
-                .equals(user.getHomeClub().getId()));
+        if (user.getHomeClub() == null) {
+            session.setHome(false);
+        } else {
+            session.setHome(session.getEnemy()
+                    .getId()
+                    .equals(user.getHomeClub().getId()));
+        }
         session.setSeries(new ArrayList<>());
         return session;
     }
