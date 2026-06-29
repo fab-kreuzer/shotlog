@@ -51,7 +51,7 @@
           <!-- Success / default -->
           <svg
               v-else
-              class="w-4 h-4 text-primary-600"
+              class="w-4 h-4 text-success-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -102,18 +102,17 @@ const notifications = useNotificationStore()
 const typeClass = {
   error: 'bg-danger-50 border-danger-200 text-danger-700',
   warn: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-  success: 'bg-primary-50 border-primary-200 text-primary-800'
+  success: 'bg-success-50 border-success-200 text-success-800'
 }
 
 function iconBgClass(type) {
-  console.log(type)
   switch (type) {
     case 'error':
       return 'bg-danger-100'
     case 'warn':
       return 'bg-yellow-100'
     default:
-      return 'bg-primary-100'
+      return 'bg-success-100'
   }
 }
 </script>

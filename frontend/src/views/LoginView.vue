@@ -5,6 +5,7 @@
       <div class="bg-white rounded-2xl shadow-xl border border-surface-200 p-8">
         <!-- Header -->
         <div class="text-center mb-8">
+          <img src="/logo.png" alt="ShotLog" class="h-20 w-20 rounded-full object-cover mx-auto mb-4 shadow-md"/>
           <h1 class="text-3xl font-bold text-primary-800 mb-2">ShotLog</h1>
           <p class="text-surface-500">
             {{ isLogin ? 'Melden Sie sich an, um fortzufahren' : 'Erstellen Sie ein neues Konto' }}

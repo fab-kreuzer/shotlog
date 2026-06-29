@@ -7,8 +7,9 @@
           <!-- Brand -->
           <router-link
               to="/dashboard"
-              class="text-white text-xl font-bold tracking-tight hover:text-primary-200 transition-colors"
+              class="flex items-center gap-2.5 text-white text-xl font-bold tracking-tight hover:text-primary-200 transition-colors"
           >
+            <img src="/logo.png" alt="ShotLog" class="h-9 w-9 rounded-full object-cover"/>
             ShotLog
           </router-link>
 
