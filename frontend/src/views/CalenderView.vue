@@ -7,7 +7,7 @@
     </div>
 
     <!-- Calendar -->
-    <div class="bg-white rounded-xl border border-surface-200 shadow-sm p-4 sm:p-6">
+    <div class="bg-card rounded-xl border border-surface-200 shadow-sm p-4 sm:p-6">
       <div ref="calendarEl"></div>
     </div>
 

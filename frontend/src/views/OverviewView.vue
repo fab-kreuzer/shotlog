@@ -25,11 +25,11 @@
       <div
           v-for="session in sessions"
           :key="session.id"
-          class="group relative bg-white rounded-xl border border-surface-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
+          class="group relative bg-card rounded-xl border border-surface-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
       >
         <!-- Actions overlay -->
         <div
-            class="absolute top-2 right-2 flex items-center rounded-lg bg-white shadow-md gap-1 opacity-0 group-hover:opacity-100 transition-opacity sm:opacity-0 max-sm:opacity-100">
+            class="absolute top-2 right-2 flex items-center rounded-lg bg-card shadow-md gap-1 opacity-0 group-hover:opacity-100 transition-opacity sm:opacity-0 max-sm:opacity-100">
           <button
               class="p-1.5 rounded-lg text-warning-500 hover:bg-warning-50 transition-colors"
               title="Bearbeiten"

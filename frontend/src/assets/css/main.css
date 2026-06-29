@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Class-based dark mode: `dark:` variants activate under a `.dark` ancestor */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ── Design Tokens ── */
 @theme {
     /* Brand teal — from the logo's inner ring (#2a9d8f) */
@@ -49,14 +52,41 @@
     --color-danger-700: #a8332a;
 
     --color-warning-50: #fffbeb;
+    --color-warning-100: #fef3c7;
+    --color-warning-200: #fde68a;
     --color-warning-400: #fbbf24;
     --color-warning-500: #f59e0b;
     --color-warning-600: #d97706;
+    --color-warning-800: #92400e;
 
     --color-info-50: #eff6ff;
+    --color-info-100: #dbeafe;
+    --color-info-200: #bfdbfe;
     --color-info-400: #60a5fa;
     --color-info-500: #3b82f6;
     --color-info-600: #2563eb;
+    --color-info-800: #1e40af;
+
+    /* Elevated surface (cards, modals, panels) — flips in dark mode */
+    --color-card: #ffffff;
+}
+
+/* ── Dark mode: warm-charcoal surface inversion (50 = darkest … 800 = lightest) ── */
+.dark {
+    --color-surface-50: #1c1a17;   /* page background */
+    --color-surface-100: #26221c;  /* table headers, hovers, raised rows */
+    --color-surface-200: #322d27;  /* dividers (border-surface-200) */
+    --color-surface-300: #3d372f;  /* primary borders (border-surface-300) */
+    --color-surface-400: #5c554c;  /* muted icons */
+    --color-surface-500: #8c857b;  /* labels / hints */
+    --color-surface-600: #aaa399;  /* secondary text */
+    --color-surface-700: #cdc8c0;  /* secondary-strong text */
+    --color-surface-800: #ece9e4;  /* primary text */
+    --color-surface-900: #f5f4f2;
+    --color-surface-950: #fafaf9;
+
+    --color-card: #232019;         /* slightly lighter than page = elevation */
+    --color-primary-50: #13302c;   /* fc-day-today highlight + light teal tints */
 }
 
 /* ── Base Styles ── */
@@ -68,21 +98,21 @@
 
     /* FullCalendar overrides */
     .fc .fc-daygrid-day-number {
-        color: theme(--color-surface-800) !important;
+        color: var(--color-surface-800) !important;
     }
 
     .fc .fc-col-header-cell-cushion {
-        color: theme(--color-surface-700) !important;
+        color: var(--color-surface-700) !important;
         font-weight: 600;
     }
 
     .fc a {
-        color: theme(--color-surface-800);
+        color: var(--color-surface-800);
         text-decoration: none;
     }
 
     .fc a:hover {
-        color: theme(--color-surface-800);
+        color: var(--color-surface-800);
     }
 
     .fc-scroller {
@@ -110,7 +140,7 @@
     }
 
     .fc .fc-day-today {
-        background-color: theme(--color-primary-50) !important;
+        background-color: var(--color-primary-50) !important;
     }
 
     .fc .fc-event {
@@ -122,11 +152,11 @@
     }
 
     .fc td {
-        border-color: theme(--color-surface-200);
+        border-color: var(--color-surface-200);
     }
 
     .fc th {
-        border-color: theme(--color-surface-200);
+        border-color: var(--color-surface-200);
     }
 }
 
@@ -193,4 +223,59 @@ button {
 
 .z-modal {
     z-index: 1300;
+}
+
+/* ── vue-multiselect dark mode ──
+   Unlayered (outside @layer) so these win over the library's own stylesheet by
+   specificity (.dark .x = two classes beats its single-class rules). */
+.dark .multiselect__tags,
+.dark .multiselect__input,
+.dark .multiselect__single {
+    background: var(--color-card);
+    color: var(--color-surface-800);
+}
+
+.dark .multiselect__tags {
+    border-color: var(--color-surface-300);
+}
+
+.dark .multiselect__input::placeholder,
+.dark .multiselect__placeholder {
+    color: var(--color-surface-500);
+}
+
+.dark .multiselect__content-wrapper {
+    background: var(--color-card);
+    border-color: var(--color-surface-300);
+}
+
+.dark .multiselect__option {
+    color: var(--color-surface-800);
+}
+
+.dark .multiselect__option--highlight {
+    background: var(--color-primary-600);
+    color: #fff;
+}
+
+.dark .multiselect__option--selected {
+    background: var(--color-surface-200);
+    color: var(--color-surface-800);
+}
+
+.dark .multiselect__option--selected.multiselect__option--highlight {
+    background: var(--color-danger-600);
+    color: #fff;
+}
+
+.dark .multiselect__tag {
+    background: var(--color-primary-600);
+}
+
+.dark .multiselect__spinner {
+    background: var(--color-card);
+}
+
+.dark .multiselect__select:before {
+    border-color: var(--color-surface-500) transparent transparent;
 }

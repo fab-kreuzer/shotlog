@@ -7,7 +7,7 @@
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="close"></div>
 
         <!-- Modal content -->
-        <div class="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl" style="animation: scaleIn 0.2s ease-out">
+        <div class="relative w-full max-w-3xl bg-card rounded-2xl shadow-2xl" style="animation: scaleIn 0.2s ease-out">
           <form @submit.prevent="handleSubmit">
             <!-- Header -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-surface-200">
@@ -62,7 +62,7 @@
                   <label class="block text-sm font-medium text-surface-700 mb-1.5">Gegner</label>
                   <select
                       v-model="form.enemyId"
-                      class="w-full px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow bg-white"
+                      class="w-full px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow bg-card"
                       required
                   >
                     <option v-for="loc in locations" :key="loc.id" :value="loc.id">{{ loc.club }}</option>
@@ -73,7 +73,7 @@
                   <label class="block text-sm font-medium text-surface-700 mb-1.5">Art des Schießens</label>
                   <select
                       v-model="form.sessionType"
-                      class="w-full px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow bg-white"
+                      class="w-full px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow bg-card"
                       required
                   >
                     <option value="TRAINING">Training</option>
@@ -168,7 +168,7 @@
             <div
                 class="flex items-center justify-end gap-3 px-6 py-4 border-t border-surface-200 bg-surface-50 rounded-b-2xl">
               <button
-                  class="px-5 py-2.5 rounded-lg text-sm font-medium text-surface-600 bg-white border border-surface-300 hover:bg-surface-50 transition-colors"
+                  class="px-5 py-2.5 rounded-lg text-sm font-medium text-surface-600 bg-card border border-surface-300 hover:bg-surface-50 transition-colors"
                   type="button"
                   @click="close"
               >

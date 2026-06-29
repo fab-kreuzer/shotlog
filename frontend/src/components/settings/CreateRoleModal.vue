@@ -10,7 +10,7 @@
         ></div>
 
         <!-- Modal -->
-        <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl p-6">
+        <div class="relative w-full max-w-md bg-card rounded-2xl shadow-2xl p-6">
 
           <div class="flex justify-between items-center mb-5">
             <h4 class="text-lg font-semibold">Neue Rolle erstellen</h4>
@@ -25,12 +25,12 @@
             />
 
             <div class="flex justify-end gap-2 pt-2">
-              <button class="px-3 py-1.5 text-md rounded-lg text-danger-600 bg-danger-50" type="button"
+              <button class="px-3 py-1.5 text-md rounded-lg text-danger-600 bg-danger-50 dark:bg-danger-500/15 dark:text-danger-400" type="button"
                       @click="$emit('update:modelValue', false)">
                 Abbrechen
               </button>
 
-              <button class="px-3 py-1.5 text-md rounded-lg text-primary-500 bg-primary-100" type="submit">
+              <button class="px-3 py-1.5 text-md rounded-lg text-primary-500 bg-primary-100 dark:bg-primary-500/20 dark:text-primary-300" type="submit">
                 Erstellen
               </button>
             </div>

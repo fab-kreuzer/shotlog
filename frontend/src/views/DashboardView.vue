@@ -7,7 +7,7 @@
     </div>
 
     <!-- Content card -->
-    <div class="bg-white rounded-xl border border-surface-200 shadow-sm p-6 flex items-center justify-between">
+    <div class="bg-card rounded-xl border border-surface-200 shadow-sm p-6 flex items-center justify-between">
       <p class="text-surface-600">You are logged in.</p>
       <input ref="fileInput" accept=".ics" class="hidden" type="file" @change="onFileSelected">
       <button

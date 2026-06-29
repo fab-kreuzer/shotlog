@@ -7,7 +7,7 @@
     </div>
 
     <!-- Tabs -->
-    <div class="bg-white rounded-xl border border-surface-200 shadow-sm overflow-hidden">
+    <div class="bg-card rounded-xl border border-surface-200 shadow-sm overflow-hidden">
       <div class="border-b border-surface-200">
         <nav class="flex gap-0">
           <button
@@ -63,7 +63,7 @@ function tabClass(tab) {
   return [
     'px-6 py-3.5 text-sm font-medium border-b-2 transition-colors cursor-pointer',
     activeTab.value === tab
-        ? 'border-primary-700 text-primary-700'
+        ? 'border-primary-700 text-primary-700 dark:border-primary-400 dark:text-primary-300'
         : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300'
   ]
 }

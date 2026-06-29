@@ -19,7 +19,7 @@
           <!-- Error -->
           <svg
               v-if="notif.type === 'error'"
-              class="w-4 h-4 text-danger-500"
+              class="w-4 h-4 text-danger-500 dark:text-danger-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -35,7 +35,7 @@
           <!-- Warning -->
           <svg
               v-else-if="notif.type === 'warn'"
-              class="w-4 h-4 text-yellow-600"
+              class="w-4 h-4 text-warning-600 dark:text-warning-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -51,7 +51,7 @@
           <!-- Success / default -->
           <svg
               v-else
-              class="w-4 h-4 text-success-600"
+              class="w-4 h-4 text-success-600 dark:text-success-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -72,7 +72,7 @@
 
         <!-- Close button -->
         <button
-            class="flex-shrink-0 p-1 rounded-lg hover:bg-black/5 transition-colors"
+            class="flex-shrink-0 p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
             @click="notifications.remove(notif.id)"
         >
           <svg
@@ -100,19 +100,19 @@ import {useNotificationStore} from '@/stores/notifications'
 const notifications = useNotificationStore()
 
 const typeClass = {
-  error: 'bg-danger-50 border-danger-200 text-danger-700',
-  warn: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-  success: 'bg-success-50 border-success-200 text-success-800'
+  error: 'bg-danger-50 border-danger-200 text-danger-700 dark:bg-danger-500/15 dark:border-danger-500/30 dark:text-danger-200',
+  warn: 'bg-warning-50 border-warning-200 text-warning-800 dark:bg-warning-500/15 dark:border-warning-500/30 dark:text-warning-200',
+  success: 'bg-success-50 border-success-200 text-success-800 dark:bg-success-500/15 dark:border-success-500/30 dark:text-success-200'
 }
 
 function iconBgClass(type) {
   switch (type) {
     case 'error':
-      return 'bg-danger-100'
+      return 'bg-danger-100 dark:bg-danger-500/25'
     case 'warn':
-      return 'bg-yellow-100'
+      return 'bg-warning-100 dark:bg-warning-500/25'
     default:
-      return 'bg-success-100'
+      return 'bg-success-100 dark:bg-success-500/25'
   }
 }
 </script>

@@ -90,10 +90,10 @@ onMounted(loadData)
 
             <td class="px-4 py-3 text-right">
               <div class="flex justify-end gap-2">
-                <button class="px-3 py-1.5 text-xs rounded-lg text-info-600 bg-info-50" @click="openEditRole(role)">
+                <button class="px-3 py-1.5 text-xs rounded-lg text-info-600 bg-info-50 dark:bg-info-500/15 dark:text-info-400" @click="openEditRole(role)">
                   Bearbeiten
                 </button>
-                <button class="px-3 py-1.5 text-xs rounded-lg text-danger-600 bg-danger-50"
+                <button class="px-3 py-1.5 text-xs rounded-lg text-danger-600 bg-danger-50 dark:bg-danger-500/15 dark:text-danger-400"
                         @click="handleDeleteRole(role.id)">Löschen
                 </button>
               </div>
@@ -108,7 +108,7 @@ onMounted(loadData)
       <Transition name="modal">
         <div v-if="editingRole" class="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="editingRole = null"></div>
-          <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl p-6"
+          <div class="relative w-full max-w-md bg-card rounded-2xl shadow-2xl p-6"
                style="animation: scaleIn 0.2s ease-out">
             <div class="flex items-center justify-between mb-5">
               <h4 class="text-lg font-semibold text-surface-800">Rolle bearbeiten</h4>
@@ -134,7 +134,7 @@ onMounted(loadData)
               </div>
               <div class="flex justify-end gap-3 pt-2">
                 <button
-                    class="px-4 py-2 rounded-lg text-sm font-medium text-surface-600 bg-white border border-surface-300 hover:bg-surface-50 transition-colors"
+                    class="px-4 py-2 rounded-lg text-sm font-medium text-surface-600 bg-card border border-surface-300 hover:bg-surface-50 transition-colors"
                     type="button"
                     @click="editingRole = null">
                   Abbrechen

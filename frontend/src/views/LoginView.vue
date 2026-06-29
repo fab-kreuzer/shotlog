@@ -1,12 +1,16 @@
 <template>
   <div class="min-h-[80vh] flex items-center justify-center">
     <div class="w-full max-w-md">
+      <!-- Theme toggle -->
+      <div class="flex justify-end mb-3">
+        <ThemeToggle/>
+      </div>
       <!-- Card -->
-      <div class="bg-white rounded-2xl shadow-xl border border-surface-200 p-8">
+      <div class="bg-card rounded-2xl shadow-xl border border-surface-200 p-8">
         <!-- Header -->
         <div class="text-center mb-8">
           <img src="/logo.png" alt="ShotLog" class="h-20 w-20 rounded-full object-cover mx-auto mb-4 shadow-md"/>
-          <h1 class="text-3xl font-bold text-primary-800 mb-2">ShotLog</h1>
+          <h1 class="text-3xl font-bold text-primary-800 dark:text-primary-300 mb-2">ShotLog</h1>
           <p class="text-surface-500">
             {{ isLogin ? 'Melden Sie sich an, um fortzufahren' : 'Erstellen Sie ein neues Konto' }}
           </p>
@@ -16,7 +20,7 @@
         <div class="flex mb-6 bg-surface-100 rounded-lg p-1">
           <button
               :class="isLogin
-                ? 'bg-white text-primary-800 shadow-sm'
+                ? 'bg-card text-primary-800 dark:text-primary-300 shadow-sm'
                 : 'text-surface-500 hover:text-surface-700'"
               class="flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200"
               @click="switchTo('login')"
@@ -25,7 +29,7 @@
           </button>
           <button
               :class="!isLogin
-                ? 'bg-white text-primary-800 shadow-sm'
+                ? 'bg-card text-primary-800 dark:text-primary-300 shadow-sm'
                 : 'text-surface-500 hover:text-surface-700'"
               class="flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200"
               @click="switchTo('signup')"
@@ -50,6 +54,7 @@ import {useRoute} from 'vue-router'
 import {useNotificationStore} from '@/stores/notifications'
 import LoginForm from '@/components/LoginForm.vue'
 import SignupForm from '@/components/SignupForm.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 
 const route = useRoute()
 const notify = useNotificationStore()

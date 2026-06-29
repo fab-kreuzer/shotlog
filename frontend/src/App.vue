@@ -29,7 +29,8 @@
               {{ link.label }}
             </router-link>
 
-            <div class="ml-4 pl-4 border-l border-primary-600">
+            <div class="ml-4 pl-4 border-l border-primary-600 flex items-center gap-1">
+              <ThemeToggle variant="nav"/>
               <button
                   class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-primary-100 hover:bg-primary-700 hover:text-white transition-all duration-200"
                   @click="handleLogout"
@@ -73,8 +74,12 @@
           >
             {{ link.label }}
           </router-link>
+          <div class="mt-2 pt-2 border-t border-primary-600 flex items-center gap-1">
+            <ThemeToggle variant="nav"/>
+            <span class="text-sm font-medium text-primary-100">Design</span>
+          </div>
           <button
-              class="w-full text-left flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-primary-100 hover:bg-primary-700 hover:text-white transition-all duration-200 mt-2 pt-2 border-t border-primary-600"
+              class="w-full text-left flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-primary-100 hover:bg-primary-700 hover:text-white transition-all duration-200"
               @click="handleLogout"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,6 +108,7 @@ import {useRoute, useRouter} from 'vue-router'
 import {useAuthStore} from '@/stores/auth'
 import {useNotificationStore} from '@/stores/notifications'
 import NotificationContainer from '@/components/NotificationContainer.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 
 const route = useRoute()
 const router = useRouter()
