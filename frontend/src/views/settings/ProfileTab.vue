@@ -44,6 +44,19 @@
           <option v-for="club in clubs" :key="club.id" :value="club.id">{{ club.club }}</option>
         </select>
       </div>
+
+      <div class="flex items-center gap-3">
+        <label class="text-sm text-surface-500 w-32" for="activeSeason">Aktive Saison:</label>
+        <select
+            id="activeSeason"
+            v-model="activeSeasonId"
+            :disabled="savingSeason"
+            class="px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
+            @change="saveActiveSeason"
+        >
+          <option v-for="season in seasons" :key="season.id" :value="season.id">{{ season.description }}</option>
+        </select>
+      </div>
     </div>
 
     <p class="mt-6 text-sm text-surface-400">
@@ -66,6 +79,10 @@ const homeClubId = ref(auth.user?.homeClubId ?? null)
 const saving = ref(false)
 const saved = ref(false)
 
+const seasons = ref([])
+const activeSeasonId = ref(null)
+const savingSeason = ref(false)
+
 async function saveHomeClub() {
   saving.value = true
   saved.value = false
@@ -80,12 +97,29 @@ async function saveHomeClub() {
   }
 }
 
+async function saveActiveSeason() {
+  savingSeason.value = true
+  try {
+    await api.setActiveSeason(activeSeasonId.value)
+  } catch (err) {
+    console.error('Error updating active season:', err)
+  } finally {
+    savingSeason.value = false
+  }
+}
+
 onMounted(async () => {
   try {
     clubs.value = await api.getLocations()
     homeClubId.value = auth.user?.homeClubId ?? null
   } catch (err) {
     console.error('Error fetching clubs:', err)
+  }
+  try {
+    seasons.value = await api.getSeasons()
+    activeSeasonId.value = seasons.value.find(s => s.active)?.id ?? null
+  } catch (err) {
+    console.error('Error fetching seasons:', err)
   }
 })
 </script>

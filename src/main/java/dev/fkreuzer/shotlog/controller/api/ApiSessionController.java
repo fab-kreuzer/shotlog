@@ -1,11 +1,9 @@
 package dev.fkreuzer.shotlog.controller.api;
 
 import dev.fkreuzer.shotlog.controller.DefaultShotLogController;
-import dev.fkreuzer.shotlog.domain.Series;
-import dev.fkreuzer.shotlog.domain.Session;
-import dev.fkreuzer.shotlog.domain.ShootingPlace;
-import dev.fkreuzer.shotlog.domain.Shot;
+import dev.fkreuzer.shotlog.domain.*;
 import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
+import dev.fkreuzer.shotlog.repository.SeasonRepository;
 import dev.fkreuzer.shotlog.service.IcsImportService;
 import dev.fkreuzer.shotlog.service.SessionService;
 import dev.fkreuzer.shotlog.service.ShootingPlaceService;
@@ -29,12 +27,14 @@ public class ApiSessionController extends DefaultShotLogController {
     private final SessionService sessionService;
     private final ShootingPlaceService shootingPlaceService;
     private final IcsImportService icsImportService;
+    private final SeasonRepository seasonRepository;
 
     public ApiSessionController(SessionService sessionService, ShootingPlaceService shootingPlaceService,
-                                IcsImportService icsImportService) {
+                                IcsImportService icsImportService, SeasonRepository seasonRepository) {
         this.sessionService = sessionService;
         this.shootingPlaceService = shootingPlaceService;
         this.icsImportService = icsImportService;
+        this.seasonRepository = seasonRepository;
     }
 
     @GetMapping("/sessions")
@@ -93,6 +93,9 @@ public class ApiSessionController extends DefaultShotLogController {
         } catch (IOException e) {
             return ResponseEntity.unprocessableEntity()
                     .body(ApiResponse.error("Die Datei konnte nicht gelesen werden"));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.unprocessableEntity()
+                    .body(ApiResponse.error(e.getMessage()));
         }
     }
 
@@ -112,6 +115,15 @@ public class ApiSessionController extends DefaultShotLogController {
             Long placeId = Long.valueOf(enemyId.toString());
             ShootingPlace place = shootingPlaceService.findById(placeId);
             session.setEnemy(place);
+        }
+
+        // Resolve season by ID
+        Object seasonId = body.get("seasonId");
+        if (seasonId != null) {
+            Long id = Long.valueOf(seasonId.toString());
+            Season season = seasonRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Season not found: " + id));
+            session.setSeason(season);
         }
 
         // Map series

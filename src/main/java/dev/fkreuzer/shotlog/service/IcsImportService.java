@@ -1,9 +1,11 @@
 package dev.fkreuzer.shotlog.service;
 
+import dev.fkreuzer.shotlog.domain.Season;
 import dev.fkreuzer.shotlog.domain.Session;
 import dev.fkreuzer.shotlog.domain.ShootingPlace;
 import dev.fkreuzer.shotlog.domain.UserAccount;
 import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
+import dev.fkreuzer.shotlog.repository.SeasonRepository;
 import dev.fkreuzer.shotlog.repository.ShootingPlaceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,10 +37,13 @@ public class IcsImportService {
 
     private final SessionService sessionService;
     private final ShootingPlaceRepository shootingPlaceRepository;
+    private final SeasonRepository seasonRepository;
 
-    public IcsImportService(SessionService sessionService, ShootingPlaceRepository shootingPlaceRepository) {
+    public IcsImportService(SessionService sessionService, ShootingPlaceRepository shootingPlaceRepository,
+                            SeasonRepository seasonRepository) {
         this.sessionService = sessionService;
         this.shootingPlaceRepository = shootingPlaceRepository;
+        this.seasonRepository = seasonRepository;
     }
 
     /**
@@ -46,10 +51,13 @@ public class IcsImportService {
      */
     @Transactional
     public int importFromIcs(InputStream input, UserAccount user) throws IOException {
+        Season activeSeason = seasonRepository.findByActiveTrue()
+                .orElseThrow(() -> new IllegalStateException("Es ist keine aktive Saison gesetzt"));
         int imported = 0;
         for (Map<String, String> event : parseEvents(input)) {
             Session session = toSession(event, user);
             if (session != null) {
+                session.setSeason(activeSeason);
                 sessionService.save(session);
                 imported++;
             }

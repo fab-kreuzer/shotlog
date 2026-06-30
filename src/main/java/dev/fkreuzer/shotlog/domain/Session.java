@@ -38,6 +38,10 @@ public class Session {
 
     private String title;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "season_id")
+    private Season season;
+
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("seriesNumber ASC")
     private List<Series> series = new ArrayList<>();

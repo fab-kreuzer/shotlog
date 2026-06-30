@@ -81,6 +81,20 @@
                   </select>
                 </div>
 
+                <div>
+                  <label class="block text-sm font-medium text-surface-700 mb-1.5">Saison</label>
+                  <select
+                      v-model="form.seasonId"
+                      class="w-full px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow bg-card"
+                      required
+                  >
+                    <option v-for="season in seasons" :key="season.id" :value="season.id">{{
+                        season.description
+                      }}
+                    </option>
+                  </select>
+                </div>
+
                 <div class="flex items-end gap-5 sm:col-span-2 lg:col-span-2">
                   <label class="flex items-center gap-2 cursor-pointer">
                     <input
@@ -196,6 +210,7 @@ const emit = defineEmits(['saved'])
 
 const visible = ref(false)
 const locations = ref([])
+const seasons = ref([])
 const isEditing = ref(false)
 const editingId = ref(null)
 const seriesContainerRef = ref(null)
@@ -204,6 +219,7 @@ const form = reactive({
   sessionDate: '',
   sessionTime: '',
   enemyId: null,
+  seasonId: null,
   title: '',
   sessionType: 'TRAINING',
   decimalScoring: false,
@@ -243,6 +259,7 @@ function resetForm() {
   form.sessionDate = now.toISOString().split('T')[0]
   form.sessionTime = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0')
   form.enemyId = locations.value.length > 0 ? locations.value[0].id : null
+  form.seasonId = (seasons.value.find(s => s.active) ?? seasons.value[0])?.id ?? null
   form.title = ''
   form.sessionType = 'TRAINING'
   form.decimalScoring = false
@@ -265,6 +282,7 @@ function openEdit(session) {
   form.sessionTime = session.sessionTime
   form.title = session.title
   form.enemyId = session.enemy ? session.enemy.id : null
+  form.seasonId = session.season ? session.season.id : null
   form.sessionType = session.sessionType
   form.decimalScoring = session.decimalScoring
   form.home = session.home
@@ -296,6 +314,7 @@ async function handleSubmit() {
     sessionDate: form.sessionDate,
     sessionTime: form.sessionTime,
     enemyId: form.enemyId,
+    seasonId: form.seasonId,
     sessionType: form.sessionType,
     title: form.title,
     decimalScoring: form.decimalScoring,
@@ -329,6 +348,11 @@ onMounted(async () => {
     locations.value = await api.getLocations()
   } catch (err) {
     console.error('Error fetching locations:', err)
+  }
+  try {
+    seasons.value = await api.getSeasons()
+  } catch (err) {
+    console.error('Error fetching seasons:', err)
   }
 })
 
