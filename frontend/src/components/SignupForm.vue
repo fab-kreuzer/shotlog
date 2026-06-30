@@ -1,80 +1,84 @@
 <template>
-  <form class="space-y-4" novalidate @submit.prevent="handleSignup">
-    <div>
-      <label class="block text-sm font-medium text-surface-700 mb-1.5" for="signup-username">Benutzername <span
-          class="text-danger-500">*</span></label>
-      <input
+  <form class="flex flex-col gap-4" novalidate @submit.prevent="handleSignup">
+    <div class="flex flex-col gap-1.5">
+      <label class="text-sm font-medium text-surface-700" for="signup-username">
+        Benutzername <span class="text-danger-500">*</span>
+      </label>
+      <InputText
           id="signup-username"
           v-model="form.username"
-          :class="errors.username ? 'border-danger-400' : 'border-surface-300'"
-          class="w-full px-4 py-2.5 rounded-lg border text-surface-800 placeholder-surface-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
+          :invalid="!!errors.username"
+          fluid
           placeholder="Benutzername wählen"
           @input="clearError('username')"
       />
-      <p v-if="errors.username" class="mt-1 text-sm text-danger-500">{{ errors.username }}</p>
+      <small v-if="errors.username" class="text-danger-500">{{ errors.username }}</small>
     </div>
 
-    <div>
-      <label class="block text-sm font-medium text-surface-700 mb-1.5" for="signup-displayname">Anzeigename <span
-          class="text-danger-500">*</span></label>
-      <input
+    <div class="flex flex-col gap-1.5">
+      <label class="text-sm font-medium text-surface-700" for="signup-displayname">
+        Anzeigename <span class="text-danger-500">*</span>
+      </label>
+      <InputText
           id="signup-displayname"
           v-model="form.displayName"
-          :class="errors.displayName ? 'border-danger-400' : 'border-surface-300'"
-          class="w-full px-4 py-2.5 rounded-lg border text-surface-800 placeholder-surface-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
+          :invalid="!!errors.displayName"
+          fluid
           placeholder="Ihr Anzeigename"
           @input="clearError('displayName')"
       />
-      <p v-if="errors.displayName" class="mt-1 text-sm text-danger-500">{{ errors.displayName }}</p>
+      <small v-if="errors.displayName" class="text-danger-500">{{ errors.displayName }}</small>
     </div>
 
-    <div>
-      <label class="block text-sm font-medium text-surface-700 mb-1.5" for="signup-password">Passwort <span
-          class="text-danger-500">*</span></label>
-      <input
-          id="signup-password"
+    <div class="flex flex-col gap-1.5">
+      <label class="text-sm font-medium text-surface-700" for="signup-password">
+        Passwort <span class="text-danger-500">*</span>
+      </label>
+      <Password
           v-model="form.password"
-          :class="errors.password ? 'border-danger-400' : 'border-surface-300'"
-          class="w-full px-4 py-2.5 rounded-lg border text-surface-800 placeholder-surface-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
+          :feedback="false"
+          :invalid="!!errors.password"
+          fluid
+          inputId="signup-password"
           placeholder="Passwort erstellen"
-          type="password"
+          toggleMask
           @input="clearError('password')"
       />
-      <p v-if="errors.password" class="mt-1 text-sm text-danger-500">{{ errors.password }}</p>
-      <p v-else class="mt-1 text-xs text-surface-400">Mindestens 6 Zeichen</p>
+      <small v-if="errors.password" class="text-danger-500">{{ errors.password }}</small>
+      <small v-else class="text-surface-400">Mindestens 6 Zeichen</small>
     </div>
 
-    <div>
-      <label class="block text-sm font-medium text-surface-700 mb-1.5" for="signup-confirm">Passwort bestätigen <span
-          class="text-danger-500">*</span></label>
-      <input
-          id="signup-confirm"
+    <div class="flex flex-col gap-1.5">
+      <label class="text-sm font-medium text-surface-700" for="signup-confirm">
+        Passwort bestätigen <span class="text-danger-500">*</span>
+      </label>
+      <Password
           v-model="form.confirmPassword"
-          :class="errors.confirmPassword ? 'border-danger-400' : 'border-surface-300'"
-          class="w-full px-4 py-2.5 rounded-lg border text-surface-800 placeholder-surface-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
+          :feedback="false"
+          :invalid="!!errors.confirmPassword"
+          fluid
+          inputId="signup-confirm"
           placeholder="Passwort wiederholen"
-          type="password"
+          toggleMask
           @input="clearError('confirmPassword')"
       />
-      <p v-if="errors.confirmPassword" class="mt-1 text-sm text-danger-500">{{ errors.confirmPassword }}</p>
+      <small v-if="errors.confirmPassword" class="text-danger-500">{{ errors.confirmPassword }}</small>
     </div>
 
-    <button
-        :disabled="submitting"
-        class="w-full py-2.5 px-4 rounded-lg text-sm font-semibold text-white bg-primary-700 hover:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-all duration-200 flex items-center justify-center gap-2"
+    <Button
+        :loading="submitting"
+        class="w-full"
+        label="Konto erstellen"
         type="submit"
-    >
-      <svg v-if="submitting" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-        <path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" fill="currentColor"/>
-      </svg>
-      {{ submitting ? 'Konto erstellen...' : 'Konto erstellen' }}
-    </button>
+    />
   </form>
 </template>
 
 <script setup>
 import {reactive, ref} from 'vue'
+import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
+import Button from 'primevue/button'
 import {api} from '@/api/http'
 import {useNotificationStore} from '@/stores/notifications'
 

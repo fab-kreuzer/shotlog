@@ -1,209 +1,146 @@
 <template>
-  <!-- Modal backdrop -->
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="visible" class="fixed inset-0 z-50 flex items-start justify-center pt-8 pb-8 px-4 overflow-y-auto">
-        <!-- Backdrop -->
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="close"></div>
+  <Dialog
+      :draggable="false"
+      :header="isEditing ? 'Schießabend bearbeiten' : 'Neuen Schießabend erstellen'"
+      :style="{ width: '48rem' }"
+      :visible="visible"
+      class="max-w-[95vw]"
+      modal
+      @update:visible="onVisibleChange"
+  >
+    <form id="session-form" class="flex flex-col gap-6" @submit.prevent="handleSubmit">
+      <!-- Session data -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700">Beschreibung</label>
+          <InputText v-model="form.title" fluid required/>
+        </div>
 
-        <!-- Modal content -->
-        <div class="relative w-full max-w-3xl bg-card rounded-2xl shadow-2xl" style="animation: scaleIn 0.2s ease-out">
-          <form @submit.prevent="handleSubmit">
-            <!-- Header -->
-            <div class="flex items-center justify-between px-6 py-4 border-b border-surface-200">
-              <h3 class="text-lg font-semibold text-surface-800">
-                {{ isEditing ? 'Schießabend bearbeiten' : 'Neuen Schießabend erstellen' }}
-              </h3>
-              <button
-                  class="p-2 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 transition-colors"
-                  type="button"
-                  @click="close"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                </svg>
-              </button>
-            </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700">Datum</label>
+          <DatePicker v-model="sessionDateModel" dateFormat="dd.mm.yy" fluid showIcon/>
+        </div>
 
-            <!-- Body -->
-            <div class="px-6 py-5 max-h-[70vh] overflow-y-auto space-y-6">
-              <!-- Session data -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-surface-700 mb-1.5">Beschreibung</label>
-                  <input
-                      v-model="form.title"
-                      class="w-full px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
-                      required
-                      type="text"
-                  >
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-surface-700 mb-1.5">Datum</label>
-                  <input
-                      v-model="form.sessionDate"
-                      class="w-full px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
-                      required
-                      type="date"
-                  >
-                </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700">Startzeit</label>
+          <DatePicker v-model="sessionTimeModel" fluid showIcon timeOnly/>
+        </div>
 
-                <div>
-                  <label class="block text-sm font-medium text-surface-700 mb-1.5">Startzeit</label>
-                  <input
-                      v-model="form.sessionTime"
-                      class="w-full px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
-                      required
-                      type="time"
-                  >
-                </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700">Gegner</label>
+          <Select
+              v-model="form.enemyId"
+              :options="locations"
+              fluid
+              optionLabel="club"
+              optionValue="id"
+          />
+        </div>
 
-                <div>
-                  <label class="block text-sm font-medium text-surface-700 mb-1.5">Gegner</label>
-                  <select
-                      v-model="form.enemyId"
-                      class="w-full px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow bg-card"
-                      required
-                  >
-                    <option v-for="loc in locations" :key="loc.id" :value="loc.id">{{ loc.club }}</option>
-                  </select>
-                </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700">Art des Schießens</label>
+          <Select
+              v-model="form.sessionType"
+              :options="sessionTypeOptions"
+              fluid
+              optionLabel="label"
+              optionValue="value"
+          />
+        </div>
 
-                <div>
-                  <label class="block text-sm font-medium text-surface-700 mb-1.5">Art des Schießens</label>
-                  <select
-                      v-model="form.sessionType"
-                      class="w-full px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow bg-card"
-                      required
-                  >
-                    <option value="TRAINING">Training</option>
-                    <option value="COMPETITION">Wettkampf</option>
-                  </select>
-                </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700">Saison</label>
+          <Select
+              v-model="form.seasonId"
+              :options="seasons"
+              fluid
+              optionLabel="description"
+              optionValue="id"
+          />
+        </div>
 
-                <div>
-                  <label class="block text-sm font-medium text-surface-700 mb-1.5">Saison</label>
-                  <select
-                      v-model="form.seasonId"
-                      class="w-full px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow bg-card"
-                      required
-                  >
-                    <option v-for="season in seasons" :key="season.id" :value="season.id">{{
-                        season.description
-                      }}
-                    </option>
-                  </select>
-                </div>
-
-                <div class="flex items-end gap-5 sm:col-span-2 lg:col-span-2">
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input
-                        v-model="form.decimalScoring"
-                        class="w-4 h-4 rounded border-surface-300 text-primary-600 focus:ring-primary-500"
-                        type="checkbox"
-                    >
-                    <span class="text-sm text-surface-700">Zehntelwertung</span>
-                  </label>
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input
-                        v-model="form.home"
-                        class="w-4 h-4 rounded border-surface-300 text-primary-600 focus:ring-primary-500"
-                        type="checkbox"
-                    >
-                    <span class="text-sm text-surface-700">Heimwettkampf</span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- Divider -->
-              <hr class="border-surface-200">
-
-              <!-- Series -->
-              <div ref="seriesContainerRef" class="space-y-4">
-                <div v-for="(series, sIndex) in form.series" :key="sIndex"
-                     class="bg-surface-50 rounded-xl border border-surface-200 overflow-hidden">
-                  <!-- Series header -->
-                  <div class="flex items-center justify-between px-4 py-3 bg-surface-100 border-b border-surface-200">
-                    <span class="text-sm font-semibold text-surface-700">Serie {{ sIndex + 1 }}</span>
-                    <div class="flex items-center gap-3">
-                      <label class="flex items-center gap-2 cursor-pointer">
-                        <input
-                            v-model="series.testShot"
-                            class="w-4 h-4 rounded border-surface-300 text-primary-600 focus:ring-primary-500"
-                            type="checkbox"
-                        >
-                        <span class="text-xs text-surface-600">Probe</span>
-                      </label>
-                      <button
-                          class="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-danger-600 hover:bg-danger-50 rounded-lg transition-colors"
-                          type="button"
-                          @click="removeSeries(sIndex)"
-                      >
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round"
-                                stroke-width="2"/>
-                        </svg>
-                        Entfernen
-                      </button>
-                    </div>
-                  </div>
-
-                  <!-- Shots grid -->
-                  <div class="p-4 grid grid-cols-2 sm:grid-cols-5 gap-3">
-                    <div v-for="(shot, shotIndex) in series.shots" :key="shotIndex">
-                      <label class="block text-xs font-medium text-surface-500 mb-1">Schuss {{ shotIndex + 1 }}</label>
-                      <input
-                          v-model.number="shot.value"
-                          class="w-full px-2.5 py-1.5 rounded-lg border border-surface-300 text-sm text-center focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
-                          min="0"
-                          max="10.9"
-                          step="0.1"
-                          type="number"
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Add series button -->
-              <button
-                  class="flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-dashed border-surface-300 text-surface-500 hover:border-primary-400 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200 text-sm font-medium w-full justify-center"
-                  type="button"
-                  @click="addSeries"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                </svg>
-                Serie hinzufügen
-              </button>
-            </div>
-
-            <!-- Footer -->
-            <div
-                class="flex items-center justify-end gap-3 px-6 py-4 border-t border-surface-200 bg-surface-50 rounded-b-2xl">
-              <button
-                  class="px-5 py-2.5 rounded-lg text-sm font-medium text-surface-600 bg-card border border-surface-300 hover:bg-surface-50 transition-colors"
-                  type="button"
-                  @click="close"
-              >
-                Abbrechen
-              </button>
-              <button
-                  class="px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-primary-700 hover:bg-primary-800 shadow-sm transition-colors"
-                  type="submit"
-              >
-                Speichern
-              </button>
-            </div>
-          </form>
+        <div class="flex items-end gap-5 sm:col-span-2 lg:col-span-2">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <Checkbox v-model="form.decimalScoring" binary/>
+            <span class="text-sm text-surface-700">Zehntelwertung</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <Checkbox v-model="form.home" binary/>
+            <span class="text-sm text-surface-700">Heimwettkampf</span>
+          </label>
         </div>
       </div>
-    </Transition>
-  </Teleport>
+
+      <hr class="border-surface-200">
+
+      <!-- Series -->
+      <div ref="seriesContainerRef" class="flex flex-col gap-4">
+        <div v-for="(series, sIndex) in form.series" :key="sIndex"
+             class="bg-surface-50 rounded-xl border border-surface-200 overflow-hidden">
+          <!-- Series header -->
+          <div class="flex items-center justify-between px-4 py-3 bg-surface-100 border-b border-surface-200">
+            <span class="text-sm font-semibold text-surface-700">Serie {{ sIndex + 1 }}</span>
+            <div class="flex items-center gap-3">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <Checkbox v-model="series.testShot" binary/>
+                <span class="text-xs text-surface-600">Probe</span>
+              </label>
+              <Button
+                  icon="pi pi-trash"
+                  label="Entfernen"
+                  severity="danger"
+                  size="small"
+                  text
+                  type="button"
+                  @click="removeSeries(sIndex)"
+              />
+            </div>
+          </div>
+
+          <!-- Shots grid -->
+          <div class="p-4 grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div v-for="(shot, shotIndex) in series.shots" :key="shotIndex" class="flex flex-col gap-1">
+              <label class="text-xs font-medium text-surface-500">Schuss {{ shotIndex + 1 }}</label>
+              <InputNumber
+                  v-model="shot.value"
+                  :max="10.9"
+                  :maxFractionDigits="1"
+                  :min="0"
+                  fluid
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add series button -->
+      <Button
+          class="w-full"
+          icon="pi pi-plus"
+          label="Serie hinzufügen"
+          outlined
+          severity="secondary"
+          type="button"
+          @click="addSeries"
+      />
+    </form>
+
+    <template #footer>
+      <Button label="Abbrechen" severity="secondary" text type="button" @click="close"/>
+      <Button form="session-form" label="Speichern" type="submit"/>
+    </template>
+  </Dialog>
 </template>
 
 <script setup>
-import {nextTick, onMounted, reactive, ref} from 'vue'
+import {computed, nextTick, onMounted, reactive, ref} from 'vue'
+import Dialog from 'primevue/dialog'
+import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import DatePicker from 'primevue/datepicker'
+import Select from 'primevue/select'
+import Checkbox from 'primevue/checkbox'
+import Button from 'primevue/button'
 import {api} from '@/api/http'
 
 const emit = defineEmits(['saved'])
@@ -215,6 +152,11 @@ const isEditing = ref(false)
 const editingId = ref(null)
 const seriesContainerRef = ref(null)
 
+const sessionTypeOptions = [
+  {label: 'Training', value: 'TRAINING'},
+  {label: 'Wettkampf', value: 'COMPETITION'}
+]
+
 const form = reactive({
   sessionDate: '',
   sessionTime: '',
@@ -225,6 +167,31 @@ const form = reactive({
   decimalScoring: false,
   home: false,
   series: []
+})
+
+// DatePicker works with Date objects; the form/API use 'yyyy-MM-dd' and 'HH:mm' strings.
+function pad(n) {
+  return String(n).padStart(2, '0')
+}
+
+const sessionDateModel = computed({
+  get: () => (form.sessionDate ? new Date(`${form.sessionDate}T00:00:00`) : null),
+  set: (d) => {
+    form.sessionDate = d ? `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}` : ''
+  }
+})
+
+const sessionTimeModel = computed({
+  get: () => {
+    if (!form.sessionTime) return null
+    const [h, m] = form.sessionTime.split(':')
+    const d = new Date()
+    d.setHours(Number(h), Number(m), 0, 0)
+    return d
+  },
+  set: (d) => {
+    form.sessionTime = d ? `${pad(d.getHours())}:${pad(d.getMinutes())}` : ''
+  }
 })
 
 function createEmptySeries() {
@@ -309,6 +276,10 @@ function close() {
   visible.value = false
 }
 
+function onVisibleChange(value) {
+  visible.value = value
+}
+
 async function handleSubmit() {
   const data = {
     sessionDate: form.sessionDate,
@@ -358,22 +329,3 @@ onMounted(async () => {
 
 defineExpose({openCreate, openEdit})
 </script>
-
-<style scoped>
-.modal-enter-active {
-  animation: fadeIn 0.2s ease-out;
-}
-
-.modal-leave-active {
-  animation: fadeIn 0.15s ease-in reverse;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-</style>

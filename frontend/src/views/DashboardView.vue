@@ -7,32 +7,40 @@
     </div>
 
     <!-- Content card -->
-    <div class="bg-card rounded-xl border border-surface-200 shadow-sm p-6 flex items-center justify-between">
-      <p class="text-surface-600">You are logged in.</p>
-      <input ref="fileInput" accept=".ics" class="hidden" type="file" @change="onFileSelected">
-      <button
-          :disabled="importing"
-          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-primary-700 hover:bg-primary-800 shadow-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-          type="button"
-          @click="fileInput?.click()">
-        {{ importing ? 'Importiere…' : 'Termine importieren' }}
-      </button>
-    </div>
+    <Card>
+      <template #content>
+        <div class="flex items-center justify-between">
+          <p class="text-surface-600">You are logged in.</p>
+          <FileUpload
+              ref="uploader"
+              :auto="true"
+              :chooseLabel="importing ? 'Importiere…' : 'Termine importieren'"
+              :disabled="importing"
+              accept=".ics"
+              customUpload
+              mode="basic"
+              @uploader="onUpload"
+          />
+        </div>
+      </template>
+    </Card>
   </div>
 </template>
 
 <script setup>
 import {ref} from 'vue'
+import Card from 'primevue/card'
+import FileUpload from 'primevue/fileupload'
 import {api} from '@/api/http'
 import {useNotificationStore} from '@/stores/notifications'
 
 const notify = useNotificationStore()
 
-const fileInput = ref(null)
+const uploader = ref(null)
 const importing = ref(false)
 
-async function onFileSelected(event) {
-  const file = event.target.files?.[0]
+async function onUpload(event) {
+  const file = event.files?.[0]
   if (!file) return
 
   importing.value = true
@@ -44,7 +52,7 @@ async function onFileSelected(event) {
     if (!err._notified) notify.error('Import fehlgeschlagen')
   } finally {
     importing.value = false
-    event.target.value = ''
+    uploader.value?.clear()
   }
 }
 </script>

@@ -1,27 +1,31 @@
 import {defineStore} from 'pinia'
-import {ref} from 'vue'
 
-let nextId = 0
+// Maps our internal message types to PrimeVue Toast severities.
+const SEVERITY = {error: 'error', warn: 'warn', success: 'success', info: 'info'}
+
+const SUMMARY = {error: 'Fehler', warn: 'Hinweis', success: 'Erfolg', info: 'Info'}
 
 export const useNotificationStore = defineStore('notifications', () => {
-    const notifications = ref([])
+    // A reference to PrimeVue's `toast.add`, registered once from App.vue.
+    let add = null
 
-    function show(message, type = 'success', duration = 5000) {
-        const id = nextId++
-        notifications.value.push({id, message, type})
-
-        if (duration > 0) {
-            setTimeout(() => {
-                remove(id)
-            }, duration)
-        }
+    function register(toastAdd) {
+        add = toastAdd
     }
 
-    function remove(id) {
-        const index = notifications.value.findIndex(n => n.id === id)
-        if (index !== -1) {
-            notifications.value.splice(index, 1)
+    function show(message, type = 'success', duration = 5000) {
+        if (!add) {
+            // Toast service not registered yet — surface it rather than swallow.
+            console.warn('[notifications] toast not registered:', type, message)
+            return
         }
+        const severity = SEVERITY[type] || 'info'
+        add({
+            severity,
+            summary: SUMMARY[type] || SUMMARY.info,
+            detail: message,
+            life: duration > 0 ? duration : undefined
+        })
     }
 
     function success(message) {
@@ -58,5 +62,5 @@ export const useNotificationStore = defineStore('notifications', () => {
         }
     }
 
-    return {notifications, show, remove, success, error, warn, fromApi, fromApiResponse}
+    return {register, show, success, error, warn, fromApi, fromApiResponse}
 })

@@ -1,4 +1,10 @@
+/* Declare cascade-layer order up front so PrimeVue's `primevue` layer sits before
+   Tailwind's `components`/`utilities` — Tailwind utility classes then win over
+   PrimeVue component styles. Must precede the Tailwind import. */
+@layer theme, base, primevue, components, utilities;
+
 @import "tailwindcss";
+@import "tailwindcss-primeui";
 
 /* Class-based dark mode: `dark:` variants activate under a `.dark` ancestor */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -160,59 +166,6 @@
     }
 }
 
-/* ── Transitions ── */
-@layer utilities {
-    .slide-in {
-        animation: slideIn 0.3s ease-out forwards;
-    }
-
-    .slide-out {
-        animation: slideOut 0.3s ease-in forwards;
-    }
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(1rem);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideOut {
-    from {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    to {
-        opacity: 0;
-        transform: translateY(1rem);
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes scaleIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
 button {
     cursor: pointer !important;
 }
@@ -223,59 +176,4 @@ button {
 
 .z-modal {
     z-index: 1300;
-}
-
-/* ── vue-multiselect dark mode ──
-   Unlayered (outside @layer) so these win over the library's own stylesheet by
-   specificity (.dark .x = two classes beats its single-class rules). */
-.dark .multiselect__tags,
-.dark .multiselect__input,
-.dark .multiselect__single {
-    background: var(--color-card);
-    color: var(--color-surface-800);
-}
-
-.dark .multiselect__tags {
-    border-color: var(--color-surface-300);
-}
-
-.dark .multiselect__input::placeholder,
-.dark .multiselect__placeholder {
-    color: var(--color-surface-500);
-}
-
-.dark .multiselect__content-wrapper {
-    background: var(--color-card);
-    border-color: var(--color-surface-300);
-}
-
-.dark .multiselect__option {
-    color: var(--color-surface-800);
-}
-
-.dark .multiselect__option--highlight {
-    background: var(--color-primary-600);
-    color: #fff;
-}
-
-.dark .multiselect__option--selected {
-    background: var(--color-surface-200);
-    color: var(--color-surface-800);
-}
-
-.dark .multiselect__option--selected.multiselect__option--highlight {
-    background: var(--color-danger-600);
-    color: #fff;
-}
-
-.dark .multiselect__tag {
-    background: var(--color-primary-600);
-}
-
-.dark .multiselect__spinner {
-    background: var(--color-card);
-}
-
-.dark .multiselect__select:before {
-    border-color: var(--color-surface-500) transparent transparent;
 }

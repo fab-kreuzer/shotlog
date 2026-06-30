@@ -1,8 +1,8 @@
 <template>
-  <div class="p-6">
+  <div class="p-2">
     <h2 class="text-lg font-semibold text-surface-800 mb-4">Mein Profil</h2>
 
-    <div class="space-y-3">
+    <div class="flex flex-col gap-3">
       <div class="flex items-center gap-3">
         <span class="text-sm text-surface-500 w-32">Benutzername:</span>
         <span class="text-sm font-medium text-surface-800">
@@ -19,43 +19,39 @@
 
       <div class="flex items-start gap-3">
         <span class="text-sm text-surface-500 w-32">Rollen:</span>
-
         <div class="flex flex-wrap gap-1.5">
-          <span
-              v-for="(role, i) in auth.user?.roles"
-              :key="i"
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-700"
-          >
-            {{ role }}
-          </span>
+          <Tag v-for="(role, i) in auth.user?.roles" :key="i" :value="role" severity="info"/>
         </div>
       </div>
 
       <div class="flex items-center gap-3">
         <label class="text-sm text-surface-500 w-32" for="homeClub">Stammverein:</label>
-        <select
+        <Select
             id="homeClub"
             v-model="homeClubId"
             :disabled="saving"
-            class="px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
+            :options="clubs"
+            class="w-64"
+            optionLabel="club"
+            optionValue="id"
+            placeholder="Kein Stammverein"
+            showClear
             @change="saveHomeClub"
-        >
-          <option :value="null">Kein Stammverein</option>
-          <option v-for="club in clubs" :key="club.id" :value="club.id">{{ club.club }}</option>
-        </select>
+        />
       </div>
 
       <div class="flex items-center gap-3">
         <label class="text-sm text-surface-500 w-32" for="activeSeason">Aktive Saison:</label>
-        <select
+        <Select
             id="activeSeason"
             v-model="activeSeasonId"
             :disabled="savingSeason"
-            class="px-3 py-2 rounded-lg border border-surface-300 text-surface-800 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
+            :options="seasons"
+            class="w-64"
+            optionLabel="description"
+            optionValue="id"
             @change="saveActiveSeason"
-        >
-          <option v-for="season in seasons" :key="season.id" :value="season.id">{{ season.description }}</option>
-        </select>
+        />
       </div>
     </div>
 
@@ -67,6 +63,8 @@
 
 <script setup>
 import {onMounted, ref} from 'vue'
+import Select from 'primevue/select'
+import Tag from 'primevue/tag'
 import {useAuthStore} from '@/stores/auth'
 import {useNotificationStore} from "@/stores/notifications.js";
 import {api} from '@/api/http'
@@ -77,7 +75,6 @@ const notify = useNotificationStore()
 const clubs = ref([])
 const homeClubId = ref(auth.user?.homeClubId ?? null)
 const saving = ref(false)
-const saved = ref(false)
 
 const seasons = ref([])
 const activeSeasonId = ref(null)
@@ -85,11 +82,9 @@ const savingSeason = ref(false)
 
 async function saveHomeClub() {
   saving.value = true
-  saved.value = false
   try {
     await api.updateProfile({homeClubId: homeClubId.value})
     await auth.fetchUser()
-    setTimeout(() => (saved.value = false), 2000)
   } catch (err) {
     console.error('Error updating home club:', err)
   } finally {

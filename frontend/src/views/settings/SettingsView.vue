@@ -6,50 +6,39 @@
       <p class="mt-1 text-surface-500">Verwalten Sie Ihr Profil und Systemeinstellungen</p>
     </div>
 
-    <!-- Tabs -->
-    <div class="bg-card rounded-xl border border-surface-200 shadow-sm overflow-hidden">
-      <div class="border-b border-surface-200">
-        <nav class="flex gap-0">
-          <button
-              :class="tabClass('profile')"
-              @click="activeTab = 'profile'"
-          >
-            Profil
-          </button>
-          <button
-              v-if="auth.isAdmin"
-              :class="tabClass('user-management')"
-              @click="activeTab = 'user-management'"
-          >
-            Benutzerverwaltung
-          </button>
-          <button
-              v-if="auth.isAdmin"
-              :class="tabClass('role-management')"
-              @click="activeTab = 'role-management'"
-          >
-            Rollenverwalung
-          </button>
-          <button
-              v-if="auth.isAdmin"
-              :class="tabClass('club-management')"
-              @click="activeTab = 'club-management'"
-          >
-            Clubverwaltung
-          </button>
-        </nav>
-      </div>
-
-      <ProfileTab v-if="activeTab === 'profile'"/>
-
-      <UserTab v-if="activeTab === 'user-management' && auth.isAdmin"/>
-      <RoleTab v-if="activeTab === 'role-management' && auth.isAdmin"/>
-    </div>
+    <Card>
+      <template #content>
+        <Tabs v-model:value="activeTab">
+          <TabList>
+            <Tab value="profile">Profil</Tab>
+            <Tab v-if="auth.isAdmin" value="user-management">Benutzerverwaltung</Tab>
+            <Tab v-if="auth.isAdmin" value="role-management">Rollenverwaltung</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel value="profile">
+              <ProfileTab/>
+            </TabPanel>
+            <TabPanel v-if="auth.isAdmin" value="user-management">
+              <UserTab/>
+            </TabPanel>
+            <TabPanel v-if="auth.isAdmin" value="role-management">
+              <RoleTab/>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </template>
+    </Card>
   </div>
 </template>
 
 <script setup>
 import {ref} from 'vue'
+import Card from 'primevue/card'
+import Tabs from 'primevue/tabs'
+import TabList from 'primevue/tablist'
+import Tab from 'primevue/tab'
+import TabPanels from 'primevue/tabpanels'
+import TabPanel from 'primevue/tabpanel'
 import {useAuthStore} from '@/stores/auth'
 
 import ProfileTab from './ProfileTab.vue'
@@ -58,13 +47,4 @@ import RoleTab from "@/views/settings/RoleTab.vue";
 
 const auth = useAuthStore()
 const activeTab = ref('profile')
-
-function tabClass(tab) {
-  return [
-    'px-6 py-3.5 text-sm font-medium border-b-2 transition-colors cursor-pointer',
-    activeTab.value === tab
-        ? 'border-primary-700 text-primary-700 dark:border-primary-400 dark:text-primary-300'
-        : 'border-transparent text-surface-500 hover:text-surface-700 hover:border-surface-300'
-  ]
-}
 </script>

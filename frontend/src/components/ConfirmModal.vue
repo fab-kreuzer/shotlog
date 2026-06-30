@@ -1,47 +1,26 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="modelValue" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <!-- Backdrop -->
-        <div
-            class="fixed inset-0 bg-black/50 backdrop-blur-sm"
-            @click="cancel"
-        />
+  <Dialog
+      :draggable="false"
+      :header="title"
+      :style="{ width: '28rem' }"
+      :visible="modelValue"
+      modal
+      @update:visible="$emit('update:modelValue', $event)"
+  >
+    <p class="text-sm text-surface-500">{{ message }}</p>
 
-        <!-- Modal -->
-        <div class="relative w-full max-w-md bg-card rounded-2xl shadow-2xl p-6">
-          <div class="mb-4">
-            <h3 class="text-lg font-semibold text-surface-800">
-              {{ title }}
-            </h3>
-            <p class="text-sm text-surface-500 mt-1">
-              {{ message }}
-            </p>
-          </div>
-
-          <div class="flex justify-end gap-2 pt-2">
-            <button
-                class="px-3 py-1.5 rounded-lg bg-surface-200 text-surface-700 hover:bg-surface-300 transition-colors"
-                @click="cancel"
-            >
-              Abbrechen
-            </button>
-
-            <button
-                class="px-3 py-1.5 rounded-lg bg-danger-500 text-white hover:bg-danger-600 transition-colors"
-                @click="confirm"
-            >
-              {{ confirmText }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
+    <template #footer>
+      <Button label="Abbrechen" severity="secondary" text @click="cancel"/>
+      <Button :label="confirmText" severity="danger" @click="confirm"/>
+    </template>
+  </Dialog>
 </template>
 
 <script setup>
-const props = defineProps({
+import Dialog from 'primevue/dialog'
+import Button from 'primevue/button'
+
+defineProps({
   modelValue: Boolean,
   title: {
     type: String,

@@ -5,45 +5,34 @@
       <div class="flex justify-end mb-3">
         <ThemeToggle/>
       </div>
-      <!-- Card -->
-      <div class="bg-card rounded-2xl shadow-xl border border-surface-200 p-8">
-        <!-- Header -->
-        <div class="text-center mb-8">
-          <img src="/logo.png" alt="ShotLog" class="h-20 w-20 rounded-full object-cover mx-auto mb-4 shadow-md"/>
-          <h1 class="text-3xl font-bold text-primary-800 dark:text-primary-300 mb-2">ShotLog</h1>
-          <p class="text-surface-500">
-            {{ isLogin ? 'Melden Sie sich an, um fortzufahren' : 'Erstellen Sie ein neues Konto' }}
-          </p>
-        </div>
 
-        <!-- Tab Toggle -->
-        <div class="flex mb-6 bg-surface-100 rounded-lg p-1">
-          <button
-              :class="isLogin
-                ? 'bg-card text-primary-800 dark:text-primary-300 shadow-sm'
-                : 'text-surface-500 hover:text-surface-700'"
-              class="flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200"
-              @click="switchTo('login')"
-          >
-            Anmelden
-          </button>
-          <button
-              :class="!isLogin
-                ? 'bg-card text-primary-800 dark:text-primary-300 shadow-sm'
-                : 'text-surface-500 hover:text-surface-700'"
-              class="flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200"
-              @click="switchTo('signup')"
-          >
-            Registrieren
-          </button>
-        </div>
+      <Card>
+        <template #content>
+          <!-- Header -->
+          <div class="text-center mb-6">
+            <img alt="ShotLog" class="h-20 w-20 rounded-full object-cover mx-auto mb-4 shadow-md" src="/logo.png"/>
+            <h1 class="text-3xl font-bold text-primary-800 dark:text-primary-300 mb-2">ShotLog</h1>
+            <p class="text-surface-500">
+              {{ activeTab === 'login' ? 'Melden Sie sich an, um fortzufahren' : 'Erstellen Sie ein neues Konto' }}
+            </p>
+          </div>
 
-        <!-- Forms -->
-        <Transition mode="out-in" name="auth-fade">
-          <LoginForm v-if="isLogin" key="login"/>
-          <SignupForm v-else key="signup" @success="onSignupSuccess"/>
-        </Transition>
-      </div>
+          <Tabs v-model:value="activeTab">
+            <TabList>
+              <Tab class="flex-1 justify-center" value="login">Anmelden</Tab>
+              <Tab class="flex-1 justify-center" value="signup">Registrieren</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel value="login">
+                <LoginForm/>
+              </TabPanel>
+              <TabPanel value="signup">
+                <SignupForm @success="onSignupSuccess"/>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </template>
+      </Card>
     </div>
   </div>
 </template>
@@ -51,6 +40,12 @@
 <script setup>
 import {onMounted, ref} from 'vue'
 import {useRoute} from 'vue-router'
+import Card from 'primevue/card'
+import Tabs from 'primevue/tabs'
+import TabList from 'primevue/tablist'
+import Tab from 'primevue/tab'
+import TabPanels from 'primevue/tabpanels'
+import TabPanel from 'primevue/tabpanel'
 import {useNotificationStore} from '@/stores/notifications'
 import LoginForm from '@/components/LoginForm.vue'
 import SignupForm from '@/components/SignupForm.vue'
@@ -59,7 +54,7 @@ import ThemeToggle from '@/components/ThemeToggle.vue'
 const route = useRoute()
 const notify = useNotificationStore()
 
-const isLogin = ref(true)
+const activeTab = ref('login')
 
 onMounted(() => {
   if (route.query.logout !== undefined) {
@@ -67,28 +62,7 @@ onMounted(() => {
   }
 })
 
-function switchTo(mode) {
-  isLogin.value = mode === 'login'
-}
-
 function onSignupSuccess() {
-  isLogin.value = true
+  activeTab.value = 'login'
 }
 </script>
-
-<style scoped>
-.auth-fade-enter-active,
-.auth-fade-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.auth-fade-enter-from {
-  opacity: 0;
-  transform: translateY(8px);
-}
-
-.auth-fade-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
-}
-</style>

@@ -1,59 +1,52 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="modelValue" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <!-- Backdrop -->
-        <div
-            class="fixed inset-0 bg-black/50 backdrop-blur-sm"
-            @click="$emit('update:modelValue', false)"
-        />
-
-        <!-- Modal -->
-        <div class="relative w-full max-w-md bg-card rounded-2xl shadow-2xl p-6">
-          <div class="flex justify-between items-center mb-5">
-            <h4 class="text-lg font-semibold">Neuen Benutzer erstellen</h4>
-            <button @click="$emit('update:modelValue', false)">✕</button>
-          </div>
-
-          <form class="space-y-4" @submit.prevent="submit">
-            <input v-model="user.username" class="flex-1 px-3 py-2 rounded-lg border border-surface-300 text-sm w-full"
-                   placeholder="Benutzername"/>
-            <input v-model="user.displayName" class="flex-1 px-3 py-2 rounded-lg border border-surface-300 text-sm w-full"
-                   placeholder="Anzeigename"/>
-            <input v-model="user.password" class="flex-1 px-3 py-2 rounded-lg border border-surface-300 text-sm w-full"
-                   placeholder="Passwort"
-                   type="password"/>
-
-            <Multiselect
-                v-model="selectedRoles"
-                :multiple="true"
-                :options="roles"
-                label="name"
-                placeholder="Rollen auswählen"
-                track-by="id"
-                class="rounded-lg"
-            />
-
-            <div class="flex justify-end gap-2 pt-2">
-              <button class="px-3 py-1.5 text-md rounded-lg text-danger-600 bg-danger-50 dark:bg-danger-500/15 dark:text-danger-400" type="button"
-                      @click="$emit('update:modelValue', false)">
-                Abbrechen
-              </button>
-              <button class="px-3 py-1.5 text-md rounded-lg text-primary-500 bg-primary-100 dark:bg-primary-500/20 dark:text-primary-300" type="submit">
-                Erstellen
-              </button>
-            </div>
-          </form>
-        </div>
+  <Dialog
+      :draggable="false"
+      :style="{ width: '32rem' }"
+      :visible="modelValue"
+      header="Neuen Benutzer erstellen"
+      modal
+      @update:visible="$emit('update:modelValue', $event)"
+  >
+    <form id="create-user-form" class="flex flex-col gap-4" @submit.prevent="submit">
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium text-surface-700" for="createUsername">Benutzername</label>
+        <InputText id="createUsername" v-model="user.username" fluid placeholder="Benutzername"/>
       </div>
-    </Transition>
-  </Teleport>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium text-surface-700" for="createDisplayName">Anzeigename</label>
+        <InputText id="createDisplayName" v-model="user.displayName" fluid placeholder="Anzeigename"/>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium text-surface-700" for="createPassword">Passwort</label>
+        <Password v-model="user.password" :feedback="false" fluid inputId="createPassword" placeholder="Passwort"
+                  toggleMask/>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium text-surface-700">Rollen</label>
+        <Multiselect
+            v-model="user.roleIds"
+            :options="roles"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Rollen auswählen"
+        />
+      </div>
+    </form>
+
+    <template #footer>
+      <Button label="Abbrechen" severity="secondary" text type="button" @click="$emit('update:modelValue', false)"/>
+      <Button form="create-user-form" label="Erstellen" type="submit"/>
+    </template>
+  </Dialog>
 </template>
 
 <script setup>
 import {ref, watch} from 'vue'
-import Multiselect from 'vue-multiselect'
-import 'vue-multiselect/dist/vue-multiselect.css'
+import Dialog from 'primevue/dialog'
+import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
+import Button from 'primevue/button'
+import Multiselect from '@/components/Multiselect.vue'
 import {useNotificationStore} from "@/stores/notifications.js";
 
 const notify = useNotificationStore()
@@ -61,12 +54,6 @@ const notify = useNotificationStore()
 const props = defineProps({
   modelValue: Boolean,
   roles: Array
-})
-
-const selectedRoles = ref([])
-
-watch(selectedRoles, (val) => {
-  user.value.roleIds = val.map(r => r.id)
 })
 
 const emit = defineEmits(['update:modelValue', 'create'])
