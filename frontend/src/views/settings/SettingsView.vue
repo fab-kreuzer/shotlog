@@ -13,6 +13,7 @@
             <Tab value="profile">Profil</Tab>
             <Tab v-if="auth.isAdmin" value="user-management">Benutzerverwaltung</Tab>
             <Tab v-if="auth.isAdmin" value="role-management">Rollenverwaltung</Tab>
+            <Tab v-if="auth.isAdmin" value="club-management">Clubverwaltung</Tab>
           </TabList>
           <TabPanels>
             <TabPanel value="profile">
@@ -23,6 +24,9 @@
             </TabPanel>
             <TabPanel v-if="auth.isAdmin" value="role-management">
               <RoleTab/>
+            </TabPanel>
+            <TabPanel v-if="auth.isAdmin" value="club-management">
+              <ClubManagementTab/>
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -44,6 +48,7 @@ import {useAuthStore} from '@/stores/auth'
 import ProfileTab from './ProfileTab.vue'
 import UserTab from "@/views/settings/UserTab.vue";
 import RoleTab from "@/views/settings/RoleTab.vue";
+import ClubManagementTab from "@/views/settings/ClubManagementTab.vue";
 
 const auth = useAuthStore()
 const activeTab = ref('profile')

@@ -111,6 +111,9 @@ export const api = {
 
     // Locations
     getLocations: () => request('GET', '/api/locations'),
+    createLocation: (data) => request('POST', '/api/locations', data),
+    updateLocation: (id, data) => request('PUT', `/api/locations/${id}`, data),
+    deleteLocation: (id) => request('DELETE', `/api/locations/${id}`),
 
     // Settings - Users
     getUsers: () => request('GET', '/api/settings/users'),
