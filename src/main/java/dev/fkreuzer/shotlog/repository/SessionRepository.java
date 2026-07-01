@@ -13,4 +13,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     Optional<Session> findByIdAndUser(Long id, UserAccount user);
     void deleteByIdAndUser(Long id, UserAccount user);
     List<Session> findAllByUser(UserAccount user);
+
+    long countByEnemyId(Long enemyId);
 }

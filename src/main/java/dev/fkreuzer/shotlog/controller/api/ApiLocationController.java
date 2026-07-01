@@ -1,7 +1,9 @@
 package dev.fkreuzer.shotlog.controller.api;
 
 import dev.fkreuzer.shotlog.domain.ShootingPlace;
+import dev.fkreuzer.shotlog.repository.SessionRepository;
 import dev.fkreuzer.shotlog.repository.ShootingPlaceRepository;
+import dev.fkreuzer.shotlog.repository.UserAccountRepository;
 import dev.fkreuzer.shotlog.web.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +17,15 @@ import java.util.Optional;
 public class ApiLocationController {
 
     private final ShootingPlaceRepository shootingPlaceRepository;
+    private final SessionRepository sessionRepository;
+    private final UserAccountRepository userAccountRepository;
 
-    public ApiLocationController(ShootingPlaceRepository shootingPlaceRepository) {
+    public ApiLocationController(ShootingPlaceRepository shootingPlaceRepository,
+                                 SessionRepository sessionRepository,
+                                 UserAccountRepository userAccountRepository) {
         this.shootingPlaceRepository = shootingPlaceRepository;
+        this.sessionRepository = sessionRepository;
+        this.userAccountRepository = userAccountRepository;
     }
 
     @GetMapping("/locations")
@@ -89,6 +97,25 @@ public class ApiLocationController {
             return ResponseEntity.notFound()
                     .build();
         }
+
+        long sessionCount = sessionRepository.countByEnemyId(id);
+        if (sessionCount > 0) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error("Der Club \"" + location.get()
+                            .getClub()
+                            + "\" kann nicht gelöscht werden, da er in " + sessionCount
+                            + " Sitzung(en) verwendet wird."));
+        }
+
+        long homeClubCount = userAccountRepository.countByHomeClubId(id);
+        if (homeClubCount > 0) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error("Der Club \"" + location.get()
+                            .getClub()
+                            + "\" kann nicht gelöscht werden, da er bei " + homeClubCount
+                            + " Benutzer(n) als Stammverein hinterlegt ist."));
+        }
+
         shootingPlaceRepository.deleteById(id);
         return ResponseEntity.ok()
                 .body(ApiResponse.success("Der Club " + location.get()

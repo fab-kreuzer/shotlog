@@ -3,11 +3,15 @@ import {onMounted, ref} from "vue";
 import DataTable from "primevue/datatable";
 import Button from "primevue/button";
 import Column from "primevue/column";
+import Tag from "primevue/tag";
 import {api} from "@/api/http.js";
 import Dialog from "primevue/dialog";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import InputText from "primevue/inputtext";
 import CreateLocationModal from "@/components/settings/CreateLocationModal.vue";
+import {useAuthStore} from "@/stores/auth";
+
+const auth = useAuthStore();
 
 const showCreateClub = ref(false);
 const clubs = ref([]);
@@ -30,8 +34,12 @@ async function handleDeleteClub(id) {
 }
 
 async function confirmDeleteClub() {
-  await api.deleteLocation(clubToDelete.value);
-  await loadClubs();
+  try {
+    await api.deleteLocation(clubToDelete.value);
+    await loadClubs();
+  } catch {
+    // Deletion was blocked (e.g. club still in use); the message is shown via the API response.
+  }
 }
 
 function openEditClub(club) {
@@ -65,7 +73,14 @@ onMounted(loadClubs);
 
     <DataTable :value="clubs" class="border border-surface-200 rounded-lg overflow-hidden" dataKey="id" stripedRows>
       <Column field="id" header="ID" sortable/>
-      <Column field="club" header="Clubname" sortable/>
+      <Column field="club" header="Clubname" sortable>
+        <template #body="{ data }">
+          <span class="inline-flex items-center gap-2">
+            {{ data.club }}
+            <Tag v-if="data.id === auth.user?.homeClubId" severity="success" value="Stammverein"/>
+          </span>
+        </template>
+      </Column>
       <Column field="location" header="Ort" sortable>
         <template #body="{ data }">
           <a
