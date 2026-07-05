@@ -8,6 +8,8 @@ import dev.fkreuzer.shotlog.repository.RoleRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
 import dev.fkreuzer.shotlog.service.ShootingPlaceService;
 import dev.fkreuzer.shotlog.web.ApiResponse;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -26,15 +28,22 @@ public class ApiAuthController extends DefaultShotLogController {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final ShootingPlaceService shootingPlaceService;
+    private final MessageSource messageSource;
 
     public ApiAuthController(UserAccountRepository userAccountRepository,
                              RoleRepository roleRepository,
                              PasswordEncoder passwordEncoder,
-                             ShootingPlaceService shootingPlaceService) {
+                             ShootingPlaceService shootingPlaceService,
+                             MessageSource messageSource) {
         this.userAccountRepository = userAccountRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.shootingPlaceService = shootingPlaceService;
+        this.messageSource = messageSource;
+    }
+
+    private String msg(String key, Object... args) {
+        return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
     @GetMapping("/me")
@@ -79,15 +88,15 @@ public class ApiAuthController extends DefaultShotLogController {
                 ShootingPlace homeClub = shootingPlaceService.findById(id);
                 if (homeClub == null || homeClub.getId() == null) {
                     return ResponseEntity.badRequest()
-                            .body(ApiResponse.error("Verein nicht gefunden"));
+                            .body(ApiResponse.error(msg("profile.clubNotFound")));
                 }
                 user.setHomeClub(homeClub);
-                response.addSuccess("Der Verein " + homeClub.getClub() + " wurde als Home Club gesetzt!");
+                response.addSuccess(msg("profile.homeClubSet", homeClub.getClub()));
             }
         }
 
         userAccountRepository.save(user);
-        response.addSuccess("Das Profil wurde erfolgreich aktualisiert!");
+        response.addSuccess(msg("profile.updateSuccess"));
         return ResponseEntity.ok().body(response);
     }
 
@@ -99,23 +108,23 @@ public class ApiAuthController extends DefaultShotLogController {
 
         if (username == null || username.isBlank()) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Benutzername ist erforderlich"));
+                    .body(ApiResponse.error(msg("auth.usernameRequired")));
         }
 
         if (password == null || password.length() < 6) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Passwort muss mindestens 6 Zeichen lang sein"));
+                    .body(ApiResponse.error(msg("auth.passwordTooShort")));
         }
 
         if (displayName == null || displayName.isBlank()) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Anzeigename ist erforderlich"));
+                    .body(ApiResponse.error(msg("auth.displayNameRequired")));
         }
 
         if (userAccountRepository.findByUsername(username)
                 .isPresent()) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Benutzername existiert bereits"));
+                    .body(ApiResponse.error(msg("auth.usernameExists")));
         }
 
         // Assign default USER role
@@ -132,6 +141,6 @@ public class ApiAuthController extends DefaultShotLogController {
 
         userAccountRepository.save(newUser);
         return ResponseEntity.ok()
-                .body(ApiResponse.success("Konto erfolgreich erstellt! Sie können sich jetzt anmelden."));
+                .body(ApiResponse.success(msg("auth.registrationSuccess")));
     }
 }

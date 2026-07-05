@@ -1,7 +1,7 @@
 <template>
   <Dialog
       :draggable="false"
-      :header="isEditing ? 'Schießabend bearbeiten' : 'Neuen Schießabend erstellen'"
+      :header="isEditing ? $t('session.editTitle') : $t('session.createTitle')"
       :style="{ width: '48rem' }"
       :visible="visible"
       class="max-w-[95vw]"
@@ -12,22 +12,22 @@
       <!-- Session data -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-medium text-surface-700">Beschreibung</label>
+          <label class="text-sm font-medium text-surface-700">{{ $t('common.description') }}</label>
           <InputText v-model="form.title" fluid required/>
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-medium text-surface-700">Datum</label>
+          <label class="text-sm font-medium text-surface-700">{{ $t('common.date') }}</label>
           <DatePicker v-model="sessionDateModel" dateFormat="dd.mm.yy" fluid showIcon/>
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-medium text-surface-700">Startzeit</label>
+          <label class="text-sm font-medium text-surface-700">{{ $t('session.startTime') }}</label>
           <DatePicker v-model="sessionTimeModel" fluid showIcon timeOnly/>
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-medium text-surface-700">Gegner</label>
+          <label class="text-sm font-medium text-surface-700">{{ $t('session.opponent') }}</label>
           <Select
               v-model="form.enemyId"
               :options="locations"
@@ -38,7 +38,7 @@
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-medium text-surface-700">Art des Schießens</label>
+          <label class="text-sm font-medium text-surface-700">{{ $t('session.shootingType') }}</label>
           <Select
               v-model="form.sessionType"
               :options="sessionTypeOptions"
@@ -49,7 +49,7 @@
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-medium text-surface-700">Saison</label>
+          <label class="text-sm font-medium text-surface-700">{{ $t('session.season') }}</label>
           <Select
               v-model="form.seasonId"
               :options="seasons"
@@ -62,11 +62,11 @@
         <div class="flex items-end gap-5 sm:col-span-2 lg:col-span-2">
           <label class="flex items-center gap-2 cursor-pointer">
             <Checkbox v-model="form.decimalScoring" binary/>
-            <span class="text-sm text-surface-700">Zehntelwertung</span>
+            <span class="text-sm text-surface-700">{{ $t('session.decimalScoring') }}</span>
           </label>
           <label class="flex items-center gap-2 cursor-pointer">
             <Checkbox v-model="form.home" binary/>
-            <span class="text-sm text-surface-700">Heimwettkampf</span>
+            <span class="text-sm text-surface-700">{{ $t('session.homeMatch') }}</span>
           </label>
         </div>
       </div>
@@ -79,15 +79,17 @@
              class="bg-surface-50 rounded-xl border border-surface-200 overflow-hidden">
           <!-- Series header -->
           <div class="flex items-center justify-between px-4 py-3 bg-surface-100 border-b border-surface-200">
-            <span class="text-sm font-semibold text-surface-700">Serie {{ sIndex + 1 }}</span>
+            <span class="text-sm font-semibold text-surface-700">{{
+                $t('session.seriesLabel', {number: sIndex + 1})
+              }}</span>
             <div class="flex items-center gap-3">
               <label class="flex items-center gap-2 cursor-pointer">
                 <Checkbox v-model="series.testShot" binary/>
-                <span class="text-xs text-surface-600">Probe</span>
+                <span class="text-xs text-surface-600">{{ $t('session.testShot') }}</span>
               </label>
               <Button
                   icon="pi pi-trash"
-                  label="Entfernen"
+                  :label="$t('session.remove')"
                   severity="danger"
                   size="small"
                   text
@@ -100,7 +102,9 @@
           <!-- Shots grid -->
           <div class="p-4 grid grid-cols-2 sm:grid-cols-5 gap-3">
             <div v-for="(shot, shotIndex) in series.shots" :key="shotIndex" class="flex flex-col gap-1">
-              <label class="text-xs font-medium text-surface-500">Schuss {{ shotIndex + 1 }}</label>
+              <label class="text-xs font-medium text-surface-500">{{
+                  $t('session.shotLabel', {number: shotIndex + 1})
+                }}</label>
               <InputNumber
                   v-model="shot.value"
                   :max="10.9"
@@ -117,7 +121,7 @@
       <Button
           class="w-full"
           icon="pi pi-plus"
-          label="Serie hinzufügen"
+          :label="$t('session.addSeries')"
           outlined
           severity="secondary"
           type="button"
@@ -126,14 +130,15 @@
     </form>
 
     <template #footer>
-      <Button label="Abbrechen" severity="secondary" text type="button" @click="close"/>
-      <Button form="session-form" label="Speichern" type="submit"/>
+      <Button :label="$t('common.cancel')" severity="secondary" text type="button" @click="close"/>
+      <Button :label="$t('common.save')" form="session-form" type="submit"/>
     </template>
   </Dialog>
 </template>
 
 <script setup>
 import {computed, nextTick, onMounted, reactive, ref} from 'vue'
+import {useI18n} from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
@@ -145,6 +150,8 @@ import {api} from '@/api/http'
 
 const emit = defineEmits(['saved'])
 
+const {t} = useI18n()
+
 const visible = ref(false)
 const locations = ref([])
 const seasons = ref([])
@@ -153,8 +160,8 @@ const editingId = ref(null)
 const seriesContainerRef = ref(null)
 
 const sessionTypeOptions = [
-  {label: 'Training', value: 'TRAINING'},
-  {label: 'Wettkampf', value: 'COMPETITION'}
+  {label: t('session.typeTraining'), value: 'TRAINING'},
+  {label: t('session.typeCompetition'), value: 'COMPETITION'}
 ]
 
 const form = reactive({
@@ -310,7 +317,7 @@ async function handleSubmit() {
     emit('saved')
   } catch (err) {
     console.error('Error saving session:', err)
-    alert('Fehler beim Speichern der Session!')
+    alert(t('session.saveError'))
   }
 }
 

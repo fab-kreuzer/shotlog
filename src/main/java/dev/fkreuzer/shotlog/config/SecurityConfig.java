@@ -1,6 +1,7 @@
 package dev.fkreuzer.shotlog.config;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -14,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, MessageSource messageSource) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**")
@@ -39,8 +40,10 @@ public class SecurityConfig {
                         .failureHandler((request, response, exception) -> {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                             response.setContentType("application/json");
+                            String message = messageSource.getMessage(
+                                    "security.invalidCredentials", null, request.getLocale());
                             response.getWriter()
-                                    .write("{\"success\":false,\"error\":\"Ungültiger Benutzername oder Passwort.\"}");
+                                    .write("{\"success\":false,\"error\":\"" + message + "\"}");
                         })
                         .permitAll()
                 )
@@ -59,8 +62,10 @@ public class SecurityConfig {
                                     .startsWith("/api/")) {
                                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                                 response.setContentType("application/json");
+                                String message = messageSource.getMessage(
+                                        "security.notAuthenticated", null, request.getLocale());
                                 response.getWriter()
-                                        .write("{\"error\":\"Nicht authentifiziert\"}");
+                                        .write("{\"error\":\"" + message + "\"}");
                             } else {
                                 response.sendRedirect("/login");
                             }

@@ -67,21 +67,21 @@ onMounted(loadClubs);
 <template>
   <div class="p-2">
     <div class="flex justify-between items-center mb-6">
-      <h3 class="text-lg font-semibold text-surface-700">Liste aller Clubs</h3>
-      <Button icon="pi pi-plus" label="Neuer Club" @click="showCreateClub = true"/>
+      <h3 class="text-lg font-semibold text-surface-700">{{ $t('club.listTitle') }}</h3>
+      <Button :label="$t('club.newButton')" icon="pi pi-plus" @click="showCreateClub = true"/>
     </div>
 
     <DataTable :value="clubs" class="border border-surface-200 rounded-lg overflow-hidden" dataKey="id" stripedRows>
-      <Column field="id" header="ID" sortable/>
-      <Column field="club" header="Clubname" sortable>
+      <Column :header="$t('club.id')" field="id" sortable/>
+      <Column :header="$t('club.clubName')" field="club" sortable>
         <template #body="{ data }">
           <span class="inline-flex items-center gap-2">
             {{ data.club }}
-            <Tag v-if="data.id === auth.user?.homeClubId" severity="success" value="Stammverein"/>
+            <Tag v-if="data.id === auth.user?.homeClubId" :value="$t('profile.homeClub')" severity="success"/>
           </span>
         </template>
       </Column>
-      <Column field="location" header="Ort" sortable>
+      <Column :header="$t('common.location')" field="location" sortable>
         <template #body="{ data }">
           <a
               v-if="data.location"
@@ -96,7 +96,7 @@ onMounted(loadClubs);
           <span v-else>{{ data.location }}</span>
         </template>
       </Column>
-      <Column header="Aktionen">
+      <Column :header="$t('common.actions')">
         <template #body="{ data }">
           <div class="flex justify-end gap-2">
             <Button icon="pi pi-pencil" rounded severity="info" size="small" text @click="openEditClub(data)"/>
@@ -111,24 +111,24 @@ onMounted(loadClubs);
       :draggable="false"
       :style="{ width: '28rem' }"
       :visible="!!clubToEdit"
-      header="Club bearbeiten"
+      :header="$t('club.editTitle')"
       modal
       @update:visible="(v) => { if (!v) clubToEdit = null }"
   >
     <form v-if="clubToEdit" id="edit-club-form" class="flex flex-col gap-4" @submit.prevent="handleUpdateClub">
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-medium text-surface-700" for="editClubName">Clubname</label>
+        <label class="text-sm font-medium text-surface-700" for="editClubName">{{ $t('club.clubName') }}</label>
         <InputText id="editClubName" v-model="clubToEdit.club" fluid required/>
       </div>
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-medium text-surface-700" for="editClubLocation">Ort</label>
+        <label class="text-sm font-medium text-surface-700" for="editClubLocation">{{ $t('common.location') }}</label>
         <InputText id="editClubLocation" v-model="clubToEdit.location" fluid required/>
       </div>
     </form>
 
     <template #footer>
-      <Button label="Abbrechen" severity="secondary" text type="button" @click="clubToEdit = null"/>
-      <Button form="edit-club-form" label="Speichern" type="submit"/>
+      <Button :label="$t('common.cancel')" severity="secondary" text type="button" @click="clubToEdit = null"/>
+      <Button :label="$t('common.save')" form="edit-club-form" type="submit"/>
     </template>
 
   </Dialog>
@@ -140,9 +140,9 @@ onMounted(loadClubs);
 
   <ConfirmModal
       v-model="showConfirmClub"
-      confirmText="Ja, löschen"
-      message="Willst du diesen Club wirklich löschen?"
-      title="Club löschen"
+      :confirmText="$t('club.deleteConfirm')"
+      :message="$t('club.deleteMessage')"
+      :title="$t('club.deleteTitle')"
       @confirm="confirmDeleteClub"
   />
 </template>

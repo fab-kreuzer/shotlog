@@ -1,8 +1,9 @@
 <template>
   <div class="min-h-[80vh] flex items-center justify-center">
     <div class="w-full max-w-md">
-      <!-- Theme toggle -->
-      <div class="flex justify-end mb-3">
+      <!-- Language + theme toggles -->
+      <div class="flex justify-end gap-1 mb-3">
+        <LanguageToggle/>
         <ThemeToggle/>
       </div>
 
@@ -13,14 +14,14 @@
             <img alt="ShotLog" class="h-20 w-20 rounded-full object-cover mx-auto mb-4 shadow-md" src="/logo.png"/>
             <h1 class="text-3xl font-bold text-primary-800 dark:text-primary-300 mb-2">ShotLog</h1>
             <p class="text-surface-500">
-              {{ activeTab === 'login' ? 'Melden Sie sich an, um fortzufahren' : 'Erstellen Sie ein neues Konto' }}
+              {{ activeTab === 'login' ? $t('login.signInPrompt') : $t('login.signUpPrompt') }}
             </p>
           </div>
 
           <Tabs v-model:value="activeTab">
             <TabList>
-              <Tab class="flex-1 justify-center" value="login">Anmelden</Tab>
-              <Tab class="flex-1 justify-center" value="signup">Registrieren</Tab>
+              <Tab class="flex-1 justify-center" value="login">{{ $t('login.signIn') }}</Tab>
+              <Tab class="flex-1 justify-center" value="signup">{{ $t('login.signUp') }}</Tab>
             </TabList>
             <TabPanels>
               <TabPanel value="login">
@@ -50,15 +51,18 @@ import {useNotificationStore} from '@/stores/notifications'
 import LoginForm from '@/components/LoginForm.vue'
 import SignupForm from '@/components/SignupForm.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
+import LanguageToggle from '@/components/LanguageToggle.vue'
+import {useI18n} from "vue-i18n";
 
 const route = useRoute()
 const notify = useNotificationStore()
+const {t} = useI18n()
 
 const activeTab = ref('login')
 
 onMounted(() => {
   if (route.query.logout !== undefined) {
-    notify.success('Sie wurden erfolgreich abgemeldet.')
+    notify.success(t('login.loggedOut'))
   }
 })
 

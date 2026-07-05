@@ -1,5 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import {useAuthStore} from '@/stores/auth'
+import i18n from '@/i18n'
 
 import LoginView from '@/views/LoginView.vue'
 import DashboardView from '@/views/DashboardView.vue'
@@ -13,7 +14,7 @@ const routes = [
         path: '/login',
         name: 'login',
         component: LoginView,
-        meta: {public: true, title: 'ShotLog - Anmelden'}
+        meta: {public: true, titleKey: 'login.signIn'}
     },
     {
         path: '/',
@@ -23,19 +24,19 @@ const routes = [
         path: '/dashboard',
         name: 'dashboard',
         component: DashboardView,
-        meta: {title: 'ShotLog - Dashboard'}
+        meta: {titleKey: 'nav.dashboard'}
     },
     {
         path: '/training',
         name: 'training',
         component: TrainingPage,
-        meta: {title: 'ShotLog - Training'}
+        meta: {titleKey: 'nav.training'}
     },
     {
         path: '/competition',
         name: 'competition',
         component: CompetitionPage,
-        meta: {title: 'ShotLog - Wettkampf'}
+        meta: {titleKey: 'nav.competition'}
     },
     {
         path: '/overview',
@@ -45,13 +46,13 @@ const routes = [
         path: '/calender',
         name: 'calender',
         component: CalenderView,
-        meta: {title: 'ShotLog - Kalender'}
+        meta: {titleKey: 'nav.calender'}
     },
     {
         path: '/settings',
         name: 'settings',
         component: SettingsView,
-        meta: {title: 'ShotLog - Einstellungen', requiresAdmin: false}
+        meta: {titleKey: 'nav.settings', requiresAdmin: false}
     }
 ]
 
@@ -75,8 +76,8 @@ router.beforeEach(async (to) => {
         return {name: 'dashboard'}
     }
 
-    if (to.meta.title) {
-        document.title = to.meta.title
+    if (to.meta.titleKey) {
+        document.title = `ShotLog - ${i18n.global.t(to.meta.titleKey)}`
     }
 })
 

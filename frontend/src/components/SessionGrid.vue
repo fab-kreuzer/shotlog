@@ -16,7 +16,7 @@
                 severity="warn"
                 size="small"
                 text
-                title="Bearbeiten"
+                :title="$t('common.edit')"
                 @click="emit('edit', session.id)"
             />
             <Button
@@ -25,7 +25,7 @@
                 severity="danger"
                 size="small"
                 text
-                title="Löschen"
+                :title="$t('common.delete')"
                 @click="emit('delete', session.id)"
             />
           </div>
@@ -46,12 +46,12 @@
 
               <div class="flex items-center gap-2.5 text-sm text-surface-600">
                 <i class="pi pi-clock text-surface-400"/>
-                <span>{{ formatTime(session.sessionTime) }} Uhr</span>
+                <span>{{ $t('session.timeClock', {time: formatTime(session.sessionTime)}) }}</span>
               </div>
 
               <div class="flex items-center gap-2.5 text-sm">
                 <i class="pi pi-circle text-surface-400"/>
-                <span class="font-semibold text-surface-800">Summe: {{ session.formattedShotSum }}
+                <span class="font-semibold text-surface-800">{{ $t('session.total') }} {{ session.formattedShotSum }}
                   <span class="font-normal text-surface-500">({{ session.formattedShotSumOfTestShots }})</span>
                 </span>
               </div>
@@ -67,9 +67,9 @@
         <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-surface-100 mb-4">
           <i class="pi pi-inbox text-surface-400" style="font-size: 2rem"/>
         </div>
-        <h3 class="text-lg font-medium text-surface-700 mb-1">Keine Sessions verfügbar</h3>
-        <p class="text-surface-500 mb-6">Erstellen Sie Ihre erste Session, um loszulegen.</p>
-        <Button icon="pi pi-plus" label="Erste Session anlegen" @click="emit('create')"/>
+        <h3 class="text-lg font-medium text-surface-700 mb-1">{{ $t('session.empty') }}</h3>
+        <p class="text-surface-500 mb-6">{{ $t('session.emptyHint') }}</p>
+        <Button :label="$t('session.createFirst')" icon="pi pi-plus" @click="emit('create')"/>
       </div>
     </template>
   </DataView>

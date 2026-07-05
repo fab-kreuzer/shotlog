@@ -1,31 +1,31 @@
 <template>
   <div class="p-2">
-    <h2 class="text-lg font-semibold text-surface-800 mb-4">Mein Profil</h2>
+    <h2 class="text-lg font-semibold text-surface-800 mb-4">{{ $t('profile.title') }}</h2>
 
     <div class="flex flex-col gap-3">
       <div class="flex items-center gap-3">
-        <span class="text-sm text-surface-500 w-32">Benutzername:</span>
+        <span class="text-sm text-surface-500 w-32">{{ $t('user.username') }}:</span>
         <span class="text-sm font-medium text-surface-800">
           {{ auth.user?.username }}
         </span>
       </div>
 
       <div class="flex items-center gap-3">
-        <span class="text-sm text-surface-500 w-32">Anzeigename:</span>
+        <span class="text-sm text-surface-500 w-32">{{ $t('user.displayName') }}:</span>
         <span class="text-sm font-medium text-surface-800">
           {{ auth.user?.displayName }}
         </span>
       </div>
 
       <div class="flex items-start gap-3">
-        <span class="text-sm text-surface-500 w-32">Rollen:</span>
+        <span class="text-sm text-surface-500 w-32">{{ $t('user.roles') }}:</span>
         <div class="flex flex-wrap gap-1.5">
           <Tag v-for="(role, i) in auth.user?.roles" :key="i" :value="role" severity="info"/>
         </div>
       </div>
 
       <div class="flex items-center gap-3">
-        <label class="text-sm text-surface-500 w-32" for="homeClub">Stammverein:</label>
+        <label class="text-sm text-surface-500 w-32" for="homeClub">{{ $t('profile.homeClub') }}:</label>
         <Select
             id="homeClub"
             v-model="homeClubId"
@@ -34,14 +34,14 @@
             class="w-64"
             optionLabel="club"
             optionValue="id"
-            placeholder="Kein Stammverein"
+            :placeholder="$t('profile.noHomeClub')"
             showClear
             @change="saveHomeClub"
         />
       </div>
 
       <div class="flex items-center gap-3">
-        <label class="text-sm text-surface-500 w-32" for="activeSeason">Aktive Saison:</label>
+        <label class="text-sm text-surface-500 w-32" for="activeSeason">{{ $t('profile.activeSeason') }}:</label>
         <Select
             id="activeSeason"
             v-model="activeSeasonId"
@@ -56,7 +56,7 @@
     </div>
 
     <p class="mt-6 text-sm text-surface-400">
-      In zukünftigen Versionen können Sie hier Ihr Profil bearbeiten.
+      {{ $t('profile.futureNote') }}
     </p>
   </div>
 </template>

@@ -2,14 +2,14 @@
   <form class="flex flex-col gap-4" novalidate @submit.prevent="handleSignup">
     <div class="flex flex-col gap-1.5">
       <label class="text-sm font-medium text-surface-700" for="signup-username">
-        Benutzername <span class="text-danger-500">*</span>
+        {{ $t('auth.username') }} <span class="text-danger-500">*</span>
       </label>
       <InputText
           id="signup-username"
           v-model="form.username"
           :invalid="!!errors.username"
           fluid
-          placeholder="Benutzername wählen"
+          :placeholder="$t('auth.chooseUsernamePlaceholder')"
           @input="clearError('username')"
       />
       <small v-if="errors.username" class="text-danger-500">{{ errors.username }}</small>
@@ -17,14 +17,14 @@
 
     <div class="flex flex-col gap-1.5">
       <label class="text-sm font-medium text-surface-700" for="signup-displayname">
-        Anzeigename <span class="text-danger-500">*</span>
+        {{ $t('auth.displayName') }} <span class="text-danger-500">*</span>
       </label>
       <InputText
           id="signup-displayname"
           v-model="form.displayName"
           :invalid="!!errors.displayName"
           fluid
-          placeholder="Ihr Anzeigename"
+          :placeholder="$t('auth.displayNamePlaceholder')"
           @input="clearError('displayName')"
       />
       <small v-if="errors.displayName" class="text-danger-500">{{ errors.displayName }}</small>
@@ -32,7 +32,7 @@
 
     <div class="flex flex-col gap-1.5">
       <label class="text-sm font-medium text-surface-700" for="signup-password">
-        Passwort <span class="text-danger-500">*</span>
+        {{ $t('auth.password') }} <span class="text-danger-500">*</span>
       </label>
       <Password
           v-model="form.password"
@@ -40,17 +40,17 @@
           :invalid="!!errors.password"
           fluid
           inputId="signup-password"
-          placeholder="Passwort erstellen"
+          :placeholder="$t('auth.createPasswordPlaceholder')"
           toggleMask
           @input="clearError('password')"
       />
       <small v-if="errors.password" class="text-danger-500">{{ errors.password }}</small>
-      <small v-else class="text-surface-400">Mindestens 6 Zeichen</small>
+      <small v-else class="text-surface-400">{{ $t('auth.passwordHint') }}</small>
     </div>
 
     <div class="flex flex-col gap-1.5">
       <label class="text-sm font-medium text-surface-700" for="signup-confirm">
-        Passwort bestätigen <span class="text-danger-500">*</span>
+        {{ $t('auth.confirmPassword') }} <span class="text-danger-500">*</span>
       </label>
       <Password
           v-model="form.confirmPassword"
@@ -58,7 +58,7 @@
           :invalid="!!errors.confirmPassword"
           fluid
           inputId="signup-confirm"
-          placeholder="Passwort wiederholen"
+          :placeholder="$t('auth.repeatPasswordPlaceholder')"
           toggleMask
           @input="clearError('confirmPassword')"
       />
@@ -68,7 +68,7 @@
     <Button
         :loading="submitting"
         class="w-full"
-        label="Konto erstellen"
+        :label="$t('auth.createAccount')"
         type="submit"
     />
   </form>
@@ -76,6 +76,7 @@
 
 <script setup>
 import {reactive, ref} from 'vue'
+import {useI18n} from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
@@ -83,6 +84,7 @@ import {api} from '@/api/http'
 import {useNotificationStore} from '@/stores/notifications'
 
 const emit = defineEmits(['success'])
+const {t} = useI18n()
 const notify = useNotificationStore()
 
 const form = reactive({
@@ -109,31 +111,31 @@ function validate() {
   let valid = true
 
   if (!form.username.trim()) {
-    errors.username = 'Benutzername ist erforderlich'
+    errors.username = t('validation.usernameRequired')
     valid = false
   } else if (form.username.trim().length < 3) {
-    errors.username = 'Benutzername muss mindestens 3 Zeichen lang sein'
+    errors.username = t('validation.usernameMinLength')
     valid = false
   }
 
   if (!form.displayName.trim()) {
-    errors.displayName = 'Anzeigename ist erforderlich'
+    errors.displayName = t('validation.displayNameRequired')
     valid = false
   }
 
   if (!form.password) {
-    errors.password = 'Passwort ist erforderlich'
+    errors.password = t('validation.passwordRequired')
     valid = false
   } else if (form.password.length < 6) {
-    errors.password = 'Passwort muss mindestens 6 Zeichen lang sein'
+    errors.password = t('validation.passwordMinLength')
     valid = false
   }
 
   if (!form.confirmPassword) {
-    errors.confirmPassword = 'Passwort-Bestätigung ist erforderlich'
+    errors.confirmPassword = t('validation.confirmPasswordRequired')
     valid = false
   } else if (form.password !== form.confirmPassword) {
-    errors.confirmPassword = 'Passwörter stimmen nicht überein'
+    errors.confirmPassword = t('validation.passwordsMismatch')
     valid = false
   }
 
@@ -152,7 +154,7 @@ async function handleSignup() {
     })
     emit('success')
   } catch (err) {
-    const message = err.errors?.[0] || 'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.'
+    const message = err.errors?.[0] || t('auth.registrationFailed')
     if (message.toLowerCase().includes('benutzername')) {
       // Surface username problems inline on the field
       errors.username = message

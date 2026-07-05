@@ -7,6 +7,8 @@ import dev.fkreuzer.shotlog.domain.UserAccount;
 import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
 import dev.fkreuzer.shotlog.repository.SeasonRepository;
 import dev.fkreuzer.shotlog.repository.ShootingPlaceRepository;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,12 +40,14 @@ public class IcsImportService {
     private final SessionService sessionService;
     private final ShootingPlaceRepository shootingPlaceRepository;
     private final SeasonRepository seasonRepository;
+    private final MessageSource messageSource;
 
     public IcsImportService(SessionService sessionService, ShootingPlaceRepository shootingPlaceRepository,
-                            SeasonRepository seasonRepository) {
+                            SeasonRepository seasonRepository, MessageSource messageSource) {
         this.sessionService = sessionService;
         this.shootingPlaceRepository = shootingPlaceRepository;
         this.seasonRepository = seasonRepository;
+        this.messageSource = messageSource;
     }
 
     /**
@@ -52,7 +56,8 @@ public class IcsImportService {
     @Transactional
     public int importFromIcs(InputStream input, UserAccount user) throws IOException {
         Season activeSeason = seasonRepository.findByActiveTrue()
-                .orElseThrow(() -> new IllegalStateException("Es ist keine aktive Saison gesetzt"));
+                .orElseThrow(() -> new IllegalStateException(
+                        messageSource.getMessage("session.noActiveSeason", null, LocaleContextHolder.getLocale())));
         int imported = 0;
         for (Map<String, String> event : parseEvents(input)) {
             Session session = toSession(event, user);

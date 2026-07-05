@@ -27,10 +27,11 @@
 
       <template #end>
         <div class="flex items-center gap-1">
+          <LanguageToggle/>
           <ThemeToggle/>
           <Button
               icon="pi pi-sign-out"
-              label="Logout"
+              :label="$t('nav.logout')"
               severity="secondary"
               text
               @click="handleLogout"
@@ -51,6 +52,7 @@
 
 <script setup>
 import {computed} from 'vue'
+import {useI18n} from 'vue-i18n'
 import {useRouter} from 'vue-router'
 import {useToast} from 'primevue/usetoast'
 import Toast from 'primevue/toast'
@@ -59,7 +61,9 @@ import Button from 'primevue/button'
 import {useAuthStore} from '@/stores/auth'
 import {useNotificationStore} from '@/stores/notifications'
 import ThemeToggle from '@/components/ThemeToggle.vue'
+import LanguageToggle from '@/components/LanguageToggle.vue'
 
+const {t} = useI18n()
 const router = useRouter()
 const auth = useAuthStore()
 const notify = useNotificationStore()
@@ -69,18 +73,18 @@ const toast = useToast()
 notify.register((options) => toast.add(options))
 
 const navLinks = [
-  {to: '/dashboard', label: 'Dashboard'},
-  {to: '/training', label: 'Training'},
-  {to: '/competition', label: 'Wettkampf'},
-  {to: '/settings', label: 'Einstellungen'},
-  {to: '/calender', label: 'Kalender'},
+  {to: '/dashboard', labelKey: 'nav.dashboard'},
+  {to: '/training', labelKey: 'nav.training'},
+  {to: '/competition', labelKey: 'nav.competition'},
+  {to: '/settings', labelKey: 'nav.settings'},
+  {to: '/calender', labelKey: 'nav.calender'},
 ]
 
-const items = computed(() => navLinks.map(l => ({label: l.label, route: l.to})))
+const items = computed(() => navLinks.map(l => ({label: t(l.labelKey), route: l.to})))
 
 async function handleLogout() {
   await auth.logout()
-  notify.success('Sie wurden erfolgreich abgemeldet.')
+  notify.success(t('login.loggedOut'))
   router.push('/login')
 }
 </script>

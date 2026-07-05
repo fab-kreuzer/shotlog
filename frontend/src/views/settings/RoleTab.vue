@@ -58,14 +58,14 @@ onMounted(loadData)
 <template>
   <div class="p-2">
     <div class="flex justify-between items-center mb-6">
-      <h3 class="text-lg font-semibold text-surface-700">Rollenliste</h3>
-      <Button icon="pi pi-plus" label="Rolle" @click="showCreateRoleModal = true"/>
+      <h3 class="text-lg font-semibold text-surface-700">{{ $t('role.listTitle') }}</h3>
+      <Button :label="$t('role.newButton')" icon="pi pi-plus" @click="showCreateRoleModal = true"/>
     </div>
 
     <DataTable :value="roles" class="border border-surface-200 rounded-lg overflow-hidden" dataKey="id" stripedRows>
-      <Column field="id" header="ID" sortable/>
-      <Column field="name" header="Name" sortable/>
-      <Column header="Aktionen">
+      <Column :header="$t('role.id')" field="id" sortable/>
+      <Column :header="$t('common.name')" field="name" sortable/>
+      <Column :header="$t('common.actions')">
         <template #body="{ data }">
           <div class="flex justify-end gap-2">
             <Button icon="pi pi-pencil" rounded severity="info" size="small" text @click="openEditRole(data)"/>
@@ -81,20 +81,20 @@ onMounted(loadData)
       :draggable="false"
       :style="{ width: '28rem' }"
       :visible="!!editingRole"
-      header="Rolle bearbeiten"
+      :header="$t('role.editTitle')"
       modal
       @update:visible="(v) => { if (!v) editingRole = null }"
   >
     <form v-if="editingRole" id="edit-role-form" class="flex flex-col gap-4" @submit.prevent="handleUpdateRole">
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-medium text-surface-700" for="editRoleName">Rollenname</label>
+        <label class="text-sm font-medium text-surface-700" for="editRoleName">{{ $t('role.roleName') }}</label>
         <InputText id="editRoleName" v-model="editingRole.name" fluid required/>
       </div>
     </form>
 
     <template #footer>
-      <Button label="Abbrechen" severity="secondary" text type="button" @click="editingRole = null"/>
-      <Button form="edit-role-form" label="Speichern" type="submit"/>
+      <Button :label="$t('common.cancel')" severity="secondary" text type="button" @click="editingRole = null"/>
+      <Button :label="$t('common.save')" form="edit-role-form" type="submit"/>
     </template>
   </Dialog>
 
@@ -105,9 +105,9 @@ onMounted(loadData)
 
   <ConfirmModal
       v-model="showConfirmRole"
-      confirmText="Ja, löschen"
-      message="Willst du diese Rolle wirklich löschen?"
-      title="Rolle löschen"
+      :confirmText="$t('role.deleteConfirm')"
+      :message="$t('role.deleteMessage')"
+      :title="$t('role.deleteTitle')"
       @confirm="confirmDeleteRole"
   />
 </template>

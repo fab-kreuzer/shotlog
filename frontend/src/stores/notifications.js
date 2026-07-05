@@ -1,9 +1,16 @@
 import {defineStore} from 'pinia'
+import i18n from '@/i18n'
 
 // Maps our internal message types to PrimeVue Toast severities.
 const SEVERITY = {error: 'error', warn: 'warn', success: 'success', info: 'info'}
 
-const SUMMARY = {error: 'Fehler', warn: 'Hinweis', success: 'Erfolg', info: 'Info'}
+// Maps our internal message types to their translation keys.
+const SUMMARY_KEYS = {
+    error: 'notify.summary.error',
+    warn: 'notify.summary.warn',
+    success: 'notify.summary.success',
+    info: 'notify.summary.info'
+}
 
 export const useNotificationStore = defineStore('notifications', () => {
     // A reference to PrimeVue's `toast.add`, registered once from App.vue.
@@ -22,7 +29,7 @@ export const useNotificationStore = defineStore('notifications', () => {
         const severity = SEVERITY[type] || 'info'
         add({
             severity,
-            summary: SUMMARY[type] || SUMMARY.info,
+            summary: i18n.global.t(SUMMARY_KEYS[type] || SUMMARY_KEYS.info),
             detail: message,
             life: duration > 0 ? duration : undefined
         })
@@ -42,7 +49,7 @@ export const useNotificationStore = defineStore('notifications', () => {
 
     const TYPES = ['error', 'warn', 'success', 'info']
 
-    function fromApi(err, fallback = 'Ein Fehler ist aufgetreten') {
+    function fromApi(err, fallback = i18n.global.t('error.generic')) {
         if (typeof err === 'string') {
             show(err, 'error')
             return

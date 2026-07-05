@@ -1,25 +1,25 @@
 <template>
   <form class="flex flex-col gap-5" @submit.prevent="handleLogin">
     <div class="flex flex-col gap-1.5">
-      <label class="text-sm font-medium text-surface-700" for="login-username">Benutzername</label>
+      <label class="text-sm font-medium text-surface-700" for="login-username">{{ $t('auth.username') }}</label>
       <InputText
           id="login-username"
           v-model="username"
           autofocus
           fluid
-          placeholder="Benutzername eingeben"
+          :placeholder="$t('auth.usernamePlaceholder')"
           required
       />
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label class="text-sm font-medium text-surface-700" for="login-password">Passwort</label>
+      <label class="text-sm font-medium text-surface-700" for="login-password">{{ $t('auth.password') }}</label>
       <Password
           v-model="password"
           :feedback="false"
           fluid
           inputId="login-password"
-          placeholder="Passwort eingeben"
+          :placeholder="$t('auth.passwordPlaceholder')"
           required
           toggleMask
       />
@@ -28,7 +28,7 @@
     <Button
         :loading="submitting"
         class="w-full"
-        label="Anmelden"
+        :label="$t('login.signIn')"
         type="submit"
     />
   </form>
@@ -36,6 +36,7 @@
 
 <script setup>
 import {ref} from 'vue'
+import {useI18n} from 'vue-i18n'
 import {useRouter} from 'vue-router'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
@@ -43,6 +44,7 @@ import Button from 'primevue/button'
 import {useAuthStore} from '@/stores/auth'
 import {useNotificationStore} from '@/stores/notifications'
 
+const {t} = useI18n()
 const router = useRouter()
 const auth = useAuthStore()
 const notify = useNotificationStore()
@@ -58,10 +60,10 @@ async function handleLogin() {
     if (success) {
       router.push('/dashboard')
     } else {
-      notify.error('Ungültiger Benutzername oder Passwort.')
+      notify.error(t('auth.invalidCredentials'))
     }
   } catch {
-    notify.error('Ungültiger Benutzername oder Passwort.')
+    notify.error(t('auth.invalidCredentials'))
   } finally {
     submitting.value = false
   }

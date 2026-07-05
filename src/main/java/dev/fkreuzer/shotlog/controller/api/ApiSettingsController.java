@@ -5,6 +5,8 @@ import dev.fkreuzer.shotlog.domain.UserAccount;
 import dev.fkreuzer.shotlog.repository.RoleRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
 import dev.fkreuzer.shotlog.web.ApiResponse;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,13 +23,20 @@ public class ApiSettingsController {
     private final UserAccountRepository userAccountRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MessageSource messageSource;
 
     public ApiSettingsController(UserAccountRepository userAccountRepository,
                                  RoleRepository roleRepository,
-                                 PasswordEncoder passwordEncoder) {
+                                 PasswordEncoder passwordEncoder,
+                                 MessageSource messageSource) {
         this.userAccountRepository = userAccountRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.messageSource = messageSource;
+    }
+
+    private String msg(String key, Object... args) {
+        return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
     // ---- User Management ----
@@ -49,18 +58,18 @@ public class ApiSettingsController {
 
         if (username == null || username.isBlank()) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Benutzername ist erforderlich"));
+                    .body(ApiResponse.error(msg("user.usernameRequired")));
         }
 
         if (displayName == null || displayName.isBlank()) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Anzeigename ist erforderlich"));
+                    .body(ApiResponse.error(msg("user.displayNameRequired")));
         }
 
         if (userAccountRepository.findByUsername(username)
                 .isPresent()) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Benutzername existiert bereits"));
+                    .body(ApiResponse.error(msg("user.usernameExists")));
         }
 
         Set<Role> roles = resolveRoles(body.get("roleIds"));
@@ -74,7 +83,7 @@ public class ApiSettingsController {
 
         userAccountRepository.save(newUser);
         return ResponseEntity.ok()
-                .body(ApiResponse.success("Benutzer \"" + newUser.getDisplayName() + "\" erfolgreich erstellt"));
+                .body(ApiResponse.success(msg("user.created", newUser.getDisplayName())));
     }
 
     @PutMapping("/users/{id}")
@@ -82,7 +91,7 @@ public class ApiSettingsController {
         Optional<UserAccount> userOpt = userAccountRepository.findById(id);
         if (userOpt.isEmpty()) {
             return ResponseEntity.status(404)
-                    .body(ApiResponse.error("Benutzer nicht gefunden"));
+                    .body(ApiResponse.error(msg("user.notFound")));
         }
 
         UserAccount user = userOpt.get();
@@ -91,14 +100,14 @@ public class ApiSettingsController {
             String username = (String) body.get("username");
             if (username == null || username.isBlank()) {
                 return ResponseEntity.badRequest()
-                        .body(ApiResponse.error("Benutzername ist erforderlich"));
+                        .body(ApiResponse.error(msg("user.usernameRequired")));
             }
             Optional<UserAccount> existingUser = userAccountRepository.findByUsername(username);
             if (existingUser.isPresent() && !existingUser.get()
                     .getId()
                     .equals(id)) {
                 return ResponseEntity.badRequest()
-                        .body(ApiResponse.error("Benutzername existiert bereits"));
+                        .body(ApiResponse.error(msg("user.usernameExists")));
             }
             user.setUsername(username);
         }
@@ -107,7 +116,7 @@ public class ApiSettingsController {
             String displayName = (String) body.get("displayName");
             if (displayName == null || displayName.isBlank()) {
                 return ResponseEntity.badRequest()
-                        .body(ApiResponse.error("Anzeigename ist erforderlich"));
+                        .body(ApiResponse.error(msg("user.displayNameRequired")));
             }
             user.setDisplayName(displayName);
         }
@@ -124,7 +133,7 @@ public class ApiSettingsController {
 
         userAccountRepository.save(user);
         return ResponseEntity.ok()
-                .body(ApiResponse.success("Benutzer \"" + user.getDisplayName() + "\" wurde aktualisiert"));
+                .body(ApiResponse.success(msg("user.updated", user.getDisplayName())));
     }
 
     @DeleteMapping("/users/{id}")
@@ -132,11 +141,12 @@ public class ApiSettingsController {
         Optional<UserAccount> userAccounts = userAccountRepository.findById(id);
         if (userAccounts.isEmpty()) {
             return ResponseEntity.status(404)
-                    .body(ApiResponse.error("Benutzer nicht gefunden"));
+                    .body(ApiResponse.error(msg("user.notFound")));
         }
         userAccountRepository.deleteById(id);
         return ResponseEntity.ok()
-                .body(ApiResponse.success("Benutzer \"" + userAccounts.get().getUsername() + "\" erfolgreich gelöscht"));
+                .body(ApiResponse.success(msg("user.deleted", userAccounts.get()
+                        .getUsername())));
     }
 
     // ---- Role Management ----
@@ -161,13 +171,13 @@ public class ApiSettingsController {
         if (roleRepository.findByName(name)
                 .isPresent()) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Rolle existiert bereits"));
+                    .body(ApiResponse.error(msg("role.exists")));
         }
 
         Role role = new Role(name);
         roleRepository.save(role);
         return ResponseEntity.ok()
-                .body(ApiResponse.success("Rolle \"" + role.getName() + "\" erfolgreich erstellt"));
+                .body(ApiResponse.success(msg("role.created", role.getName())));
     }
 
     @PutMapping("/roles/{id}")
@@ -175,7 +185,7 @@ public class ApiSettingsController {
         Optional<Role> roleOpt = roleRepository.findById(id);
         if (roleOpt.isEmpty()) {
             return ResponseEntity.status(404)
-                    .body(ApiResponse.error("Rolle nicht gefunden"));
+                    .body(ApiResponse.error(msg("role.notFound")));
         }
 
         String name = body.get("name");
@@ -184,14 +194,14 @@ public class ApiSettingsController {
                 .getId()
                 .equals(id)) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Rolle existiert bereits"));
+                    .body(ApiResponse.error(msg("role.exists")));
         }
 
         Role role = roleOpt.get();
         role.setName(name);
         roleRepository.save(role);
         return ResponseEntity.ok()
-                .body(ApiResponse.success("Rolle \"" + role.getName() + "\" wurde aktualisiert"));
+                .body(ApiResponse.success(msg("role.updated", role.getName())));
     }
 
     @DeleteMapping("/roles/{id}")
@@ -199,7 +209,7 @@ public class ApiSettingsController {
         Optional<Role> roleToDelete = roleRepository.findById(id);
         if (roleToDelete.isEmpty()) {
             return ResponseEntity.status(404)
-                    .body(ApiResponse.error("Rolle nicht gefunden"));
+                    .body(ApiResponse.error(msg("role.notFound")));
         }
 
         List<UserAccount> usersWithRole = userAccountRepository.findAll()
@@ -212,12 +222,16 @@ public class ApiSettingsController {
 
         if (!usersWithRole.isEmpty()) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Rolle kann nicht gelöscht werden, da sie den Benutzern " + usersWithRole.stream().map(UserAccount::getDisplayName).collect(Collectors.joining(", ")) + " zugewiesen ist"));
+                    .body(ApiResponse.error(msg("role.deleteAssigned",
+                            usersWithRole.stream()
+                                    .map(UserAccount::getDisplayName)
+                                    .collect(Collectors.joining(", ")))));
         }
 
         roleRepository.deleteById(id);
         return ResponseEntity.ok()
-                .body(ApiResponse.success("Rolle \"" + roleToDelete.get().getName() + "\" wurde erfolgreich gelöscht!"));
+                .body(ApiResponse.success(msg("role.deleted", roleToDelete.get()
+                        .getName())));
     }
 
     // ---- Helpers ----

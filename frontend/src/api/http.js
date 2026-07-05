@@ -1,11 +1,12 @@
 import {useNotificationStore} from '@/stores/notifications'
+import i18n from '@/i18n'
 
 const BASE = ''
 
 async function request(method, url, body = null, {notify = true} = {}) {
     const options = {
         method,
-        headers: {},
+        headers: {'Accept-Language': i18n.global.locale.value},
         credentials: 'same-origin'
     }
 
@@ -22,9 +23,10 @@ async function request(method, url, body = null, {notify = true} = {}) {
     const response = await fetch(BASE + url, options)
 
     if (response.status === 401) {
-        const error = {status: 401, message: 'Nicht authentifiziert', _notified: false}
+        const notAuthenticated = i18n.global.t('error.notAuthenticated')
+        const error = {status: 401, message: notAuthenticated, _notified: false}
         if (notify) {
-            useNotificationStore().error('Nicht authentifiziert')
+            useNotificationStore().error(notAuthenticated)
             error._notified = true
         }
         throw error
@@ -87,12 +89,19 @@ export const api = {
         formData.append('password', password)
         return fetch('/api/auth/login', {
             method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept-Language': i18n.global.locale.value
+            },
             body: formData,
             credentials: 'same-origin'
         })
     },
-    logout: () => fetch('/api/auth/logout', {method: 'POST', credentials: 'same-origin'}),
+    logout: () => fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {'Accept-Language': i18n.global.locale.value},
+        credentials: 'same-origin'
+    }),
     me: () => request('GET', '/api/auth/me', null, {notify: false}),
     updateProfile: (data) => request('PUT', '/api/auth/me', data),
 

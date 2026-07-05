@@ -1,0 +1,197 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "training": "Training",
+    "competition": "Competition",
+    "settings": "Settings",
+    "calender": "Calendar",
+    "logout": "Log Out"
+  },
+  "login": {
+    "signInPrompt": "Sign in to continue",
+    "signIn": "Sign In",
+    "signUpPrompt": "Create a new account",
+    "signUp": "Sign Up",
+    "loggedOut": "You have been logged out successfully."
+  },
+  "language": {
+    "switch": "Switch language"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "add": "Add",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading...",
+    "actions": "Actions",
+    "search": "Search",
+    "name": "Name",
+    "description": "Description",
+    "date": "Date",
+    "location": "Location"
+  },
+  "auth": {
+    "username": "Username",
+    "usernamePlaceholder": "Enter username",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "invalidCredentials": "Invalid username or password.",
+    "chooseUsernamePlaceholder": "Choose a username",
+    "displayName": "Display name",
+    "displayNamePlaceholder": "Your display name",
+    "createPasswordPlaceholder": "Create a password",
+    "passwordHint": "At least 6 characters",
+    "confirmPassword": "Confirm password",
+    "repeatPasswordPlaceholder": "Repeat password",
+    "createAccount": "Create account",
+    "registrationFailed": "Registration failed. Please try again."
+  },
+  "validation": {
+    "usernameRequired": "Username is required",
+    "usernameMinLength": "Username must be at least 3 characters long",
+    "displayNameRequired": "Display name is required",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 6 characters long",
+    "confirmPasswordRequired": "Password confirmation is required",
+    "passwordsMismatch": "Passwords do not match"
+  },
+  "confirm": {
+    "message": "Are you sure?"
+  },
+  "error": {
+    "notAuthenticated": "Not authenticated",
+    "generic": "An error occurred"
+  },
+  "notify": {
+    "summary": {
+      "error": "Error",
+      "success": "Success",
+      "warn": "Warning",
+      "info": "Info"
+    }
+  },
+  "session": {
+    "timeClock": "{time}",
+    "total": "Total:",
+    "empty": "No sessions available",
+    "emptyHint": "Create your first session to get started.",
+    "createFirst": "Create first session",
+    "editTitle": "Edit shooting session",
+    "createTitle": "Create new shooting session",
+    "startTime": "Start time",
+    "opponent": "Opponent",
+    "shootingType": "Type of shooting",
+    "season": "Season",
+    "decimalScoring": "Decimal scoring",
+    "homeMatch": "Home match",
+    "seriesLabel": "Series {number}",
+    "testShot": "Test shot",
+    "remove": "Remove",
+    "shotLabel": "Shot {number}",
+    "addSeries": "Add series",
+    "typeTraining": "Training",
+    "typeCompetition": "Competition",
+    "saveError": "Error saving session!",
+    "loadError": "Error loading sessions!",
+    "loadOneError": "Error loading session!",
+    "deleteError": "Error deleting session!"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to ShotLog",
+    "loggedIn": "You are logged in.",
+    "importing": "Importing…",
+    "importDates": "Import appointments",
+    "imported": "{count} appointment imported | {count} appointments imported",
+    "importFailed": "Import failed"
+  },
+  "training": {
+    "title": "Overview of your training sessions",
+    "create": "Create new training"
+  },
+  "competition": {
+    "title": "Overview of your competition sessions",
+    "create": "Create new competition"
+  },
+  "shooting": {
+    "sessionsFound": "{count} session found | {count} sessions found",
+    "season": "Season",
+    "confirmDeleteText": "Yes, delete",
+    "deleteMessage": "Do you really want to delete this entry?",
+    "deleteTitle": "Delete entry"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "subtitle": "All sessions at a glance",
+    "today": "Today"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your profile and system settings",
+    "tabProfile": "Profile",
+    "tabUserManagement": "User Management",
+    "tabRoleManagement": "Role Management",
+    "tabClubManagement": "Club Management"
+  },
+  "profile": {
+    "title": "My Profile",
+    "homeClub": "Home Club",
+    "noHomeClub": "No home club",
+    "activeSeason": "Active Season",
+    "futureNote": "In future versions you will be able to edit your profile here."
+  },
+  "user": {
+    "id": "ID",
+    "username": "Username",
+    "displayName": "Display Name",
+    "password": "Password",
+    "newPassword": "New Password",
+    "passwordKeepHint": "(leave empty to keep)",
+    "roles": "Roles",
+    "selectRoles": "Select roles",
+    "listTitle": "User List",
+    "newButton": "User",
+    "createTitle": "Create New User",
+    "editTitle": "Edit User",
+    "deleteTitle": "Delete User",
+    "deleteMessage": "Do you really want to delete this user?",
+    "deleteConfirm": "Yes, delete",
+    "createError": "User could not be created",
+    "usernameRequired": "Username must not be empty",
+    "usernameMinLength": "Username must be at least 3 characters",
+    "displayNameRequired": "Display name must not be empty",
+    "passwordRequired": "Password must not be empty",
+    "passwordMinLength": "Password must be at least 6 characters"
+  },
+  "role": {
+    "id": "ID",
+    "roleName": "Role Name",
+    "listTitle": "Role List",
+    "newButton": "Role",
+    "createTitle": "Create New Role",
+    "editTitle": "Edit Role",
+    "deleteTitle": "Delete Role",
+    "deleteMessage": "Do you really want to delete this role?",
+    "deleteConfirm": "Yes, delete",
+    "nameRequired": "Please enter a role name."
+  },
+  "club": {
+    "id": "ID",
+    "clubName": "Club Name",
+    "listTitle": "List of All Clubs",
+    "newButton": "New Club",
+    "createTitle": "Create New Club",
+    "editTitle": "Edit Club",
+    "deleteTitle": "Delete Club",
+    "deleteMessage": "Do you really want to delete this club?",
+    "deleteConfirm": "Yes, delete",
+    "nameRequired": "Please enter a club name.",
+    "locationRequired": "Please enter a location."
+  }
+}

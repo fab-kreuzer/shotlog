@@ -2,8 +2,8 @@
   <div>
     <!-- Page header -->
     <div class="mb-8">
-      <h1 class="text-2xl font-bold text-surface-800">Kalender</h1>
-      <p class="mt-1 text-surface-500">Alle Sessions im Überblick</p>
+      <h1 class="text-2xl font-bold text-surface-800">{{ $t('calendar.title') }}</h1>
+      <p class="mt-1 text-surface-500">{{ $t('calendar.subtitle') }}</p>
     </div>
 
     <!-- Calendar -->
@@ -20,11 +20,14 @@
 
 <script setup>
 import {onBeforeUnmount, onMounted, ref} from 'vue'
+import {useI18n} from 'vue-i18n'
 import {Calendar} from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import Card from 'primevue/card'
 import {api} from '@/api/http'
 import SessionModal from '@/components/SessionModal.vue'
+
+const {t} = useI18n()
 
 const calendarEl = ref(null)
 const sessionModal = ref(null)
@@ -61,7 +64,7 @@ onMounted(() => {
     firstDay: 1,
     initialView: 'dayGridMonth',
     buttonText: {
-      today: 'Heute'
+      today: t('calendar.today')
     },
     events: async function (fetchInfo, successCallback, failureCallback) {
       try {

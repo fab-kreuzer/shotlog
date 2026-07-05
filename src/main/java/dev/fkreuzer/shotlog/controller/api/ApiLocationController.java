@@ -5,6 +5,8 @@ import dev.fkreuzer.shotlog.repository.SessionRepository;
 import dev.fkreuzer.shotlog.repository.ShootingPlaceRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
 import dev.fkreuzer.shotlog.web.ApiResponse;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +21,20 @@ public class ApiLocationController {
     private final ShootingPlaceRepository shootingPlaceRepository;
     private final SessionRepository sessionRepository;
     private final UserAccountRepository userAccountRepository;
+    private final MessageSource messageSource;
 
     public ApiLocationController(ShootingPlaceRepository shootingPlaceRepository,
                                  SessionRepository sessionRepository,
-                                 UserAccountRepository userAccountRepository) {
+                                 UserAccountRepository userAccountRepository,
+                                 MessageSource messageSource) {
         this.shootingPlaceRepository = shootingPlaceRepository;
         this.sessionRepository = sessionRepository;
         this.userAccountRepository = userAccountRepository;
+        this.messageSource = messageSource;
+    }
+
+    private String msg(String key, Object... args) {
+        return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
     @GetMapping("/locations")
@@ -41,11 +50,11 @@ public class ApiLocationController {
 
         if (club == null || club.isBlank()) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Clubname ist erforderlich"));
+                    .body(ApiResponse.error(msg("club.nameRequired")));
         }
         if (location == null || location.isBlank()) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Ort ist erforderlich"));
+                    .body(ApiResponse.error(msg("club.locationRequired")));
         }
 
         ShootingPlace place = new ShootingPlace();
@@ -54,7 +63,7 @@ public class ApiLocationController {
         shootingPlaceRepository.save(place);
 
         return ResponseEntity.ok()
-                .body(ApiResponse.success("Der Club \"" + place.getClub() + "\" wurde erstellt."));
+                .body(ApiResponse.success(msg("club.created", place.getClub())));
     }
 
     @PutMapping("/locations/{id}")
@@ -62,7 +71,7 @@ public class ApiLocationController {
         Optional<ShootingPlace> existing = shootingPlaceRepository.findById(id);
         if (existing.isEmpty()) {
             return ResponseEntity.status(404)
-                    .body(ApiResponse.error("Der Club wurde nicht gefunden."));
+                    .body(ApiResponse.error(msg("club.notFound")));
         }
 
         ShootingPlace place = existing.get();
@@ -71,7 +80,7 @@ public class ApiLocationController {
             String club = body.get("club");
             if (club == null || club.isBlank()) {
                 return ResponseEntity.badRequest()
-                        .body(ApiResponse.error("Clubname ist erforderlich"));
+                        .body(ApiResponse.error(msg("club.nameRequired")));
             }
             place.setClub(club.trim());
         }
@@ -80,14 +89,14 @@ public class ApiLocationController {
             String location = body.get("location");
             if (location == null || location.isBlank()) {
                 return ResponseEntity.badRequest()
-                        .body(ApiResponse.error("Ort ist erforderlich"));
+                        .body(ApiResponse.error(msg("club.locationRequired")));
             }
             place.setLocation(location.trim());
         }
 
         shootingPlaceRepository.save(place);
         return ResponseEntity.ok()
-                .body(ApiResponse.success("Der Club \"" + place.getClub() + "\" wurde aktualisiert."));
+                .body(ApiResponse.success(msg("club.updated", place.getClub())));
     }
 
     @DeleteMapping("/locations/{id}")
@@ -101,24 +110,20 @@ public class ApiLocationController {
         long sessionCount = sessionRepository.countByEnemyId(id);
         if (sessionCount > 0) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Der Club \"" + location.get()
-                            .getClub()
-                            + "\" kann nicht gelöscht werden, da er in " + sessionCount
-                            + " Sitzung(en) verwendet wird."));
+                    .body(ApiResponse.error(msg("club.deleteInUseSessions", location.get()
+                            .getClub(), sessionCount)));
         }
 
         long homeClubCount = userAccountRepository.countByHomeClubId(id);
         if (homeClubCount > 0) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Der Club \"" + location.get()
-                            .getClub()
-                            + "\" kann nicht gelöscht werden, da er bei " + homeClubCount
-                            + " Benutzer(n) als Stammverein hinterlegt ist."));
+                    .body(ApiResponse.error(msg("club.deleteInUseHomeClub", location.get()
+                            .getClub(), homeClubCount)));
         }
 
         shootingPlaceRepository.deleteById(id);
         return ResponseEntity.ok()
-                .body(ApiResponse.success("Der Club " + location.get()
-                        .getClub() + " wurde gelöscht."));
+                .body(ApiResponse.success(msg("club.deleted", location.get()
+                        .getClub())));
     }
 }

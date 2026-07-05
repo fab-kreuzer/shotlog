@@ -3,13 +3,11 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
       <div>
-        <h1 class="text-2xl font-bold text-surface-800">Übersicht deiner Training-Sessions</h1>
-        <p class="mt-1 text-surface-500">{{ filteredSessions.length }}
-          Session{{ filteredSessions.length !== 1 ? 's' : '' }}
-          gefunden</p>
+        <h1 class="text-2xl font-bold text-surface-800">{{ $t('training.title') }}</h1>
+        <p class="mt-1 text-surface-500">{{ $t('shooting.sessionsFound', filteredSessions.length) }}</p>
       </div>
       <div class="flex items-center gap-2">
-        Saison:
+        {{ $t('shooting.season') }}:
         <Multiselect
             v-model="selected"
             :fluid="false"
@@ -21,7 +19,7 @@
         <Button
             v-if="sessions.length > 0"
             icon="pi pi-plus"
-            label="Neues Training anlegen"
+            :label="$t('training.create')"
             @click="openCreate"
         />
       </div>
@@ -32,9 +30,9 @@
     <SessionModal ref="sessionModal" @saved="loadSessions"/>
     <ConfirmModal
         v-model="showDeleteConfirm"
-        confirmText="Ja, löschen"
-        message="Willst du diesen Eintrag wirklich löschen?"
-        title="Eintrag löschen"
+        :confirmText="$t('shooting.confirmDeleteText')"
+        :message="$t('shooting.deleteMessage')"
+        :title="$t('shooting.deleteTitle')"
         @confirm="confirmDeleteSession"
     />
   </div>

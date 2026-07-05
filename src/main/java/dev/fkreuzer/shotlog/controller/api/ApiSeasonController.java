@@ -3,6 +3,8 @@ package dev.fkreuzer.shotlog.controller.api;
 import dev.fkreuzer.shotlog.domain.Season;
 import dev.fkreuzer.shotlog.repository.SeasonRepository;
 import dev.fkreuzer.shotlog.web.ApiResponse;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +16,15 @@ import java.util.List;
 public class ApiSeasonController {
 
     private final SeasonRepository seasonRepository;
+    private final MessageSource messageSource;
 
-    public ApiSeasonController(SeasonRepository seasonRepository) {
+    public ApiSeasonController(SeasonRepository seasonRepository, MessageSource messageSource) {
         this.seasonRepository = seasonRepository;
+        this.messageSource = messageSource;
+    }
+
+    private String msg(String key, Object... args) {
+        return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
     @GetMapping("/seasons")
@@ -45,6 +53,6 @@ public class ApiSeasonController {
         target.setActive(true);
         seasonRepository.saveAndFlush(target);
         return ResponseEntity.ok()
-                .body(ApiResponse.success("Die aktive Saison wurde auf " + target.getDescription() + " gesetzt!"));
+                .body(ApiResponse.success(msg("season.activeSet", target.getDescription())));
     }
 }

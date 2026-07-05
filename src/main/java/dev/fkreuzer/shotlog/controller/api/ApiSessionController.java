@@ -8,6 +8,8 @@ import dev.fkreuzer.shotlog.service.IcsImportService;
 import dev.fkreuzer.shotlog.service.SessionService;
 import dev.fkreuzer.shotlog.service.ShootingPlaceService;
 import dev.fkreuzer.shotlog.web.ApiResponse;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,13 +30,20 @@ public class ApiSessionController extends DefaultShotLogController {
     private final ShootingPlaceService shootingPlaceService;
     private final IcsImportService icsImportService;
     private final SeasonRepository seasonRepository;
+    private final MessageSource messageSource;
 
     public ApiSessionController(SessionService sessionService, ShootingPlaceService shootingPlaceService,
-                                IcsImportService icsImportService, SeasonRepository seasonRepository) {
+                                IcsImportService icsImportService, SeasonRepository seasonRepository,
+                                MessageSource messageSource) {
         this.sessionService = sessionService;
         this.shootingPlaceService = shootingPlaceService;
         this.icsImportService = icsImportService;
         this.seasonRepository = seasonRepository;
+        this.messageSource = messageSource;
+    }
+
+    private String msg(String key, Object... args) {
+        return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
     @GetMapping("/sessions")
@@ -84,7 +93,7 @@ public class ApiSessionController extends DefaultShotLogController {
     public ResponseEntity<?> importSessions(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Die Datei ist leer"));
+                    .body(ApiResponse.error(msg("session.importFileEmpty")));
         }
 
         try {
@@ -92,7 +101,7 @@ public class ApiSessionController extends DefaultShotLogController {
             return ResponseEntity.ok(Map.of("imported", imported));
         } catch (IOException e) {
             return ResponseEntity.unprocessableEntity()
-                    .body(ApiResponse.error("Die Datei konnte nicht gelesen werden"));
+                    .body(ApiResponse.error(msg("session.importReadError")));
         } catch (IllegalStateException e) {
             return ResponseEntity.unprocessableEntity()
                     .body(ApiResponse.error(e.getMessage()));

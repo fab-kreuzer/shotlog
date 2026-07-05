@@ -1,4 +1,5 @@
 import {onMounted, ref} from 'vue'
+import {useI18n} from 'vue-i18n'
 import {api} from '@/api/http'
 import {useNotificationStore} from '@/stores/notifications'
 
@@ -9,6 +10,7 @@ import {useNotificationStore} from '@/stores/notifications'
  * create/edit/delete flow.
  */
 export function useSessionList(type) {
+    const {t} = useI18n()
     const notify = useNotificationStore()
 
     const sessions = ref([])
@@ -21,7 +23,7 @@ export function useSessionList(type) {
             sessions.value = await api.getSessionsByType(type.toLowerCase())
         } catch (err) {
             console.error('Error loading sessions:', err)
-            if (!err._notified) notify.error('Fehler beim Laden der Sessions!')
+            if (!err._notified) notify.error(t('session.loadError'))
         }
     }
 
@@ -31,7 +33,7 @@ export function useSessionList(type) {
             sessionModal.value?.openEdit(session)
         } catch (err) {
             console.error('Error loading session:', err)
-            if (!err._notified) notify.error('Fehler beim Laden der Session!')
+            if (!err._notified) notify.error(t('session.loadOneError'))
         }
     }
 
@@ -50,7 +52,7 @@ export function useSessionList(type) {
             await loadSessions()
         } catch (err) {
             console.error('Error deleting session:', err)
-            if (!err._notified) notify.error('Fehler beim Löschen der Session!')
+            if (!err._notified) notify.error(t('session.deleteError'))
         }
     }
 

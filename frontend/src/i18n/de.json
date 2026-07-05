@@ -1,0 +1,197 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "training": "Training",
+    "competition": "Wettkampf",
+    "settings": "Einstellungen",
+    "calender": "Kalender",
+    "logout": "Abmelden"
+  },
+  "login": {
+    "signInPrompt": "Melden Sie sich an, um fortzufahren",
+    "signIn": "Anmelden",
+    "signUpPrompt": "Erstellen Sie ein neues Konto",
+    "signUp": "Registrieren",
+    "loggedOut": "Sie wurden erfolgreich abgemeldet."
+  },
+  "language": {
+    "switch": "Sprache wechseln"
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "add": "Hinzufügen",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "yes": "Ja",
+    "no": "Nein",
+    "loading": "Wird geladen...",
+    "actions": "Aktionen",
+    "search": "Suchen",
+    "name": "Name",
+    "description": "Beschreibung",
+    "date": "Datum",
+    "location": "Ort"
+  },
+  "auth": {
+    "username": "Benutzername",
+    "usernamePlaceholder": "Benutzername eingeben",
+    "password": "Passwort",
+    "passwordPlaceholder": "Passwort eingeben",
+    "invalidCredentials": "Ungültiger Benutzername oder Passwort.",
+    "chooseUsernamePlaceholder": "Benutzername wählen",
+    "displayName": "Anzeigename",
+    "displayNamePlaceholder": "Ihr Anzeigename",
+    "createPasswordPlaceholder": "Passwort erstellen",
+    "passwordHint": "Mindestens 6 Zeichen",
+    "confirmPassword": "Passwort bestätigen",
+    "repeatPasswordPlaceholder": "Passwort wiederholen",
+    "createAccount": "Konto erstellen",
+    "registrationFailed": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut."
+  },
+  "validation": {
+    "usernameRequired": "Benutzername ist erforderlich",
+    "usernameMinLength": "Benutzername muss mindestens 3 Zeichen lang sein",
+    "displayNameRequired": "Anzeigename ist erforderlich",
+    "passwordRequired": "Passwort ist erforderlich",
+    "passwordMinLength": "Passwort muss mindestens 6 Zeichen lang sein",
+    "confirmPasswordRequired": "Passwort-Bestätigung ist erforderlich",
+    "passwordsMismatch": "Passwörter stimmen nicht überein"
+  },
+  "confirm": {
+    "message": "Bist du sicher?"
+  },
+  "error": {
+    "notAuthenticated": "Nicht authentifiziert",
+    "generic": "Ein Fehler ist aufgetreten"
+  },
+  "notify": {
+    "summary": {
+      "error": "Fehler",
+      "success": "Erfolg",
+      "warn": "Hinweis",
+      "info": "Info"
+    }
+  },
+  "session": {
+    "timeClock": "{time} Uhr",
+    "total": "Summe:",
+    "empty": "Keine Sessions verfügbar",
+    "emptyHint": "Erstellen Sie Ihre erste Session, um loszulegen.",
+    "createFirst": "Erste Session anlegen",
+    "editTitle": "Schießabend bearbeiten",
+    "createTitle": "Neuen Schießabend erstellen",
+    "startTime": "Startzeit",
+    "opponent": "Gegner",
+    "shootingType": "Art des Schießens",
+    "season": "Saison",
+    "decimalScoring": "Zehntelwertung",
+    "homeMatch": "Heimwettkampf",
+    "seriesLabel": "Serie {number}",
+    "testShot": "Probe",
+    "remove": "Entfernen",
+    "shotLabel": "Schuss {number}",
+    "addSeries": "Serie hinzufügen",
+    "typeTraining": "Training",
+    "typeCompetition": "Wettkampf",
+    "saveError": "Fehler beim Speichern der Session!",
+    "loadError": "Fehler beim Laden der Sessions!",
+    "loadOneError": "Fehler beim Laden der Session!",
+    "deleteError": "Fehler beim Löschen der Session!"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Willkommen bei ShotLog",
+    "loggedIn": "Sie sind angemeldet.",
+    "importing": "Importiere…",
+    "importDates": "Termine importieren",
+    "imported": "{count} Termin importiert | {count} Termine importiert",
+    "importFailed": "Import fehlgeschlagen"
+  },
+  "training": {
+    "title": "Übersicht deiner Training-Sessions",
+    "create": "Neues Training anlegen"
+  },
+  "competition": {
+    "title": "Übersicht deiner Wettkampf-Sessions",
+    "create": "Neuen Wettkampf anlegen"
+  },
+  "shooting": {
+    "sessionsFound": "{count} Session gefunden | {count} Sessions gefunden",
+    "season": "Saison",
+    "confirmDeleteText": "Ja, löschen",
+    "deleteMessage": "Willst du diesen Eintrag wirklich löschen?",
+    "deleteTitle": "Eintrag löschen"
+  },
+  "calendar": {
+    "title": "Kalender",
+    "subtitle": "Alle Sessions im Überblick",
+    "today": "Heute"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "subtitle": "Verwalten Sie Ihr Profil und Systemeinstellungen",
+    "tabProfile": "Profil",
+    "tabUserManagement": "Benutzerverwaltung",
+    "tabRoleManagement": "Rollenverwaltung",
+    "tabClubManagement": "Clubverwaltung"
+  },
+  "profile": {
+    "title": "Mein Profil",
+    "homeClub": "Stammverein",
+    "noHomeClub": "Kein Stammverein",
+    "activeSeason": "Aktive Saison",
+    "futureNote": "In zukünftigen Versionen können Sie hier Ihr Profil bearbeiten."
+  },
+  "user": {
+    "id": "ID",
+    "username": "Benutzername",
+    "displayName": "Anzeigename",
+    "password": "Passwort",
+    "newPassword": "Neues Passwort",
+    "passwordKeepHint": "(leer lassen, um beizubehalten)",
+    "roles": "Rollen",
+    "selectRoles": "Rollen auswählen",
+    "listTitle": "Benutzerliste",
+    "newButton": "Benutzer",
+    "createTitle": "Neuen Benutzer erstellen",
+    "editTitle": "Benutzer bearbeiten",
+    "deleteTitle": "Benutzer löschen",
+    "deleteMessage": "Willst du diesen Benutzer wirklich löschen?",
+    "deleteConfirm": "Ja, löschen",
+    "createError": "Benutzer konnte nicht erstellt werden",
+    "usernameRequired": "Benutzername darf nicht leer sein",
+    "usernameMinLength": "Benutzername muss mindestens 3 Zeichen haben",
+    "displayNameRequired": "Anzeigename darf nicht leer sein",
+    "passwordRequired": "Passwort darf nicht leer sein",
+    "passwordMinLength": "Passwort muss mindestens 6 Zeichen haben"
+  },
+  "role": {
+    "id": "ID",
+    "roleName": "Rollenname",
+    "listTitle": "Rollenliste",
+    "newButton": "Rolle",
+    "createTitle": "Neue Rolle erstellen",
+    "editTitle": "Rolle bearbeiten",
+    "deleteTitle": "Rolle löschen",
+    "deleteMessage": "Willst du diese Rolle wirklich löschen?",
+    "deleteConfirm": "Ja, löschen",
+    "nameRequired": "Bitte geben Sie einen Rollennamen ein."
+  },
+  "club": {
+    "id": "ID",
+    "clubName": "Clubname",
+    "listTitle": "Liste aller Clubs",
+    "newButton": "Neuer Club",
+    "createTitle": "Neuen Club erstellen",
+    "editTitle": "Club bearbeiten",
+    "deleteTitle": "Club löschen",
+    "deleteMessage": "Willst du diesen Club wirklich löschen?",
+    "deleteConfirm": "Ja, löschen",
+    "nameRequired": "Bitte geben Sie einen Clubnamen ein.",
+    "locationRequired": "Bitte geben Sie einen Ort ein."
+  }
+}

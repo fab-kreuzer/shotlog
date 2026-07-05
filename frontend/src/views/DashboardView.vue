@@ -2,19 +2,19 @@
   <div>
     <!-- Page header -->
     <div class="mb-8">
-      <h1 class="text-2xl font-bold text-surface-800">Dashboard</h1>
-      <p class="mt-1 text-surface-500">Willkommen bei ShotLog</p>
+      <h1 class="text-2xl font-bold text-surface-800">{{ $t('dashboard.title') }}</h1>
+      <p class="mt-1 text-surface-500">{{ $t('dashboard.welcome') }}</p>
     </div>
 
     <!-- Content card -->
     <Card>
       <template #content>
         <div class="flex items-center justify-between">
-          <p class="text-surface-600">You are logged in.</p>
+          <p class="text-surface-600">{{ $t('dashboard.loggedIn') }}</p>
           <FileUpload
               ref="uploader"
               :auto="true"
-              :chooseLabel="importing ? 'Importiere…' : 'Termine importieren'"
+              :chooseLabel="importing ? t('dashboard.importing') : t('dashboard.importDates')"
               :disabled="importing"
               accept=".ics"
               customUpload
@@ -29,11 +29,13 @@
 
 <script setup>
 import {ref} from 'vue'
+import {useI18n} from 'vue-i18n'
 import Card from 'primevue/card'
 import FileUpload from 'primevue/fileupload'
 import {api} from '@/api/http'
 import {useNotificationStore} from '@/stores/notifications'
 
+const {t} = useI18n()
 const notify = useNotificationStore()
 
 const uploader = ref(null)
@@ -47,9 +49,9 @@ async function onUpload(event) {
   try {
     const result = await api.importSessions(file)
     const count = result?.imported ?? 0
-    notify.success(`${count} Termin${count === 1 ? '' : 'e'} importiert`)
+    notify.success(t('dashboard.imported', {count}, count))
   } catch (err) {
-    if (!err._notified) notify.error('Import fehlgeschlagen')
+    if (!err._notified) notify.error(t('dashboard.importFailed'))
   } finally {
     importing.value = false
     uploader.value?.clear()

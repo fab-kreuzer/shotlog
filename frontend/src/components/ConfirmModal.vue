@@ -10,7 +10,7 @@
     <p class="text-sm text-surface-500">{{ message }}</p>
 
     <template #footer>
-      <Button label="Abbrechen" severity="secondary" text @click="cancel"/>
+      <Button :label="$t('common.cancel')" severity="secondary" text @click="cancel"/>
       <Button :label="confirmText" severity="danger" @click="confirm"/>
     </template>
   </Dialog>
@@ -19,20 +19,21 @@
 <script setup>
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
+import i18n from '@/i18n'
 
 defineProps({
   modelValue: Boolean,
   title: {
     type: String,
-    default: 'Bestätigen'
+    default: () => i18n.global.t('common.confirm')
   },
   message: {
     type: String,
-    default: 'Bist du sicher?'
+    default: () => i18n.global.t('confirm.message')
   },
   confirmText: {
     type: String,
-    default: 'Löschen'
+    default: () => i18n.global.t('common.delete')
   }
 })
 

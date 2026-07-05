@@ -2,18 +2,18 @@
   <div>
     <!-- Page header -->
     <div class="mb-8">
-      <h1 class="text-2xl font-bold text-surface-800">Einstellungen</h1>
-      <p class="mt-1 text-surface-500">Verwalten Sie Ihr Profil und Systemeinstellungen</p>
+      <h1 class="text-2xl font-bold text-surface-800">{{ $t('settings.title') }}</h1>
+      <p class="mt-1 text-surface-500">{{ $t('settings.subtitle') }}</p>
     </div>
 
     <Card>
       <template #content>
         <Tabs v-model:value="activeTab">
           <TabList>
-            <Tab value="profile">Profil</Tab>
-            <Tab v-if="auth.isAdmin" value="user-management">Benutzerverwaltung</Tab>
-            <Tab v-if="auth.isAdmin" value="role-management">Rollenverwaltung</Tab>
-            <Tab v-if="auth.isAdmin" value="club-management">Clubverwaltung</Tab>
+            <Tab value="profile">{{ $t('settings.tabProfile') }}</Tab>
+            <Tab v-if="auth.isAdmin" value="user-management">{{ $t('settings.tabUserManagement') }}</Tab>
+            <Tab v-if="auth.isAdmin" value="role-management">{{ $t('settings.tabRoleManagement') }}</Tab>
+            <Tab v-if="auth.isAdmin" value="club-management">{{ $t('settings.tabClubManagement') }}</Tab>
           </TabList>
           <TabPanels>
             <TabPanel value="profile">
