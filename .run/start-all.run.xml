@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="start-all" type="CompoundRunConfigurationType">
+        <toRun name="ShotLog - Frontend" type="js.build_tools.npm"/>
+        <toRun name="ShotLog - Backend" type="SpringBootApplicationConfigurationType"/>
+        <method v="2"/>
+    </configuration>
+</component>
