@@ -107,9 +107,14 @@
                 }}</label>
               <InputNumber
                   v-model="shot.value"
+                  :min="0.0"
+                  :minFractionDigits="1"
+                  :step="0.1"
+                  inputId="minmax-buttons"
+                  mode="decimal"
                   :max="10.9"
+                  showButtons
                   :maxFractionDigits="1"
-                  :min="0"
                   fluid
               />
             </div>
