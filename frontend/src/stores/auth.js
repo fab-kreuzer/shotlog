@@ -7,9 +7,15 @@ export const useAuthStore = defineStore('auth', () => {
     const loading = ref(true)
 
     const isLoggedIn = computed(() => user.value !== null)
+
     const isAdmin = computed(() => {
         if (!user.value) return false
-        return user.value.authorities && user.value.authorities.includes('ROLE_ADMIN')
+        return user.value.authorities?.includes('ROLE_ADMIN')
+    })
+
+    const isSportLeader = computed(() => {
+        if (!user.value) return false
+        return user.value.authorities?.includes('ROLE_SPORT_LEADER')
     })
 
     async function fetchUser() {
@@ -37,5 +43,5 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = null
     }
 
-    return {user, loading, isLoggedIn, isAdmin, fetchUser, login, logout}
+    return {user, loading, isLoggedIn, isAdmin, isSportLeader, fetchUser, login, logout}
 })

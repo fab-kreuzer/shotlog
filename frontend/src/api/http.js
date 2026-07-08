@@ -140,4 +140,8 @@ export const api = {
     //Seaons
     getSeasons: () => request('GET', '/api/seasons'),
     setActiveSeason: (id) => request('PUT', `/api/seasons/${id}/active`),
+
+    //Teams
+    getTeams: () => request('GET', '/api/teams'),
+    createTeam: (data) => request('POST', '/api/teams', data),
 }

@@ -1,10 +1,12 @@
 package dev.fkreuzer.shotlog.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,10 @@ public class UserAccount {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "home_club")
     private ShootingPlace homeClub;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<UserTeam> teams;
 
     public UserAccount(String username, String passwordHash, Set<Role> roles) {
         this.username = username;

@@ -14,6 +14,10 @@
             <Tab v-if="auth.isAdmin" value="user-management">{{ $t('settings.tabUserManagement') }}</Tab>
             <Tab v-if="auth.isAdmin" value="role-management">{{ $t('settings.tabRoleManagement') }}</Tab>
             <Tab v-if="auth.isAdmin" value="club-management">{{ $t('settings.tabClubManagement') }}</Tab>
+            <Tab v-if="auth.isAdmin || auth.isSportLeader" value="team-management">{{
+                $t('settings.tabTeamManagement')
+              }}
+            </Tab>
           </TabList>
           <TabPanels>
             <TabPanel value="profile">
@@ -27,6 +31,9 @@
             </TabPanel>
             <TabPanel v-if="auth.isAdmin" value="club-management">
               <ClubManagementTab/>
+            </TabPanel>
+            <TabPanel v-if="auth.isAdmin || auth.isSportLeader" value="team-management">
+              <TeamTab/>
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -49,6 +56,7 @@ import ProfileTab from './ProfileTab.vue'
 import UserTab from "@/views/settings/UserTab.vue";
 import RoleTab from "@/views/settings/RoleTab.vue";
 import ClubManagementTab from "@/views/settings/ClubManagementTab.vue";
+import TeamTab from "@/views/settings/TeamTab.vue";
 
 const auth = useAuthStore()
 const activeTab = ref('profile')
