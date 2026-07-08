@@ -34,7 +34,8 @@
     "name": "Name",
     "description": "Beschreibung",
     "date": "Datum",
-    "location": "Ort"
+    "location": "Ort",
+    "noData": "Keine Daten verfügbar"
   },
   "auth": {
     "username": "Benutzername",
@@ -137,14 +138,17 @@
     "tabProfile": "Profil",
     "tabUserManagement": "Benutzerverwaltung",
     "tabRoleManagement": "Rollenverwaltung",
-    "tabClubManagement": "Clubverwaltung"
+    "tabClubManagement": "Clubverwaltung",
+    "tabTeamManagement": "Mannschaften"
   },
   "profile": {
     "title": "Mein Profil",
     "homeClub": "Stammverein",
     "noHomeClub": "Kein Stammverein",
     "activeSeason": "Aktive Saison",
-    "futureNote": "In zukünftigen Versionen können Sie hier Ihr Profil bearbeiten."
+    "futureNote": "In zukünftigen Versionen können Sie hier Ihr Profil bearbeiten.",
+    "myTeams": "Meine Mannschaften",
+    "noTeams": "Sie sind keiner Mannschaft zugewiesen"
   },
   "user": {
     "id": "ID",
@@ -193,5 +197,28 @@
     "deleteConfirm": "Ja, löschen",
     "nameRequired": "Bitte geben Sie einen Clubnamen ein.",
     "locationRequired": "Bitte geben Sie einen Ort ein."
+  },
+  "team": {
+    "listTitle": "Alle Mannschaften",
+    "newButton": "Neue Mannschaft",
+    "createTitle": "Neue Mannschaft erstellen",
+    "nameLabel": "Mannschaftsname",
+    "namePlaceholder": "Mannschaftsnamen eingeben...",
+    "addMemberTitle": "Mitglied zu {teamName} hinzufügen",
+    "searchPlaceholder": "Nach Name oder Benutzername suchen...",
+    "noUsersFound": "Keine Benutzer gefunden",
+    "allUsersMembersMessage": "Alle Benutzer sind bereits Mitglieder",
+    "memberSingular": "Mitglied",
+    "memberPlural": "Mitglieder",
+    "deleteTitle": "Mannschaft löschen",
+    "deleteMessage": "Wenn Sie diese Mannschaft löschen, werden alle Mitglieder aus ihr entfernt. Sind Sie sicher?",
+    "deleteConfirm": "Ja, löschen",
+    "removeMemberTitle": "Mitglied entfernen",
+    "removeMemberMessage": "Sind Sie sicher, dass Sie {userName} aus der Mannschaft entfernen möchten?",
+    "removeMemberConfirm": "Ja, entfernen",
+    "teamCreated": "Mannschaft erfolgreich erstellt",
+    "teamDeleted": "Mannschaft erfolgreich gelöscht",
+    "memberAdded": "Mitglied zur Mannschaft hinzugefügt",
+    "memberRemoved": "Mitglied aus der Mannschaft entfernt"
   }
 }

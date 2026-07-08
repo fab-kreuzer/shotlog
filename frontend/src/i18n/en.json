@@ -34,7 +34,8 @@
     "name": "Name",
     "description": "Description",
     "date": "Date",
-    "location": "Location"
+    "location": "Location",
+    "noData": "No data available"
   },
   "auth": {
     "username": "Username",
@@ -137,14 +138,17 @@
     "tabProfile": "Profile",
     "tabUserManagement": "User Management",
     "tabRoleManagement": "Role Management",
-    "tabClubManagement": "Club Management"
+    "tabClubManagement": "Club Management",
+    "tabTeamManagement": "Team Management"
   },
   "profile": {
     "title": "My Profile",
     "homeClub": "Home Club",
     "noHomeClub": "No home club",
     "activeSeason": "Active Season",
-    "futureNote": "In future versions you will be able to edit your profile here."
+    "futureNote": "In future versions you will be able to edit your profile here.",
+    "myTeams": "My Teams",
+    "noTeams": "You are not assigned to any team"
   },
   "user": {
     "id": "ID",
@@ -193,5 +197,28 @@
     "deleteConfirm": "Yes, delete",
     "nameRequired": "Please enter a club name.",
     "locationRequired": "Please enter a location."
+  },
+  "team": {
+    "listTitle": "All Teams",
+    "newButton": "New Team",
+    "createTitle": "Create New Team",
+    "nameLabel": "Team Name",
+    "namePlaceholder": "Enter team name...",
+    "addMemberTitle": "Add member to {teamName}",
+    "searchPlaceholder": "Search by name or username...",
+    "noUsersFound": "No users found",
+    "allUsersMembersMessage": "All users are already members",
+    "memberSingular": "member",
+    "memberPlural": "members",
+    "deleteTitle": "Delete team",
+    "deleteMessage": "If you delete this team, all members will be removed from it. Are you sure?",
+    "deleteConfirm": "Yes, delete",
+    "removeMemberTitle": "Remove member",
+    "removeMemberMessage": "Are you sure you want to remove {userName} from the team?",
+    "removeMemberConfirm": "Yes, remove",
+    "teamCreated": "Team created successfully",
+    "teamDeleted": "Team deleted successfully",
+    "memberAdded": "Member added to team",
+    "memberRemoved": "Member removed from team"
   }
 }
