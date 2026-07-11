@@ -11,7 +11,7 @@
           v-if="sessions.length > 0"
           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-primary-700 hover:bg-primary-800 shadow-sm transition-colors"
           type="button"
-          @click="sessionModal?.openCreate(props.type)"
+          @click="modalForType(props.type)?.openCreate()"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -132,7 +132,7 @@
       <button
           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-primary-700 hover:bg-primary-800 shadow-sm transition-colors"
           type="button"
-          @click="sessionModal?.openCreate(props.type)"
+          @click="modalForType(props.type)?.openCreate()"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -141,8 +141,9 @@
       </button>
     </div>
 
-    <!-- Session Modal -->
-    <SessionModal ref="sessionModal" @saved="loadSessions"/>
+    <!-- Session Modals (one per type; the matching one opens per session type) -->
+    <TrainingSessionModal ref="trainingModal" @saved="loadSessions"/>
+    <CompetitionSessionModal ref="competitionModal" @saved="loadSessions"/>
     <ConfirmModal
         v-model="showDeleteSessionConfirm"
         confirmText="Ja, löschen"
@@ -156,7 +157,8 @@
 <script setup>
 import {computed, onMounted, ref, watch} from 'vue'
 import {api} from '@/api/http'
-import SessionModal from '@/components/SessionModal.vue'
+import TrainingSessionModal from '@/components/session/TrainingSessionModal.vue'
+import CompetitionSessionModal from '@/components/session/CompetitionSessionModal.vue'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 import {useNotificationStore} from '@/stores/notifications'
 
@@ -171,7 +173,12 @@ const showDeleteSessionConfirm = ref(false)
 const sessionToDelete = ref(null)
 
 const sessions = ref([])
-const sessionModal = ref(null)
+const trainingModal = ref(null)
+const competitionModal = ref(null)
+
+function modalForType(type) {
+  return type === 'COMPETITION' ? competitionModal.value : trainingModal.value
+}
 
 const typeLabel = computed(() => props.type === 'COMPETITION' ? 'Wettkampf' : 'Training')
 
@@ -198,7 +205,7 @@ async function loadSessions() {
 async function editSession(id) {
   try {
     const session = await api.getSession(id)
-    sessionModal.value?.openEdit(session)
+    modalForType(session.sessionType)?.openEdit(session)
   } catch (err) {
     console.error('Error loading session:', err)
     if (!err._notified) notify.error('Fehler beim Laden der Session!')

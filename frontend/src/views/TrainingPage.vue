@@ -27,7 +27,7 @@
 
     <SessionGrid :sessions="filteredSessions" @create="openCreate" @delete="handleDelete" @edit="editSession"/>
 
-    <SessionModal ref="sessionModal" @saved="loadSessions"/>
+    <TrainingSessionModal ref="sessionModal" @saved="loadSessions"/>
     <ConfirmModal
         v-model="showDeleteConfirm"
         :confirmText="$t('shooting.confirmDeleteText')"
@@ -40,7 +40,7 @@
 
 <script setup>
 import SessionGrid from '@/components/SessionGrid.vue'
-import SessionModal from '@/components/SessionModal.vue'
+import TrainingSessionModal from '@/components/session/TrainingSessionModal.vue'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 import {useSessionList} from '@/composables/useSessionList'
 import {useSeasonFilter} from '@/composables/useSeasonFilter'
