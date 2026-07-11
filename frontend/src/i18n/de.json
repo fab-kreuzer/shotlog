@@ -171,7 +171,8 @@
     "usernameMinLength": "Benutzername muss mindestens 3 Zeichen haben",
     "displayNameRequired": "Anzeigename darf nicht leer sein",
     "passwordRequired": "Passwort darf nicht leer sein",
-    "passwordMinLength": "Passwort muss mindestens 6 Zeichen haben"
+    "passwordMinLength": "Passwort muss mindestens 6 Zeichen haben",
+    "teams": "Zugehörige Mannschaften"
   },
   "role": {
     "id": "ID",

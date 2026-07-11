@@ -71,10 +71,23 @@ public class ApiTeamController {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
 
-        UserAccount user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        UserTeam membership = team.getUserTeams()
+                .stream()
+                .filter(ut -> ut.getUser()
+                        .getId()
+                        .equals(userId))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not a member of this team"));
 
-        userTeamRepository.deleteByUserAndTeam(user, team);
+        // Both Team.userTeams and UserAccount.teams cascade with orphanRemoval and
+        // are eagerly loaded. The join row is only deleted if it is orphaned on
+        // BOTH sides; leaving it referenced by the user's collection makes
+        // Hibernate re-persist it at flush, so we detach it from both parents.
+        team.getUserTeams()
+                .remove(membership);
+        membership.getUser()
+                .getTeams()
+                .remove(membership);
     }
 
     @DeleteMapping("/teams/{teamId}")

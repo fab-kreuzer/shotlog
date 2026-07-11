@@ -1,10 +1,13 @@
 package dev.fkreuzer.shotlog.service;
 
+import dev.fkreuzer.shotlog.domain.Season;
 import dev.fkreuzer.shotlog.domain.Session;
 import dev.fkreuzer.shotlog.domain.ShootingPlace;
 import dev.fkreuzer.shotlog.domain.UserAccount;
 import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
+import dev.fkreuzer.shotlog.repository.SeasonRepository;
 import dev.fkreuzer.shotlog.repository.ShootingPlaceRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -19,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,8 +37,16 @@ class IcsImportServiceTest {
     @Mock
     private ShootingPlaceRepository shootingPlaceRepository;
 
+    @Mock
+    private SeasonRepository seasonRepository;
+
     @InjectMocks
     private IcsImportService service;
+
+    @BeforeEach
+    void setUpActiveSeason() {
+        when(seasonRepository.findByActiveTrue()).thenReturn(Optional.of(new Season("2024")));
+    }
 
     private UserAccount user() {
         return new UserAccount("user", "hash", Set.of());

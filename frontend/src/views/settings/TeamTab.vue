@@ -77,6 +77,9 @@ async function addMemberToTeam(user) {
       role: 'MEMBER'
     }
     selectedTeamForAdd.value.userTeams.push(userTeamItem)
+    if (user.id === auth.user?.id) {
+      await auth.fetchUser()
+    }
     showAddMemberDialog.value = false
     notification.success(t('team.memberAdded'))
   } catch (error) {
@@ -98,6 +101,9 @@ function handleDeleteRole(userTeam, teamId) {
         const team = teams.value.find(tm => tm.id === teamId)
         if (team) {
           team.userTeams = team.userTeams.filter(ut => ut.user.id !== userTeam.id)
+        }
+        if (userTeam.id === auth.user?.id) {
+          await auth.fetchUser()
         }
         notification.success(t('team.memberRemoved'))
       } catch (error) {

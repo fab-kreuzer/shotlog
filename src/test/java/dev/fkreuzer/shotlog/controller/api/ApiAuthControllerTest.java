@@ -5,12 +5,14 @@ import dev.fkreuzer.shotlog.domain.UserAccount;
 import dev.fkreuzer.shotlog.repository.RoleRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
 import dev.fkreuzer.shotlog.security.SecurityUser;
+import dev.fkreuzer.shotlog.service.ShootingPlaceService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +37,12 @@ class ApiAuthControllerTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private ShootingPlaceService shootingPlaceService;
+
+    @Mock
+    private MessageSource messageSource;
 
     @InjectMocks
     private ApiAuthController controller;
