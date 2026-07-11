@@ -6,7 +6,9 @@ import {useNotificationStore} from '@/stores/notifications'
 import {api} from '@/api/http'
 import Button from "primevue/button";
 import Accordion from "primevue/accordion";
-import AccordionTab from "primevue/accordiontab";
+import AccordionPanel from "primevue/accordionpanel";
+import AccordionHeader from "primevue/accordionheader";
+import AccordionContent from "primevue/accordioncontent";
 import Dialog from "primevue/dialog";
 import ConfirmDialog from "primevue/confirmdialog";
 import {useConfirm} from "primevue/useconfirm";
@@ -162,8 +164,8 @@ onMounted(loadData)
       <Button :label="$t('team.newButton')" icon="pi pi-plus" @click="openCreateTeamDialog()"/>
     </div>
     <Accordion class="border border-surface-200 rounded-lg overflow-hidden">
-      <AccordionTab v-for="team in teams" :key="team.id">
-        <template #header>
+      <AccordionPanel v-for="team in teams" :key="team.id" :value="String(team.id)">
+        <AccordionHeader>
           <div class="flex justify-between items-center w-full pr-4">
             <div class="flex-1">
               <span class="font-semibold">{{ team.name }}</span>
@@ -181,7 +183,8 @@ onMounted(loadData)
                       @click.stop="deleteTeam(team)"/>
             </div>
           </div>
-        </template>
+        </AccordionHeader>
+        <AccordionContent>
         <div class="space-y-4">
           <div v-if="team.userTeams && team.userTeams.length > 0" class="space-y-2">
             <div v-for="userTeam in team.userTeams" :key="`${team.id}-${userTeam.user.id}`"
@@ -203,7 +206,8 @@ onMounted(loadData)
             {{ $t('common.noData') }}
           </div>
         </div>
-      </AccordionTab>
+        </AccordionContent>
+      </AccordionPanel>
     </Accordion>
 
     <Dialog v-model:visible="showAddMemberDialog"
