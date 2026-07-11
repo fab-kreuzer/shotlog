@@ -171,7 +171,8 @@
     "usernameMinLength": "Username must be at least 3 characters",
     "displayNameRequired": "Display name must not be empty",
     "passwordRequired": "Password must not be empty",
-    "passwordMinLength": "Password must be at least 6 characters"
+    "passwordMinLength": "Password must be at least 6 characters",
+    "teams": "Assigned teams"
   },
   "role": {
     "id": "ID",

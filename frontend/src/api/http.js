@@ -124,11 +124,11 @@ export const api = {
     updateLocation: (id, data) => request('PUT', `/api/locations/${id}`, data),
     deleteLocation: (id) => request('DELETE', `/api/locations/${id}`),
 
-    // Settings - Users
-    getUsers: () => request('GET', '/api/settings/users'),
-    createUser: (data) => request('POST', '/api/settings/users', data),
-    updateUser: (id, data) => request('PUT', `/api/settings/users/${id}`, data),
-    deleteUser: (id) => request('DELETE', `/api/settings/users/${id}`),
+    // Users
+    getUsers: () => request('GET', '/api/users'),
+    createUser: (data) => request('POST', '/api/users', data),
+    updateUser: (id, data) => request('PUT', `/api/users/${id}`, data),
+    deleteUser: (id) => request('DELETE', `/api/users/${id}`),
 
     // Settings - Roles
     getRoles: () => request('GET', '/api/settings/roles'),
