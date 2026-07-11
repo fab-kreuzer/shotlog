@@ -13,8 +13,9 @@
       </template>
     </Card>
 
-    <!-- Session Modal -->
-    <SessionModal ref="sessionModal" @saved="refreshCalendar"/>
+    <!-- Session Modals (one per type; the matching one opens on edit) -->
+    <TrainingSessionModal ref="trainingModal" @saved="refreshCalendar"/>
+    <CompetitionSessionModal ref="competitionModal" @saved="refreshCalendar"/>
   </div>
 </template>
 
@@ -25,13 +26,19 @@ import {Calendar} from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import Card from 'primevue/card'
 import {api} from '@/api/http'
-import SessionModal from '@/components/SessionModal.vue'
+import TrainingSessionModal from '@/components/session/TrainingSessionModal.vue'
+import CompetitionSessionModal from '@/components/session/CompetitionSessionModal.vue'
 
 const {t} = useI18n()
 
 const calendarEl = ref(null)
-const sessionModal = ref(null)
+const trainingModal = ref(null)
+const competitionModal = ref(null)
 let calendar = null
+
+function modalForType(type) {
+  return type === 'COMPETITION' ? competitionModal.value : trainingModal.value
+}
 
 function colorForSessionType(type) {
   switch (type) {
@@ -90,7 +97,7 @@ onMounted(() => {
       const sessionId = info.event.id
       try {
         const session = await api.getSession(sessionId)
-        sessionModal.value?.openEdit(session)
+        modalForType(session.sessionType)?.openEdit(session)
       } catch (err) {
         console.error('Error fetching session:', err)
       }
