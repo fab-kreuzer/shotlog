@@ -14,6 +14,7 @@ import ConfirmDialog from "primevue/confirmdialog";
 import {useConfirm} from "primevue/useconfirm";
 import InputGroup from "primevue/inputgroup";
 import InputText from "primevue/inputtext";
+import Select from "primevue/select";
 
 const auth = useAuthStore()
 const confirm = useConfirm()
@@ -22,11 +23,21 @@ const notification = useNotificationStore()
 
 const teams = ref([])
 const allUsers = ref([])
+const teamRoles = ref([])
 const showAddMemberDialog = ref(false)
 const selectedTeamForAdd = ref(null)
+const selectedRole = ref('MEMBER')
 const searchQuery = ref('')
 const showCreateTeamDialog = ref(false)
 const newTeamName = ref('')
+
+const roleLabels = computed(() =>
+    Object.fromEntries(teamRoles.value.map(role => [role.name, role.type]))
+)
+
+function roleLabel(role) {
+  return roleLabels.value[role] ?? role
+}
 
 const filteredUsers = computed(() => {
   if (!selectedTeamForAdd.value) return []
@@ -52,6 +63,7 @@ async function loadData() {
   try {
     teams.value = await api.getTeams()
     allUsers.value = await api.getUsers()
+    teamRoles.value = await api.getTeamRoles()
     console.log('teams data loaded')
     console.log(teams.value)
   } catch (error) {
@@ -62,6 +74,7 @@ async function loadData() {
 function openAddMemberDialog(team) {
   selectedTeamForAdd.value = team
   searchQuery.value = ''
+  selectedRole.value = 'MEMBER'
   showAddMemberDialog.value = true
 }
 
@@ -71,12 +84,12 @@ async function addMemberToTeam(user) {
   try {
     await api.post(`/api/teams/${selectedTeamForAdd.value.id}/members`, {
       userId: user.id,
-      role: 'MEMBER'
+      role: selectedRole.value
     })
 
     const userTeamItem = {
       user,
-      role: 'MEMBER'
+      role: selectedRole.value
     }
     selectedTeamForAdd.value.userTeams.push(userTeamItem)
     if (user.id === auth.user?.id) {
@@ -195,7 +208,7 @@ onMounted(loadData)
               </div>
               <div class="flex items-center gap-3">
                 <span class="px-3 py-1 bg-primary-100 text-primary-800 rounded text-sm font-medium">{{
-                    userTeam.role
+                    roleLabel(userTeam.role)
                   }}</span>
                 <Button icon="pi pi-trash" rounded severity="danger" size="small" text
                         @click="handleDeleteRole(userTeam.user, team.id)"/>
@@ -213,6 +226,11 @@ onMounted(loadData)
     <Dialog v-model:visible="showAddMemberDialog"
             :header="$t('team.addMemberTitle', {teamName: selectedTeamForAdd?.name})" modal>
       <div class="space-y-4">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700">{{ $t('team.roleLabel') }}</label>
+          <Select v-model="selectedRole" :options="teamRoles" optionLabel="type" optionValue="name"
+                  :placeholder="$t('team.roleLabel')" fluid/>
+        </div>
         <InputGroup>
           <InputText v-model="searchQuery" :placeholder="$t('team.searchPlaceholder')"/>
           <Button icon="pi pi-search"/>

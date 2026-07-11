@@ -28,7 +28,7 @@
         <span class="text-sm text-surface-500 w-32">{{ $t('user.teams') }}:</span>
         <div class="flex flex-wrap gap-1.5">
           <template v-if="auth.user?.teams?.length">
-            <Tag v-for="(team, i) in auth.user.teams" :key="i" :value="`${team.name} - ${team.role}`" severity="info"/>
+            <Tag v-for="(team, i) in auth.user.teams" :key="i" :value="`${team.name} - ${roleLabel(team.role)}`" severity="info"/>
           </template>
           <span v-else class="text-sm text-surface-500">{{ $t('profile.noTeams') }}</span>
         </div>
@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import Select from 'primevue/select'
 import Tag from 'primevue/tag'
 import {useAuthStore} from '@/stores/auth'
@@ -89,6 +89,15 @@ const saving = ref(false)
 const seasons = ref([])
 const activeSeasonId = ref(null)
 const savingSeason = ref(false)
+
+const teamRoles = ref([])
+const roleLabels = computed(() =>
+    Object.fromEntries(teamRoles.value.map(role => [role.name, role.type]))
+)
+
+function roleLabel(role) {
+  return roleLabels.value[role] ?? role
+}
 
 async function saveHomeClub() {
   saving.value = true
@@ -125,6 +134,11 @@ onMounted(async () => {
     activeSeasonId.value = seasons.value.find(s => s.active)?.id ?? null
   } catch (err) {
     console.error('Error fetching seasons:', err)
+  }
+  try {
+    teamRoles.value = await api.getTeamRoles()
+  } catch (err) {
+    console.error('Error fetching team roles:', err)
   }
 })
 </script>

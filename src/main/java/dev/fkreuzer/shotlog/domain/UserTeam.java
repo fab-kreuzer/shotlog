@@ -1,6 +1,7 @@
 package dev.fkreuzer.shotlog.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import dev.fkreuzer.shotlog.domain.datatypes.TeamRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +24,8 @@ public class UserTeam {
     @JsonIgnore
     private Team team;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private String role = "MEMBER";
+    private TeamRole role = TeamRole.MEMBER;
 }
 

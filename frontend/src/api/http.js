@@ -143,5 +143,6 @@ export const api = {
 
     //Teams
     getTeams: () => request('GET', '/api/teams'),
+    getTeamRoles: () => request('GET', '/api/teams/roles'),
     createTeam: (data) => request('POST', '/api/teams', data),
 }
