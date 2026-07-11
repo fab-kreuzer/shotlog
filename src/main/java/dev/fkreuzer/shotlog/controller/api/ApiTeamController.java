@@ -3,6 +3,7 @@ package dev.fkreuzer.shotlog.controller.api;
 import dev.fkreuzer.shotlog.domain.Team;
 import dev.fkreuzer.shotlog.domain.UserAccount;
 import dev.fkreuzer.shotlog.domain.UserTeam;
+import dev.fkreuzer.shotlog.domain.datatypes.TeamRole;
 import dev.fkreuzer.shotlog.repository.TeamRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
 import dev.fkreuzer.shotlog.repository.UserTeamRepository;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +33,13 @@ public class ApiTeamController {
     @GetMapping("/teams")
     public List<Team> getTeams() {
         return teamRepository.findAll();
+    }
+
+    @GetMapping("/teams/roles")
+    public List<Map<String, String>> getTeamRoles() {
+        return Arrays.stream(TeamRole.values())
+                .map(role -> Map.of("name", role.name(), "type", role.getType()))
+                .toList();
     }
 
     @PostMapping("/teams")
@@ -55,7 +64,7 @@ public class ApiTeamController {
         UserAccount user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        String role = (String) request.getOrDefault("role", "MEMBER");
+        TeamRole role = parseRole(request.get("role"));
 
         UserTeam userTeam = new UserTeam();
         userTeam.setUser(user);
@@ -63,6 +72,17 @@ public class ApiTeamController {
         userTeam.setRole(role);
 
         return userTeamRepository.save(userTeam);
+    }
+
+    private TeamRole parseRole(Object rawRole) {
+        if (rawRole == null) {
+            return TeamRole.MEMBER;
+        }
+        try {
+            return TeamRole.valueOf(rawRole.toString());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid team role: " + rawRole);
+        }
     }
 
     @DeleteMapping("/teams/{teamId}/members/{userId}")

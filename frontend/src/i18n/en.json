@@ -206,6 +206,7 @@
     "nameLabel": "Team Name",
     "namePlaceholder": "Enter team name...",
     "addMemberTitle": "Add member to {teamName}",
+    "roleLabel": "Role",
     "searchPlaceholder": "Search by name or username...",
     "noUsersFound": "No users found",
     "allUsersMembersMessage": "All users are already members",
