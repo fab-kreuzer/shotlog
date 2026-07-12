@@ -105,7 +105,8 @@
     "saveError": "Fehler beim Speichern der Session!",
     "loadError": "Fehler beim Laden der Sessions!",
     "loadOneError": "Fehler beim Laden der Session!",
-    "deleteError": "Fehler beim Löschen der Session!"
+    "deleteError": "Fehler beim Löschen der Session!",
+    "team": "Mannschaft"
   },
   "dashboard": {
     "title": "Dashboard",

@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -34,6 +35,23 @@ public class ApiTeamController {
     public List<Team> getTeams() {
         return teamRepository.findAll();
     }
+
+    @GetMapping("/teams/{userId}")
+    public List<Team> getAssignedTeams(@PathVariable Long userId) {
+
+        Optional<UserAccount> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            return List.of();
+        }
+        List<UserTeam> assignedTeams = userTeamRepository.findUserTeamsByUser(user.get());
+        if (assignedTeams.isEmpty()) {
+            return List.of();
+        }
+        return assignedTeams.stream()
+                .map(UserTeam::getTeam)
+                .toList();
+    }
+
 
     @GetMapping("/teams/roles")
     public List<Map<String, String>> getTeamRoles() {

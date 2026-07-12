@@ -1,6 +1,7 @@
 import {computed, onMounted, reactive, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {api} from '@/api/http'
+import {useAuthStore} from '@/stores/auth'
 
 /**
  * Shared state + logic for a session create/edit modal of a fixed type
@@ -9,10 +10,12 @@ import {api} from '@/api/http'
  */
 export function useSessionForm(sessionType, {onSaved} = {}) {
     const {t} = useI18n()
+    const auth = useAuthStore()
 
     const visible = ref(false)
     const locations = ref([])
     const seasons = ref([])
+    const assignedTeams = ref([])
     const isEditing = ref(false)
     const editingId = ref(null)
 
@@ -21,6 +24,7 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
         sessionTime: '',
         enemyId: null,
         seasonId: null,
+        teamId: null,
         title: '',
         sessionType,
         decimalScoring: false,
@@ -81,6 +85,7 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
         form.sessionTime = pad(now.getHours()) + ':' + pad(now.getMinutes())
         form.enemyId = locations.value.length > 0 ? locations.value[0].id : null
         form.seasonId = (seasons.value.find(s => s.active) ?? seasons.value[0])?.id ?? null
+        form.teamId = assignedTeams.value.length > 0 ? assignedTeams.value[0].id : null
         form.title = ''
         form.sessionType = sessionType
         form.decimalScoring = false
@@ -103,6 +108,7 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
         form.title = session.title
         form.enemyId = session.enemy ? session.enemy.id : null
         form.seasonId = session.season ? session.season.id : null
+        form.teamId = session.team ? session.team.id : null
         form.sessionType = session.sessionType
         form.decimalScoring = session.decimalScoring
         form.home = session.home
@@ -139,6 +145,7 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
             sessionTime: form.sessionTime,
             enemyId: form.enemyId,
             seasonId: form.seasonId,
+            teamId: form.teamId,
             sessionType: form.sessionType,
             title: form.title,
             decimalScoring: form.decimalScoring,
@@ -178,12 +185,21 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
         } catch (err) {
             console.error('Error fetching seasons:', err)
         }
+        try {
+            const userId = auth.user?.id
+            if (userId != null) {
+                assignedTeams.value = await api.getAssignedTeams(userId)
+            }
+        } catch (err) {
+            console.error('Error fetching assigned teams:', err)
+        }
     })
 
     return {
         visible,
         locations,
         seasons,
+        assignedTeams,
         isEditing,
         form,
         sessionDateModel,

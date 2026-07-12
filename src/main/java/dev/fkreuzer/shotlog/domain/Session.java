@@ -1,5 +1,6 @@
 package dev.fkreuzer.shotlog.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -41,6 +42,12 @@ public class Session {
     @ManyToOne(optional = false)
     @JoinColumn(name = "season_id")
     private Season season;
+
+    // Optional: only competition sessions are tied to a team.
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    @JsonIgnoreProperties("userTeams")
+    private Team team;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("seriesNumber ASC")
