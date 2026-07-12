@@ -4,6 +4,7 @@ import dev.fkreuzer.shotlog.controller.DefaultShotLogController;
 import dev.fkreuzer.shotlog.domain.*;
 import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
 import dev.fkreuzer.shotlog.repository.SeasonRepository;
+import dev.fkreuzer.shotlog.repository.TeamRepository;
 import dev.fkreuzer.shotlog.service.IcsImportService;
 import dev.fkreuzer.shotlog.service.SessionService;
 import dev.fkreuzer.shotlog.service.ShootingPlaceService;
@@ -30,15 +31,17 @@ public class ApiSessionController extends DefaultShotLogController {
     private final ShootingPlaceService shootingPlaceService;
     private final IcsImportService icsImportService;
     private final SeasonRepository seasonRepository;
+    private final TeamRepository teamRepository;
     private final MessageSource messageSource;
 
     public ApiSessionController(SessionService sessionService, ShootingPlaceService shootingPlaceService,
                                 IcsImportService icsImportService, SeasonRepository seasonRepository,
-                                MessageSource messageSource) {
+                                TeamRepository teamRepository, MessageSource messageSource) {
         this.sessionService = sessionService;
         this.shootingPlaceService = shootingPlaceService;
         this.icsImportService = icsImportService;
         this.seasonRepository = seasonRepository;
+        this.teamRepository = teamRepository;
         this.messageSource = messageSource;
     }
 
@@ -133,6 +136,17 @@ public class ApiSessionController extends DefaultShotLogController {
             Season season = seasonRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Season not found: " + id));
             session.setSeason(season);
+        }
+
+        // Resolve team by ID (optional: only competition sessions have one)
+        Object teamId = body.get("teamId");
+        if (teamId != null) {
+            Long id = Long.valueOf(teamId.toString());
+            Team team = teamRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Team not found: " + id));
+            session.setTeam(team);
+        } else {
+            session.setTeam(null);
         }
 
         // Map series

@@ -105,7 +105,8 @@
     "saveError": "Error saving session!",
     "loadError": "Error loading sessions!",
     "loadOneError": "Error loading session!",
-    "deleteError": "Error deleting session!"
+    "deleteError": "Error deleting session!",
+    "team": "Team"
   },
   "dashboard": {
     "title": "Dashboard",

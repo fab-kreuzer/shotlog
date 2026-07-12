@@ -48,6 +48,17 @@
           />
         </div>
 
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-surface-700">{{ $t('session.team') }}</label>
+          <Select
+              v-model="form.teamId"
+              :options="assignedTeams"
+              fluid
+              optionLabel="name"
+              optionValue="id"
+          />
+        </div>
+
         <div class="flex items-end gap-5 sm:col-span-2 lg:col-span-3">
           <label class="flex items-center gap-2 cursor-pointer">
             <Checkbox v-model="form.decimalScoring" binary/>
@@ -88,6 +99,7 @@ const {
   visible,
   locations,
   seasons,
+  assignedTeams,
   isEditing,
   form,
   sessionDateModel,
