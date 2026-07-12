@@ -1,9 +1,13 @@
 package dev.fkreuzer.shotlog.controller.api;
 
 import dev.fkreuzer.shotlog.domain.Role;
+import dev.fkreuzer.shotlog.domain.Season;
 import dev.fkreuzer.shotlog.domain.Session;
 import dev.fkreuzer.shotlog.domain.ShootingPlace;
+import dev.fkreuzer.shotlog.domain.Team;
 import dev.fkreuzer.shotlog.domain.UserAccount;
+import dev.fkreuzer.shotlog.repository.SeasonRepository;
+import dev.fkreuzer.shotlog.repository.TeamRepository;
 import dev.fkreuzer.shotlog.security.SecurityUser;
 import dev.fkreuzer.shotlog.service.SessionService;
 import dev.fkreuzer.shotlog.service.ShootingPlaceService;
@@ -31,6 +35,12 @@ class ApiSessionControllerTest {
 
     @Mock
     private ShootingPlaceService shootingPlaceService;
+
+    @Mock
+    private SeasonRepository seasonRepository;
+
+    @Mock
+    private TeamRepository teamRepository;
 
     @InjectMocks
     private ApiSessionController controller;
@@ -310,5 +320,106 @@ class ApiSessionControllerTest {
                 .getShots()
                 .get(0)
                 .getValue());
+    }
+
+    // --- team mapping ---
+
+    @Test
+    void createSession_withTeamId_shouldResolveAndSetTeam() {
+        // Arrange
+        ShootingPlace place = new ShootingPlace();
+        when(shootingPlaceService.findById(1L)).thenReturn(place);
+        Team team = new Team();
+        team.setId(3L);
+        when(teamRepository.findById(3L)).thenReturn(Optional.of(team));
+        when(sessionService.save(any(Session.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("sessionDate", "2024-01-15");
+        body.put("sessionTime", "14:30");
+        body.put("sessionType", "COMPETITION");
+        body.put("decimalScoring", false);
+        body.put("home", false);
+        body.put("enemyId", 1);
+        body.put("teamId", 3);
+        body.put("series", List.of());
+
+        // Act
+        ResponseEntity<Session> response = controller.createSession(body);
+
+        // Assert
+        assertSame(team, response.getBody()
+                .getTeam());
+    }
+
+    @Test
+    void createSession_withoutTeamId_shouldLeaveTeamNull() {
+        // Arrange
+        ShootingPlace place = new ShootingPlace();
+        when(shootingPlaceService.findById(1L)).thenReturn(place);
+        when(sessionService.save(any(Session.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("sessionDate", "2024-01-15");
+        body.put("sessionTime", "14:30");
+        body.put("sessionType", "TRAINING");
+        body.put("decimalScoring", false);
+        body.put("home", false);
+        body.put("enemyId", 1);
+        body.put("series", List.of());
+
+        // Act
+        ResponseEntity<Session> response = controller.createSession(body);
+
+        // Assert
+        assertNull(response.getBody()
+                .getTeam());
+        verify(teamRepository, never()).findById(any());
+    }
+
+    @Test
+    void createSession_withUnknownTeamId_shouldThrow() {
+        // Arrange
+        when(teamRepository.findById(9L)).thenReturn(Optional.empty());
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("sessionDate", "2024-01-15");
+        body.put("sessionTime", "14:30");
+        body.put("sessionType", "COMPETITION");
+        body.put("decimalScoring", false);
+        body.put("home", false);
+        body.put("teamId", 9);
+        body.put("series", List.of());
+
+        // Act + Assert
+        assertThrows(IllegalArgumentException.class, () -> controller.createSession(body));
+        verify(sessionService, never()).save(any());
+    }
+
+    // --- season mapping ---
+
+    @Test
+    void createSession_withSeasonId_shouldResolveAndSetSeason() {
+        // Arrange
+        Season season = new Season("2024");
+        season.setId(7L);
+        when(seasonRepository.findById(7L)).thenReturn(Optional.of(season));
+        when(sessionService.save(any(Session.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("sessionDate", "2024-01-15");
+        body.put("sessionTime", "14:30");
+        body.put("sessionType", "TRAINING");
+        body.put("decimalScoring", false);
+        body.put("home", false);
+        body.put("seasonId", 7);
+        body.put("series", List.of());
+
+        // Act
+        ResponseEntity<Session> response = controller.createSession(body);
+
+        // Assert
+        assertSame(season, response.getBody()
+                .getSeason());
     }
 }
