@@ -141,11 +141,19 @@
         "One more shot, {name}?"
       ]
     },
-    "loggedIn": "You are logged in.",
-    "importing": "Importing…",
-    "importDates": "Import appointments",
-    "imported": "{count} appointment imported | {count} appointments imported",
-    "importFailed": "Import failed"
+    "recentSessions": "Recent Sessions",
+    "upcomingSessions": "Upcoming Sessions",
+    "noRecent": "No sessions logged yet",
+    "noUpcoming": "No upcoming sessions",
+    "viewAll": "View all",
+    "seasonStats": "Season {season}",
+    "stats": {
+      "trainings": "Trainings",
+      "competitions": "Competitions",
+      "avgScore": "Avg. competition score",
+      "bestScore": "Best competition score",
+      "homeAway": "Home / Away"
+    }
   },
   "training": {
     "title": "Overview of your training sessions",
@@ -153,7 +161,12 @@
   },
   "competition": {
     "title": "Overview of your competition sessions",
-    "create": "Create new competition"
+    "create": "Create new competition",
+    "importing": "Importing…",
+    "importDates": "Import appointments",
+    "importHint": "Upload an .ics file to automatically create sessions from competition dates.",
+    "imported": "{count} appointment imported | {count} appointments imported",
+    "importFailed": "Import failed"
   },
   "shooting": {
     "sessionsFound": "{count} session found | {count} sessions found",

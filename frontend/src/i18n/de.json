@@ -141,11 +141,19 @@
         "Noch ein Schuss, {name}?"
       ]
     },
-    "loggedIn": "Sie sind angemeldet.",
-    "importing": "Importiere…",
-    "importDates": "Termine importieren",
-    "imported": "{count} Termin importiert | {count} Termine importiert",
-    "importFailed": "Import fehlgeschlagen"
+    "recentSessions": "Letzte Sessions",
+    "upcomingSessions": "Anstehende Termine",
+    "noRecent": "Noch keine Sessions erfasst",
+    "noUpcoming": "Keine anstehenden Termine",
+    "viewAll": "Alle anzeigen",
+    "seasonStats": "Saison {season}",
+    "stats": {
+      "trainings": "Trainings",
+      "competitions": "Wettkämpfe",
+      "avgScore": "Ø Wettkampfscore",
+      "bestScore": "Bester Wettkampfscore",
+      "homeAway": "Heim / Auswärts"
+    }
   },
   "training": {
     "title": "Übersicht deiner Training-Sessions",
@@ -153,7 +161,12 @@
   },
   "competition": {
     "title": "Übersicht deiner Wettkampf-Sessions",
-    "create": "Neuen Wettkampf anlegen"
+    "create": "Neuen Wettkampf anlegen",
+    "importing": "Importiere…",
+    "importDates": "Termine importieren",
+    "importHint": "Lade eine .ics-Datei hoch, um Wettkampftermine automatisch als Sessions anzulegen.",
+    "imported": "{count} Termin importiert | {count} Termine importiert",
+    "importFailed": "Import fehlgeschlagen"
   },
   "shooting": {
     "sessionsFound": "{count} Session gefunden | {count} Sessions gefunden",

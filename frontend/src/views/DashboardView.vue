@@ -6,39 +6,65 @@
       <p class="mt-1 text-surface-500">{{ $t('dashboard.welcome') }}</p>
     </div>
 
-    <!-- Content card -->
-    <Card>
-      <template #content>
-        <div class="flex items-center justify-between">
-          <p class="text-surface-600">{{ $t('dashboard.loggedIn') }}</p>
-          <FileUpload
-              ref="uploader"
-              :auto="true"
-              :chooseLabel="importing ? t('dashboard.importing') : t('dashboard.importDates')"
-              :disabled="importing"
-              accept=".ics"
-              customUpload
-              mode="basic"
-              @uploader="onUpload"
-          />
-        </div>
-      </template>
-    </Card>
+    <div class="flex flex-col gap-6">
+      <SeasonStatsCard :season-name="activeSeasonName" :sessions="seasonSessions"/>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RecentSessionsCard :sessions="recentSessions"/>
+        <UpcomingSessionsCard :sessions="upcomingSessions"/>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import {computed, ref} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
-import Card from 'primevue/card'
-import FileUpload from 'primevue/fileupload'
 import {api} from '@/api/http'
-import {useNotificationStore} from '@/stores/notifications'
 import {useAuthStore} from '@/stores/auth'
+import {useSeasonFilter} from '@/composables/useSeasonFilter'
+import SeasonStatsCard from '@/components/dashboard/SeasonStatsCard.vue'
+import RecentSessionsCard from '@/components/dashboard/RecentSessionsCard.vue'
+import UpcomingSessionsCard from '@/components/dashboard/UpcomingSessionsCard.vue'
 
 const {t, locale} = useI18n()
-const notify = useNotificationStore()
 const auth = useAuthStore()
+
+const sessions = ref([])
+const {options: seasons, filteredSessions: seasonSessions, loadSeasons} = useSeasonFilter(sessions)
+
+const activeSeasonName = computed(() => seasons.value.find(s => s.active)?.description ?? '')
+
+function sessionDateTime(session) {
+  return new Date(`${session.sessionDate}T${session.sessionTime}`)
+}
+
+const recentSessions = computed(() => {
+  const now = new Date()
+  return sessions.value
+      .filter(s => sessionDateTime(s) <= now)
+      .sort((a, b) => sessionDateTime(b) - sessionDateTime(a))
+      .slice(0, 5)
+})
+
+const upcomingSessions = computed(() => {
+  const now = new Date()
+  return sessions.value
+      .filter(s => sessionDateTime(s) > now)
+      .sort((a, b) => sessionDateTime(a) - sessionDateTime(b))
+      .slice(0, 3)
+})
+
+async function loadDashboardData() {
+  try {
+    sessions.value = await api.getSessions()
+  } catch (err) {
+    console.error('Error loading sessions:', err)
+  }
+  await loadSeasons()
+}
+
+onMounted(loadDashboardData)
 
 // Time-of-day bucket and a random variant, both fixed once per page load.
 function currentBucket() {
@@ -56,24 +82,4 @@ const greeting = computed(() => {
   void locale.value // re-resolve when the UI language is toggled
   return t(`dashboard.greetings.${bucket}.${variant}`, {name: name.value})
 })
-
-const uploader = ref(null)
-const importing = ref(false)
-
-async function onUpload(event) {
-  const file = event.files?.[0]
-  if (!file) return
-
-  importing.value = true
-  try {
-    const result = await api.importSessions(file)
-    const count = result?.imported ?? 0
-    notify.success(t('dashboard.imported', {count}, count))
-  } catch (err) {
-    if (!err._notified) notify.error(t('dashboard.importFailed'))
-  } finally {
-    importing.value = false
-    uploader.value?.clear()
-  }
-}
 </script>
