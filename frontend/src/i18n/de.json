@@ -111,6 +111,36 @@
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Willkommen bei ShotLog",
+    "greetings": {
+      "morning": [
+        "Morgen, {name}",
+        "Guten Morgen, {name}",
+        "Schön, dass du da bist, {name}",
+        "Ein frischer Start, {name}",
+        "Bereit zum Zielen, {name}?"
+      ],
+      "day": [
+        "Hallo, {name}",
+        "Guten Tag, {name}",
+        "Schön dich zu sehen, {name}",
+        "Hey, {name}",
+        "Auf ins Schwarze, {name}"
+      ],
+      "evening": [
+        "Guten Abend, {name}",
+        "Abend, {name}",
+        "Lässt du den Tag ausklingen, {name}?",
+        "Zeit für ein paar Serien, {name}?",
+        "Ruhige Hand, {name}"
+      ],
+      "night": [
+        "Noch wach, {name}?",
+        "Gute Nacht, {name}",
+        "Noch spät unterwegs, {name}?",
+        "So spät noch, {name}?",
+        "Noch ein Schuss, {name}?"
+      ]
+    },
     "loggedIn": "Sie sind angemeldet.",
     "importing": "Importiere…",
     "importDates": "Termine importieren",

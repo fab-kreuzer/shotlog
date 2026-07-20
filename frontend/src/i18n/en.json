@@ -111,6 +111,36 @@
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome to ShotLog",
+    "greetings": {
+      "morning": [
+        "Morning, {name}",
+        "Good morning, {name}",
+        "Rise and shine, {name}",
+        "A fresh start, {name}",
+        "Ready to aim, {name}?"
+      ],
+      "day": [
+        "Hello, {name}",
+        "Good day, {name}",
+        "Great to see you, {name}",
+        "Hey there, {name}",
+        "Let's hit the mark, {name}"
+      ],
+      "evening": [
+        "Good evening, {name}",
+        "Evening, {name}",
+        "Winding down, {name}?",
+        "Time for a few rounds, {name}?",
+        "Steady hands, {name}"
+      ],
+      "night": [
+        "Still up, {name}?",
+        "Good night, {name}",
+        "Burning the midnight oil, {name}?",
+        "Late one, {name}?",
+        "One more shot, {name}?"
+      ]
+    },
     "loggedIn": "You are logged in.",
     "importing": "Importing…",
     "importDates": "Import appointments",
