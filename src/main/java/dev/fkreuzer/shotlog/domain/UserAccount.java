@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "users")
@@ -62,7 +63,13 @@ public class UserAccount {
     private Set<Role> roles = new HashSet<>();
 
     public Set<String> authorityNames() {
-        return roles.stream().map(Role::authority).collect(Collectors.toUnmodifiableSet());
+        return roles.stream()
+                .flatMap(role -> Stream.concat(
+                        Stream.of(role.authority()),
+                        role.getPermissions()
+                                .stream()
+                                .map(Permission::getPermissionName)))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
 

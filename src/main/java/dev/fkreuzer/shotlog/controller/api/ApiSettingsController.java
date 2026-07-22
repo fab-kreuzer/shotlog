@@ -1,7 +1,9 @@
 package dev.fkreuzer.shotlog.controller.api;
 
+import dev.fkreuzer.shotlog.domain.Permission;
 import dev.fkreuzer.shotlog.domain.Role;
 import dev.fkreuzer.shotlog.domain.UserAccount;
+import dev.fkreuzer.shotlog.repository.PermissionRepository;
 import dev.fkreuzer.shotlog.repository.RoleRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
 import dev.fkreuzer.shotlog.web.ApiResponse;
@@ -16,18 +18,20 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/settings")
-@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class ApiSettingsController {
 
     private final UserAccountRepository userAccountRepository;
     private final RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
     private final MessageSource messageSource;
 
     public ApiSettingsController(UserAccountRepository userAccountRepository,
                                  RoleRepository roleRepository,
+                                 PermissionRepository permissionRepository,
                                  MessageSource messageSource) {
         this.userAccountRepository = userAccountRepository;
         this.roleRepository = roleRepository;
+        this.permissionRepository = permissionRepository;
         this.messageSource = messageSource;
     }
 
@@ -35,9 +39,22 @@ public class ApiSettingsController {
         return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
+    // ---- Permission Management ----
+
+    @GetMapping("/permissions")
+    @PreAuthorize("hasAuthority('view_role_tab')")
+    public ResponseEntity<List<Map<String, Object>>> getPermissions() {
+        List<Map<String, Object>> result = permissionRepository.findAll()
+                .stream()
+                .map(this::mapPermission)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
     // ---- Role Management ----
 
     @GetMapping("/roles")
+    @PreAuthorize("hasAuthority('view_role_tab') or hasAuthority('view_user_tab')")
     public ResponseEntity<List<Map<String, Object>>> getRoles() {
         List<Role> roles = roleRepository.findAll();
         List<Map<String, Object>> result = roles.stream()
@@ -45,6 +62,10 @@ public class ApiSettingsController {
                     Map<String, Object> map = new HashMap<>();
                     map.put("id", role.getId());
                     map.put("name", role.getName());
+                    map.put("permissions", role.getPermissions()
+                            .stream()
+                            .map(this::mapPermission)
+                            .collect(Collectors.toList()));
                     return map;
                 })
                 .collect(Collectors.toList());
@@ -52,8 +73,9 @@ public class ApiSettingsController {
     }
 
     @PostMapping("/roles")
-    public ResponseEntity<?> createRole(@RequestBody Map<String, String> body) {
-        String name = body.get("name");
+    @PreAuthorize("hasAuthority('view_role_tab')")
+    public ResponseEntity<?> createRole(@RequestBody Map<String, Object> body) {
+        String name = (String) body.get("name");
         if (roleRepository.findByName(name)
                 .isPresent()) {
             return ResponseEntity.badRequest()
@@ -61,36 +83,46 @@ public class ApiSettingsController {
         }
 
         Role role = new Role(name);
+        role.setPermissions(resolvePermissions(body.get("permissionIds")));
         roleRepository.save(role);
         return ResponseEntity.ok()
                 .body(ApiResponse.success(msg("role.created", role.getName())));
     }
 
     @PutMapping("/roles/{id}")
-    public ResponseEntity<?> updateRole(@PathVariable Long id, @RequestBody Map<String, String> body) {
+    @PreAuthorize("hasAuthority('view_role_tab')")
+    public ResponseEntity<?> updateRole(@PathVariable Long id, @RequestBody Map<String, Object> body) {
         Optional<Role> roleOpt = roleRepository.findById(id);
         if (roleOpt.isEmpty()) {
             return ResponseEntity.status(404)
                     .body(ApiResponse.error(msg("role.notFound")));
         }
 
-        String name = body.get("name");
-        Optional<Role> existingRole = roleRepository.findByName(name);
-        if (existingRole.isPresent() && !existingRole.get()
-                .getId()
-                .equals(id)) {
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error(msg("role.exists")));
+        Role role = roleOpt.get();
+
+        if (body.containsKey("name")) {
+            String name = (String) body.get("name");
+            Optional<Role> existingRole = roleRepository.findByName(name);
+            if (existingRole.isPresent() && !existingRole.get()
+                    .getId()
+                    .equals(id)) {
+                return ResponseEntity.badRequest()
+                        .body(ApiResponse.error(msg("role.exists")));
+            }
+            role.setName(name);
         }
 
-        Role role = roleOpt.get();
-        role.setName(name);
+        if (body.containsKey("permissionIds")) {
+            role.setPermissions(resolvePermissions(body.get("permissionIds")));
+        }
+
         roleRepository.save(role);
         return ResponseEntity.ok()
                 .body(ApiResponse.success(msg("role.updated", role.getName())));
     }
 
     @DeleteMapping("/roles/{id}")
+    @PreAuthorize("hasAuthority('view_role_tab')")
     public ResponseEntity<?> deleteRole(@PathVariable Long id) {
         Optional<Role> roleToDelete = roleRepository.findById(id);
         if (roleToDelete.isEmpty()) {
@@ -118,6 +150,29 @@ public class ApiSettingsController {
         return ResponseEntity.ok()
                 .body(ApiResponse.success(msg("role.deleted", roleToDelete.get()
                         .getName())));
+    }
+
+    // ---- Helpers ----
+
+    private Map<String, Object> mapPermission(Permission permission) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", permission.getId());
+        map.put("permissionName", permission.getPermissionName());
+        map.put("description", permission.getDescription());
+        return map;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<Permission> resolvePermissions(Object permissionIdsObj) {
+        Set<Permission> permissions = new HashSet<>();
+        if (permissionIdsObj instanceof List<?> permissionIdsList) {
+            for (Object idObj : permissionIdsList) {
+                Long permissionId = Long.valueOf(idObj.toString());
+                permissionRepository.findById(permissionId)
+                        .ifPresent(permissions::add);
+            }
+        }
+        return permissions;
     }
 
 }

@@ -135,6 +135,7 @@ export const api = {
     createRole: (data) => request('POST', '/api/settings/roles', data),
     updateRole: (id, data) => request('PUT', `/api/settings/roles/${id}`, data),
     deleteRole: (id) => request('DELETE', `/api/settings/roles/${id}`),
+    getPermissions: () => request('GET', '/api/settings/permissions'),
 
 
     //Seaons

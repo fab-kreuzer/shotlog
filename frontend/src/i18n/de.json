@@ -232,7 +232,9 @@
     "deleteTitle": "Rolle löschen",
     "deleteMessage": "Willst du diese Rolle wirklich löschen?",
     "deleteConfirm": "Ja, löschen",
-    "nameRequired": "Bitte geben Sie einen Rollennamen ein."
+    "nameRequired": "Bitte geben Sie einen Rollennamen ein.",
+    "permissions": "Berechtigungen",
+    "selectPermissions": "Berechtigungen auswählen"
   },
   "club": {
     "id": "ID",

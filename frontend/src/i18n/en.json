@@ -232,7 +232,9 @@
     "deleteTitle": "Delete Role",
     "deleteMessage": "Do you really want to delete this role?",
     "deleteConfirm": "Yes, delete",
-    "nameRequired": "Please enter a role name."
+    "nameRequired": "Please enter a role name.",
+    "permissions": "Permissions",
+    "selectPermissions": "Select permissions"
   },
   "club": {
     "id": "ID",

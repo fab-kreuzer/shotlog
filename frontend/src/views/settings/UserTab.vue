@@ -28,7 +28,7 @@ const roles = ref([])
 const editingUser = ref(null)
 
 async function loadData() {
-  if (!auth.isAdmin)
+  if (!auth.hasPermission('view_user_tab'))
     return
 
   users.value = await api.getUsers()

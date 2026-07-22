@@ -5,6 +5,8 @@ import Column from 'primevue/column'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import Tag from 'primevue/tag'
+import Multiselect from '@/components/Multiselect.vue'
 import CreateRoleModal from "@/components/settings/CreateRoleModal.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import {useAuthStore} from '@/stores/auth'
@@ -15,13 +17,15 @@ const auth = useAuthStore()
 const showConfirmRole = ref(false)
 const roleToDelete = ref(null)
 const roles = ref([])
+const permissions = ref([])
 const showCreateRoleModal = ref(false)
 const editingRole = ref(null)
 
 async function loadData() {
-  if (!auth.isAdmin) return
+  if (!auth.hasPermission('view_role_tab')) return
 
   roles.value = await api.getRoles()
+  permissions.value = await api.getPermissions()
 }
 
 async function handleCreateRole(role) {
@@ -30,12 +34,16 @@ async function handleCreateRole(role) {
 }
 
 function openEditRole(role) {
-  editingRole.value = {...role}
+  editingRole.value = {
+    ...role,
+    permissionIds: role.permissions.map(p => p.id)
+  }
 }
 
 async function handleUpdateRole() {
   await api.updateRole(editingRole.value.id, {
-    name: editingRole.value.name
+    name: editingRole.value.name,
+    permissionIds: editingRole.value.permissionIds
   })
 
   editingRole.value = null
@@ -68,6 +76,13 @@ onMounted(loadData)
     <DataTable :value="roles" class="border border-surface-200 rounded-lg overflow-hidden" dataKey="id" stripedRows>
       <Column :header="$t('role.id')" field="id" sortable/>
       <Column :header="$t('common.name')" field="name" sortable/>
+      <Column :header="$t('role.permissions')">
+        <template #body="{ data }">
+          <div class="flex flex-wrap gap-1">
+            <Tag v-for="p in data.permissions" :key="p.id" :value="p.permissionName" severity="secondary"/>
+          </div>
+        </template>
+      </Column>
       <Column :header="$t('common.actions')">
         <template #body="{ data }">
           <div class="flex justify-end gap-2">
@@ -93,6 +108,16 @@ onMounted(loadData)
         <label class="text-sm font-medium text-surface-700" for="editRoleName">{{ $t('role.roleName') }}</label>
         <InputText id="editRoleName" v-model="editingRole.name" fluid required/>
       </div>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium text-surface-700">{{ $t('role.permissions') }}</label>
+        <Multiselect
+            v-model="editingRole.permissionIds"
+            :options="permissions"
+            :placeholder="$t('role.selectPermissions')"
+            optionLabel="permissionName"
+            optionValue="id"
+        />
+      </div>
     </form>
 
     <template #footer>
@@ -103,6 +128,7 @@ onMounted(loadData)
 
   <CreateRoleModal
       v-model="showCreateRoleModal"
+      :permissions="permissions"
       @create="handleCreateRole"
   />
 

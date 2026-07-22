@@ -54,8 +54,7 @@ const filteredUsers = computed(() => {
 })
 
 async function loadData() {
-  if (!auth.isAdmin && !auth.isSportLeader) {
-    console.log('admin ' + auth.isAdmin + ' sport leader ' + auth.isSportLeader)
+  if (!auth.hasPermission('view_team_tab')) {
     return
   }
 
