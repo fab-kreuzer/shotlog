@@ -1,12 +1,12 @@
 <template>
   <div>
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-      <div>
-        <h1 class="text-2xl font-bold text-surface-800">{{ $t('competition.title') }}</h1>
-        <p class="mt-1 text-surface-500">{{ $t('shooting.sessionsFound', filteredSessions.length) }}</p>
-      </div>
-      <div class="flex items-center gap-2">
+    <PageHeader
+        :subtitle="$t('shooting.sessionsFound', filteredSessions.length)"
+        :title="$t('competition.title')"
+        color="red"
+        icon="pi pi-trophy"
+    >
+      <template #actions>
         {{ $t('shooting.season') }}:
         <Multiselect
             v-model="selected"
@@ -35,8 +35,8 @@
             size="small"
             @click="openCreate"
         />
-      </div>
-    </div>
+      </template>
+    </PageHeader>
 
     <SessionGrid :sessions="filteredSessions" @create="openCreate" @delete="handleDelete" @edit="editSession"/>
 
@@ -54,6 +54,7 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import {useI18n} from 'vue-i18n'
+import PageHeader from '@/components/PageHeader.vue'
 import SessionGrid from '@/components/SessionGrid.vue'
 import CompetitionSessionModal from '@/components/session/CompetitionSessionModal.vue'
 import ConfirmModal from '@/components/ConfirmModal.vue'

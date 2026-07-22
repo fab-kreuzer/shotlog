@@ -1,10 +1,6 @@
 <template>
   <div>
-    <!-- Page header -->
-    <div class="mb-8">
-      <h1 class="text-2xl font-bold text-surface-800">{{ greeting }}</h1>
-      <p class="mt-1 text-surface-500">{{ $t('dashboard.welcome') }}</p>
-    </div>
+    <PageHeader :subtitle="$t('dashboard.welcome')" :title="greeting" color="primary" icon="pi pi-home"/>
 
     <div class="flex flex-col gap-6">
       <SeasonStatsCard :season-name="activeSeasonName" :sessions="seasonSessions"/>
@@ -23,6 +19,7 @@ import {useI18n} from 'vue-i18n'
 import {api} from '@/api/http'
 import {useAuthStore} from '@/stores/auth'
 import {useSeasonFilter} from '@/composables/useSeasonFilter'
+import PageHeader from '@/components/PageHeader.vue'
 import SeasonStatsCard from '@/components/dashboard/SeasonStatsCard.vue'
 import RecentSessionsCard from '@/components/dashboard/RecentSessionsCard.vue'
 import UpcomingSessionsCard from '@/components/dashboard/UpcomingSessionsCard.vue'

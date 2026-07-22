@@ -1,6 +1,9 @@
 <template>
   <div class="p-2">
-    <h2 class="text-lg font-semibold text-surface-800 mb-4">{{ $t('profile.title') }}</h2>
+    <h2 class="flex items-center gap-2 text-lg font-semibold text-surface-800 mb-4">
+      <i class="pi pi-user text-primary-500"/>
+      {{ $t('profile.title') }}
+    </h2>
 
     <div class="flex flex-col gap-3">
       <div class="flex items-center gap-3">

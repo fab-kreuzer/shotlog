@@ -58,7 +58,10 @@ onMounted(loadData)
 <template>
   <div class="p-2">
     <div class="flex justify-between items-center mb-6">
-      <h3 class="text-lg font-semibold text-surface-700">{{ $t('role.listTitle') }}</h3>
+      <h3 class="flex items-center gap-2 text-lg font-semibold text-surface-700">
+        <i class="pi pi-shield text-primary-500"/>
+        {{ $t('role.listTitle') }}
+      </h3>
       <Button :label="$t('role.newButton')" icon="pi pi-plus" @click="showCreateRoleModal = true"/>
     </div>
 

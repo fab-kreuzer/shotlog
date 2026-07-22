@@ -173,7 +173,10 @@ onMounted(loadData)
 <template>
   <div class="p-2">
     <div class="flex justify-between items-center mb-6">
-      <h3 class="text-lg font-semibold text-surface-700">{{ $t('team.listTitle') }}</h3>
+      <h3 class="flex items-center gap-2 text-lg font-semibold text-surface-700">
+        <i class="pi pi-sitemap text-primary-500"/>
+        {{ $t('team.listTitle') }}
+      </h3>
       <Button :label="$t('team.newButton')" icon="pi pi-plus" @click="openCreateTeamDialog()"/>
     </div>
     <Accordion class="border border-surface-200 rounded-lg overflow-hidden">

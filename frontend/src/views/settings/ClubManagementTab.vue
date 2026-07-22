@@ -67,7 +67,10 @@ onMounted(loadClubs);
 <template>
   <div class="p-2">
     <div class="flex justify-between items-center mb-6">
-      <h3 class="text-lg font-semibold text-surface-700">{{ $t('club.listTitle') }}</h3>
+      <h3 class="flex items-center gap-2 text-lg font-semibold text-surface-700">
+        <i class="pi pi-building text-primary-500"/>
+        {{ $t('club.listTitle') }}
+      </h3>
       <Button :label="$t('club.newButton')" icon="pi pi-plus" @click="showCreateClub = true"/>
     </div>
 

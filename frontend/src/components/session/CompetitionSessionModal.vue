@@ -1,13 +1,24 @@
 <template>
   <Dialog
       :draggable="false"
-      :header="isEditing ? $t('session.editCompetitionTitle') : $t('session.createCompetitionTitle')"
       :style="{ width: '48rem' }"
       :visible="visible"
       class="max-w-[95vw]"
       modal
       @update:visible="onVisibleChange"
   >
+    <template #header>
+      <div class="flex items-center gap-3">
+        <div
+            class="flex items-center justify-center w-9 h-9 rounded-full bg-red-50 text-red-600 dark:bg-red-400/10 dark:text-red-400">
+          <i class="pi pi-trophy"/>
+        </div>
+        <span class="font-semibold text-surface-800">
+          {{ isEditing ? $t('session.editCompetitionTitle') : $t('session.createCompetitionTitle') }}
+        </span>
+      </div>
+    </template>
+
     <form id="competition-session-form" class="flex flex-col gap-6" @submit.prevent="handleSubmit">
       <!-- Session data -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -1,22 +1,23 @@
 <template>
   <div>
-    <!-- Page header -->
-    <div class="mb-8">
-      <h1 class="text-2xl font-bold text-surface-800">{{ $t('settings.title') }}</h1>
-      <p class="mt-1 text-surface-500">{{ $t('settings.subtitle') }}</p>
-    </div>
+    <PageHeader :subtitle="$t('settings.subtitle')" :title="$t('settings.title')" color="purple" icon="pi pi-cog"/>
 
     <Card>
       <template #content>
         <Tabs v-model:value="activeTab">
           <TabList>
-            <Tab value="profile">{{ $t('settings.tabProfile') }}</Tab>
-            <Tab v-if="auth.isAdmin" value="user-management">{{ $t('settings.tabUserManagement') }}</Tab>
-            <Tab v-if="auth.isAdmin" value="role-management">{{ $t('settings.tabRoleManagement') }}</Tab>
-            <Tab v-if="auth.isAdmin" value="club-management">{{ $t('settings.tabClubManagement') }}</Tab>
-            <Tab v-if="auth.isAdmin || auth.isSportLeader" value="team-management">{{
-                $t('settings.tabTeamManagement')
-              }}
+            <Tab value="profile"><i class="pi pi-user mr-2"/>{{ $t('settings.tabProfile') }}</Tab>
+            <Tab v-if="auth.isAdmin" value="user-management">
+              <i class="pi pi-users mr-2"/>{{ $t('settings.tabUserManagement') }}
+            </Tab>
+            <Tab v-if="auth.isAdmin" value="role-management">
+              <i class="pi pi-shield mr-2"/>{{ $t('settings.tabRoleManagement') }}
+            </Tab>
+            <Tab v-if="auth.isAdmin" value="club-management">
+              <i class="pi pi-building mr-2"/>{{ $t('settings.tabClubManagement') }}
+            </Tab>
+            <Tab v-if="auth.isAdmin || auth.isSportLeader" value="team-management">
+              <i class="pi pi-sitemap mr-2"/>{{ $t('settings.tabTeamManagement') }}
             </Tab>
           </TabList>
           <TabPanels>
@@ -51,6 +52,7 @@ import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import {useAuthStore} from '@/stores/auth'
+import PageHeader from '@/components/PageHeader.vue'
 
 import ProfileTab from './ProfileTab.vue'
 import UserTab from "@/views/settings/UserTab.vue";

@@ -32,8 +32,10 @@
 
           <div class="p-2">
             <!-- Card header -->
-            <div class="flex items-center gap-2 mb-4">
-              <i :class="session.home ? 'pi pi-home' : 'pi pi-map-marker'" class="text-surface-400 text-sm"/>
+            <div class="flex items-center gap-2.5 mb-4">
+              <div class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-100 shrink-0">
+                <i :class="session.home ? 'pi pi-home' : 'pi pi-map-marker'" class="text-surface-500 text-sm"/>
+              </div>
               <h3 class="text-base font-semibold text-surface-800 leading-tight">{{ session.title }}</h3>
             </div>
 

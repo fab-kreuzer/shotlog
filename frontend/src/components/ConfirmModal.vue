@@ -1,12 +1,21 @@
 <template>
   <Dialog
       :draggable="false"
-      :header="title"
       :style="{ width: '28rem' }"
       :visible="modelValue"
       modal
       @update:visible="$emit('update:modelValue', $event)"
   >
+    <template #header>
+      <div class="flex items-center gap-3">
+        <div
+            class="flex items-center justify-center w-9 h-9 rounded-full bg-red-50 text-red-600 dark:bg-red-400/10 dark:text-red-400">
+          <i class="pi pi-exclamation-triangle"/>
+        </div>
+        <span class="font-semibold text-surface-800">{{ title }}</span>
+      </div>
+    </template>
+
     <p class="text-sm text-surface-500">{{ message }}</p>
 
     <template #footer>

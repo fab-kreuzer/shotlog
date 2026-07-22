@@ -20,6 +20,7 @@
               v-bind="props.action"
               @click="navigate"
           >
+            <i :class="item.icon" class="mr-1.5"/>
             <span>{{ item.label }}</span>
           </a>
         </router-link>
@@ -73,14 +74,14 @@ const toast = useToast()
 notify.register((options) => toast.add(options))
 
 const navLinks = [
-  {to: '/dashboard', labelKey: 'nav.dashboard'},
-  {to: '/training', labelKey: 'nav.training'},
-  {to: '/competition', labelKey: 'nav.competition'},
-  {to: '/settings', labelKey: 'nav.settings'},
-  {to: '/calender', labelKey: 'nav.calender'},
+  {to: '/dashboard', labelKey: 'nav.dashboard', icon: 'pi pi-home'},
+  {to: '/training', labelKey: 'nav.training', icon: 'pi pi-bullseye'},
+  {to: '/competition', labelKey: 'nav.competition', icon: 'pi pi-trophy'},
+  {to: '/settings', labelKey: 'nav.settings', icon: 'pi pi-cog'},
+  {to: '/calender', labelKey: 'nav.calender', icon: 'pi pi-calendar'},
 ]
 
-const items = computed(() => navLinks.map(l => ({label: t(l.labelKey), route: l.to})))
+const items = computed(() => navLinks.map(l => ({label: t(l.labelKey), route: l.to, icon: l.icon})))
 
 async function handleLogout() {
   await auth.logout()

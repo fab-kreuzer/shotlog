@@ -1,10 +1,19 @@
 <template>
   <div>
-    <!-- Page header -->
-    <div class="mb-8">
-      <h1 class="text-2xl font-bold text-surface-800">{{ $t('calendar.title') }}</h1>
-      <p class="mt-1 text-surface-500">{{ $t('calendar.subtitle') }}</p>
-    </div>
+    <PageHeader :subtitle="$t('calendar.subtitle')" :title="$t('calendar.title')" color="blue" icon="pi pi-calendar">
+      <template #actions>
+        <div class="flex items-center gap-4 text-sm text-surface-600">
+          <span class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full" style="background-color: #4caf50"/>
+            {{ $t('session.typeTraining') }}
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full" style="background-color: #f44336"/>
+            {{ $t('session.typeCompetition') }}
+          </span>
+        </div>
+      </template>
+    </PageHeader>
 
     <!-- Calendar -->
     <Card>
@@ -26,6 +35,7 @@ import {Calendar} from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import Card from 'primevue/card'
 import {api} from '@/api/http'
+import PageHeader from '@/components/PageHeader.vue'
 import TrainingSessionModal from '@/components/session/TrainingSessionModal.vue'
 import CompetitionSessionModal from '@/components/session/CompetitionSessionModal.vue'
 

@@ -96,7 +96,10 @@ onMounted(loadData)
 <template>
   <div class="p-2">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-lg font-semibold text-surface-700">{{ $t('user.listTitle') }}</h1>
+      <h1 class="flex items-center gap-2 text-lg font-semibold text-surface-700">
+        <i class="pi pi-users text-primary-500"/>
+        {{ $t('user.listTitle') }}
+      </h1>
       <Button :label="$t('user.newButton')" icon="pi pi-plus" @click="showCreateUserModal = true"/>
     </div>
 

@@ -1,13 +1,24 @@
 <template>
   <Dialog
       :draggable="false"
-      :header="isEditing ? $t('session.editTrainingTitle') : $t('session.createTrainingTitle')"
       :style="{ width: '48rem' }"
       :visible="visible"
       class="max-w-[95vw]"
       modal
       @update:visible="onVisibleChange"
   >
+    <template #header>
+      <div class="flex items-center gap-3">
+        <div
+            class="flex items-center justify-center w-9 h-9 rounded-full bg-green-50 text-green-600 dark:bg-green-400/10 dark:text-green-400">
+          <i class="pi pi-bullseye"/>
+        </div>
+        <span class="font-semibold text-surface-800">
+          {{ isEditing ? $t('session.editTrainingTitle') : $t('session.createTrainingTitle') }}
+        </span>
+      </div>
+    </template>
+
     <form id="training-session-form" class="flex flex-col gap-6" @submit.prevent="handleSubmit">
       <!-- Session data -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
