@@ -23,7 +23,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/css/**", "/js/**", "/assets/**", "/favicon.ico", "/index.html")
                         .permitAll()
                         .requestMatchers("/api/settings/**")
-                        .hasRole("ADMIN")
+                        .authenticated()
                         .requestMatchers("/api/**")
                         .authenticated()
                         .anyRequest()

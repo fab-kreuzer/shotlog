@@ -8,6 +8,7 @@ import dev.fkreuzer.shotlog.web.ApiResponse;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,6 +45,7 @@ public class ApiLocationController {
     }
 
     @PostMapping("/locations")
+    @PreAuthorize("hasAuthority('view_club_tab')")
     public ResponseEntity<ApiResponse> createLocation(@RequestBody Map<String, String> body) {
         String club = body.get("club");
         String location = body.get("location");
@@ -67,6 +69,7 @@ public class ApiLocationController {
     }
 
     @PutMapping("/locations/{id}")
+    @PreAuthorize("hasAuthority('view_club_tab')")
     public ResponseEntity<ApiResponse> updateLocation(@PathVariable Long id, @RequestBody Map<String, String> body) {
         Optional<ShootingPlace> existing = shootingPlaceRepository.findById(id);
         if (existing.isEmpty()) {
@@ -100,6 +103,7 @@ public class ApiLocationController {
     }
 
     @DeleteMapping("/locations/{id}")
+    @PreAuthorize("hasAuthority('view_club_tab')")
     public ResponseEntity<ApiResponse> deleteLocation(@PathVariable Long id) {
         Optional<ShootingPlace> location = shootingPlaceRepository.findById(id);
         if (location.isEmpty()) {

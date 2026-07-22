@@ -8,6 +8,7 @@ import dev.fkreuzer.shotlog.repository.TeamRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
 import dev.fkreuzer.shotlog.repository.UserTeamRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,6 +33,7 @@ public class ApiTeamController {
     }
 
     @GetMapping("/teams")
+    @PreAuthorize("hasAuthority('view_team_tab')")
     public List<Team> getTeams() {
         return teamRepository.findAll();
     }
@@ -61,6 +63,7 @@ public class ApiTeamController {
     }
 
     @PostMapping("/teams")
+    @PreAuthorize("hasAuthority('view_team_tab')")
     public Team createTeam(@RequestBody Map<String, String> request) {
         String name = request.get("name");
         if (name == null || name.trim()
@@ -74,6 +77,7 @@ public class ApiTeamController {
     }
 
     @PostMapping("/teams/{teamId}/members")
+    @PreAuthorize("hasAuthority('view_team_tab')")
     public UserTeam addMemberToTeam(@PathVariable Long teamId, @RequestBody Map<String, Object> request) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
@@ -105,6 +109,7 @@ public class ApiTeamController {
 
     @DeleteMapping("/teams/{teamId}/members/{userId}")
     @Transactional
+    @PreAuthorize("hasAuthority('view_team_tab')")
     public void removeMemberFromTeam(@PathVariable Long teamId, @PathVariable Long userId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
@@ -130,6 +135,7 @@ public class ApiTeamController {
 
     @DeleteMapping("/teams/{teamId}")
     @Transactional
+    @PreAuthorize("hasAuthority('view_team_tab')")
     public void deleteTeam(@PathVariable Long teamId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));

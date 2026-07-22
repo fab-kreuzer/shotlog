@@ -1,10 +1,7 @@
 package dev.fkreuzer.shotlog.controller.api;
 
 import dev.fkreuzer.shotlog.controller.DefaultShotLogController;
-import dev.fkreuzer.shotlog.domain.Role;
-import dev.fkreuzer.shotlog.domain.ShootingPlace;
-import dev.fkreuzer.shotlog.domain.UserAccount;
-import dev.fkreuzer.shotlog.domain.UserTeam;
+import dev.fkreuzer.shotlog.domain.*;
 import dev.fkreuzer.shotlog.repository.RoleRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
 import dev.fkreuzer.shotlog.service.ShootingPlaceService;
@@ -15,11 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -71,6 +64,13 @@ public class ApiAuthController extends DefaultShotLogController {
                 .map(Role::getName)
                 .collect(Collectors.toList()));
         userInfo.put("authorities", user.authorityNames());
+        userInfo.put("permissions", user.getRoles()
+                .stream()
+                .flatMap(role -> role.getPermissions()
+                        .stream())
+                .map(Permission::getPermissionName)
+                .distinct()
+                .collect(Collectors.toList()));
         ShootingPlace homeClub = user.getHomeClub();
         userInfo.put("homeClubId", homeClub != null ? homeClub.getId() : null);
         userInfo.put("homeClubName", homeClub != null ? homeClub.getClub() : null);

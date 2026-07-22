@@ -7,16 +7,16 @@
         <Tabs v-model:value="activeTab">
           <TabList>
             <Tab value="profile"><i class="pi pi-user mr-2"/>{{ $t('settings.tabProfile') }}</Tab>
-            <Tab v-if="auth.isAdmin" value="user-management">
+            <Tab v-if="auth.hasPermission('view_user_tab')" value="user-management">
               <i class="pi pi-users mr-2"/>{{ $t('settings.tabUserManagement') }}
             </Tab>
-            <Tab v-if="auth.isAdmin" value="role-management">
+            <Tab v-if="auth.hasPermission('view_role_tab')" value="role-management">
               <i class="pi pi-shield mr-2"/>{{ $t('settings.tabRoleManagement') }}
             </Tab>
-            <Tab v-if="auth.isAdmin" value="club-management">
+            <Tab v-if="auth.hasPermission('view_club_tab')" value="club-management">
               <i class="pi pi-building mr-2"/>{{ $t('settings.tabClubManagement') }}
             </Tab>
-            <Tab v-if="auth.isAdmin || auth.isSportLeader" value="team-management">
+            <Tab v-if="auth.hasPermission('view_team_tab')" value="team-management">
               <i class="pi pi-sitemap mr-2"/>{{ $t('settings.tabTeamManagement') }}
             </Tab>
           </TabList>
@@ -24,16 +24,16 @@
             <TabPanel value="profile">
               <ProfileTab/>
             </TabPanel>
-            <TabPanel v-if="auth.isAdmin" value="user-management">
+            <TabPanel v-if="auth.hasPermission('view_user_tab')" value="user-management">
               <UserTab/>
             </TabPanel>
-            <TabPanel v-if="auth.isAdmin" value="role-management">
+            <TabPanel v-if="auth.hasPermission('view_role_tab')" value="role-management">
               <RoleTab/>
             </TabPanel>
-            <TabPanel v-if="auth.isAdmin" value="club-management">
+            <TabPanel v-if="auth.hasPermission('view_club_tab')" value="club-management">
               <ClubManagementTab/>
             </TabPanel>
-            <TabPanel v-if="auth.isAdmin || auth.isSportLeader" value="team-management">
+            <TabPanel v-if="auth.hasPermission('view_team_tab')" value="team-management">
               <TeamTab/>
             </TabPanel>
           </TabPanels>

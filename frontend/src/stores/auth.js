@@ -18,6 +18,11 @@ export const useAuthStore = defineStore('auth', () => {
         return user.value.authorities?.includes('ROLE_SPORT_LEADER')
     })
 
+    function hasPermission(permissionName) {
+        if (!user.value) return false
+        return user.value.permissions?.includes(permissionName) ?? false
+    }
+
     async function fetchUser() {
         loading.value = true
         try {
@@ -44,5 +49,5 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = null
     }
 
-    return {user, loading, isLoggedIn, isAdmin, isSportLeader, fetchUser, login, logout}
+    return {user, loading, isLoggedIn, isAdmin, isSportLeader, hasPermission, fetchUser, login, logout}
 })

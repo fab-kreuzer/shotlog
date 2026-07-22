@@ -8,6 +8,7 @@ import dev.fkreuzer.shotlog.web.ApiResponse;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,7 @@ public class ApiUserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('view_user_tab') or hasAuthority('view_team_tab')")
     public ResponseEntity<List<Map<String, Object>>> getUsers() {
         List<UserAccount> users = userAccountRepository.findAll();
         List<Map<String, Object>> result = users.stream()
@@ -47,6 +49,7 @@ public class ApiUserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('view_user_tab')")
     public ResponseEntity<?> createUser(@RequestBody Map<String, Object> body) {
         String username = (String) body.get("username");
         String password = (String) body.get("password");
@@ -83,6 +86,7 @@ public class ApiUserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('view_user_tab')")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody Map<String, Object> body) {
         Optional<UserAccount> userOpt = userAccountRepository.findById(id);
         if (userOpt.isEmpty()) {
@@ -133,6 +137,7 @@ public class ApiUserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('view_user_tab')")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         Optional<UserAccount> userAccounts = userAccountRepository.findById(id);
         if (userAccounts.isEmpty()) {
