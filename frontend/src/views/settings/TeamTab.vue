@@ -176,7 +176,7 @@ onMounted(loadData)
         <i class="pi pi-sitemap text-primary-500"/>
         {{ $t('team.listTitle') }}
       </h3>
-      <Button :label="$t('team.newButton')" icon="pi pi-plus" @click="openCreateTeamDialog()"/>
+      <Button v-if="auth.hasPermission('create_team')" :label="$t('team.newButton')" icon="pi pi-plus" @click="openCreateTeamDialog()"/>
     </div>
     <Accordion class="border border-surface-200 rounded-lg overflow-hidden">
       <AccordionPanel v-for="team in teams" :key="team.id" :value="String(team.id)">
@@ -191,10 +191,10 @@ onMounted(loadData)
                 }})</span>
             </div>
             <div class="flex gap-2">
-              <Button :title="$t('team.addMemberTitle', {teamName: team.name})" icon="pi pi-plus" rounded severity="success" size="small"
+              <Button v-if="auth.hasPermission('edit_team')" :title="$t('team.addMemberTitle', {teamName: team.name})" icon="pi pi-plus" rounded severity="success" size="small"
                       text
                       @click.stop="openAddMemberDialog(team)"/>
-              <Button :title="$t('team.deleteTitle')" icon="pi pi-trash" rounded severity="danger" size="small" text
+              <Button v-if="auth.hasPermission('delete_team')" :title="$t('team.deleteTitle')" icon="pi pi-trash" rounded severity="danger" size="small" text
                       @click.stop="deleteTeam(team)"/>
             </div>
           </div>
@@ -212,7 +212,7 @@ onMounted(loadData)
                 <span class="px-3 py-1 bg-primary-100 text-primary-800 rounded text-sm font-medium">{{
                     roleLabel(userTeam.role)
                   }}</span>
-                <Button icon="pi pi-trash" rounded severity="danger" size="small" text
+                <Button v-if="auth.hasPermission('edit_team')" icon="pi pi-trash" rounded severity="danger" size="small" text
                         @click="handleDeleteRole(userTeam.user, team.id)"/>
               </div>
             </div>

@@ -71,7 +71,7 @@ onMounted(loadClubs);
         <i class="pi pi-building text-primary-500"/>
         {{ $t('club.listTitle') }}
       </h3>
-      <Button :label="$t('club.newButton')" icon="pi pi-plus" @click="showCreateClub = true"/>
+      <Button v-if="auth.hasPermission('create_club')" :label="$t('club.newButton')" icon="pi pi-plus" @click="showCreateClub = true"/>
     </div>
 
     <DataTable :value="clubs" class="border border-surface-200 rounded-lg overflow-hidden" dataKey="id" stripedRows>
@@ -99,11 +99,11 @@ onMounted(loadClubs);
           <span v-else>{{ data.location }}</span>
         </template>
       </Column>
-      <Column :header="$t('common.actions')">
+      <Column v-if="auth.hasPermission('edit_club') || auth.hasPermission('delete_club')" :header="$t('common.actions')">
         <template #body="{ data }">
           <div class="flex justify-end gap-2">
-            <Button icon="pi pi-pencil" rounded severity="info" size="small" text @click="openEditClub(data)"/>
-            <Button icon="pi pi-trash" rounded severity="danger" size="small" text @click="handleDeleteClub(data.id)"/>
+            <Button v-if="auth.hasPermission('edit_club')" icon="pi pi-pencil" rounded severity="info" size="small" text @click="openEditClub(data)"/>
+            <Button v-if="auth.hasPermission('delete_club')" icon="pi pi-trash" rounded severity="danger" size="small" text @click="handleDeleteClub(data.id)"/>
           </div>
         </template>
       </Column>
