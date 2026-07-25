@@ -46,8 +46,16 @@ async function handleUpdateRole() {
     permissionIds: editingRole.value.permissionIds
   })
 
+  // If the edited role belongs to the current user, their cached permissions
+  // are now stale — refresh them so the UI reflects the change without a reload.
+  const affectsCurrentUser = auth.user?.roles?.includes(editingRole.value.name)
+
   editingRole.value = null
   await loadData()
+
+  if (affectsCurrentUser) {
+    await auth.fetchUser()
+  }
 }
 
 async function handleDeleteRole(id) {
