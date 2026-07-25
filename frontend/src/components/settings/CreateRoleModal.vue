@@ -1,7 +1,7 @@
 <template>
   <Dialog
       :draggable="false"
-      :style="{ width: '28rem' }"
+      :style="{ width: '32rem' }"
       :visible="modelValue"
       :header="$t('role.createTitle')"
       modal
@@ -14,13 +14,7 @@
       </div>
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-surface-700">{{ $t('role.permissions') }}</label>
-        <Multiselect
-            v-model="permissionIds"
-            :options="permissions"
-            :placeholder="$t('role.selectPermissions')"
-            optionLabel="permissionName"
-            optionValue="id"
-        />
+        <PermissionMatrix v-model="permissionIds" :permissions="permissions"/>
       </div>
     </form>
 
@@ -37,7 +31,7 @@ import {ref, watch} from 'vue'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import Multiselect from '@/components/Multiselect.vue'
+import PermissionMatrix from '@/components/settings/PermissionMatrix.vue'
 import {useNotificationStore} from "@/stores/notifications.js";
 import {useI18n} from 'vue-i18n'
 

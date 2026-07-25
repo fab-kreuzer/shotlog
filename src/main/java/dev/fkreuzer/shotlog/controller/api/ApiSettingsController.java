@@ -159,6 +159,8 @@ public class ApiSettingsController {
         map.put("id", permission.getId());
         map.put("permissionName", permission.getPermissionName());
         map.put("description", permission.getDescription());
+        map.put("resource", permission.getResource());
+        map.put("action", permission.getAction());
         return map;
     }
 

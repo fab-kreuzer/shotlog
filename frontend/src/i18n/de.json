@@ -233,8 +233,21 @@
     "deleteMessage": "Willst du diese Rolle wirklich löschen?",
     "deleteConfirm": "Ja, löschen",
     "nameRequired": "Bitte geben Sie einen Rollennamen ein.",
-    "permissions": "Berechtigungen",
-    "selectPermissions": "Berechtigungen auswählen"
+    "permissions": "Berechtigungen"
+  },
+  "permission": {
+    "resource": {
+      "user": "Benutzer",
+      "role": "Rollen",
+      "club": "Clubs",
+      "team": "Teams"
+    },
+    "action": {
+      "view": "Anzeigen",
+      "create": "Erstellen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    }
   },
   "club": {
     "id": "ID",
