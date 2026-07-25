@@ -5,8 +5,8 @@ import Column from 'primevue/column'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import Tag from 'primevue/tag'
 import PermissionMatrix from '@/components/settings/PermissionMatrix.vue'
+import PermissionSummary from '@/components/settings/PermissionSummary.vue'
 import CreateRoleModal from "@/components/settings/CreateRoleModal.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import {useAuthStore} from '@/stores/auth'
@@ -86,9 +86,7 @@ onMounted(loadData)
       <Column :header="$t('common.name')" field="name" sortable/>
       <Column :header="$t('role.permissions')">
         <template #body="{ data }">
-          <div class="flex flex-wrap gap-1">
-            <Tag v-for="p in data.permissions" :key="p.id" :value="p.permissionName" severity="secondary"/>
-          </div>
+          <PermissionSummary :permissions="data.permissions"/>
         </template>
       </Column>
       <Column v-if="auth.hasPermission('edit_role') || auth.hasPermission('delete_role')" :header="$t('common.actions')">
