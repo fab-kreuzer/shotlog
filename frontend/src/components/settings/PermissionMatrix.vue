@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref, watch} from 'vue'
+import {computed} from 'vue'
 import Checkbox from 'primevue/checkbox'
 import {useI18n} from 'vue-i18n'
 
@@ -18,14 +18,9 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const internalValue = ref([...props.modelValue])
-
-watch(() => props.modelValue, (val) => {
-  internalValue.value = [...(val || [])]
-})
-
-watch(internalValue, (val) => {
-  emit('update:modelValue', val)
+const internalValue = computed({
+  get: () => props.modelValue ?? [],
+  set: (val) => emit('update:modelValue', val)
 })
 
 const ACTION_ORDER = ['view', 'create', 'edit', 'delete']
