@@ -233,8 +233,21 @@
     "deleteMessage": "Do you really want to delete this role?",
     "deleteConfirm": "Yes, delete",
     "nameRequired": "Please enter a role name.",
-    "permissions": "Permissions",
-    "selectPermissions": "Select permissions"
+    "permissions": "Permissions"
+  },
+  "permission": {
+    "resource": {
+      "user": "Users",
+      "role": "Roles",
+      "club": "Clubs",
+      "team": "Teams"
+    },
+    "action": {
+      "view": "View",
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete"
+    }
   },
   "club": {
     "id": "ID",

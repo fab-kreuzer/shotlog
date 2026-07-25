@@ -6,7 +6,7 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
-import Multiselect from '@/components/Multiselect.vue'
+import PermissionMatrix from '@/components/settings/PermissionMatrix.vue'
 import CreateRoleModal from "@/components/settings/CreateRoleModal.vue";
 import ConfirmModal from "@/components/ConfirmModal.vue";
 import {useAuthStore} from '@/stores/auth'
@@ -97,7 +97,7 @@ onMounted(loadData)
   <!-- Edit role dialog -->
   <Dialog
       :draggable="false"
-      :style="{ width: '28rem' }"
+      :style="{ width: '32rem' }"
       :visible="!!editingRole"
       :header="$t('role.editTitle')"
       modal
@@ -110,13 +110,7 @@ onMounted(loadData)
       </div>
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-surface-700">{{ $t('role.permissions') }}</label>
-        <Multiselect
-            v-model="editingRole.permissionIds"
-            :options="permissions"
-            :placeholder="$t('role.selectPermissions')"
-            optionLabel="permissionName"
-            optionValue="id"
-        />
+        <PermissionMatrix v-model="editingRole.permissionIds" :permissions="permissions"/>
       </div>
     </form>
 

@@ -19,6 +19,10 @@ public class Permission {
 
     private String description;
 
+    private String resource;
+
+    private String action;
+
     public Permission(String permissionName) {
         this.permissionName = permissionName;
     }
