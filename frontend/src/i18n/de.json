@@ -187,7 +187,9 @@
     "tabUserManagement": "Benutzerverwaltung",
     "tabRoleManagement": "Rollenverwaltung",
     "tabClubManagement": "Clubverwaltung",
-    "tabTeamManagement": "Mannschaften"
+    "tabTeamManagement": "Mannschaften",
+    "accessDeniedTitle": "Zugriff verweigert",
+    "accessDeniedMessage": "Sie haben keine Berechtigung, diese Seite anzuzeigen. Wenn Sie Zugriff wünschen, wenden Sie sich bitte an Ihren Systemadministrator."
   },
   "profile": {
     "title": "Mein Profil",

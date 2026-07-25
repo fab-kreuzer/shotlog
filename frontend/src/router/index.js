@@ -50,9 +50,49 @@ const routes = [
     },
     {
         path: '/settings',
-        name: 'settings',
         component: SettingsView,
-        meta: {titleKey: 'nav.settings', requiresAdmin: false}
+        meta: {titleKey: 'nav.settings', requiresAdmin: false},
+        redirect: {name: 'settings-profile'},
+        children: [
+            {
+                path: 'profile',
+                name: 'settings-profile',
+                component: () => import('@/views/settings/ProfileTab.vue')
+            },
+            {
+                path: 'users',
+                name: 'settings-user-management',
+                component: () => import('@/views/settings/UserTab.vue'),
+                meta: {permission: 'view_user_tab'}
+            },
+            {
+                path: 'roles',
+                name: 'settings-role-management',
+                component: () => import('@/views/settings/RoleTab.vue'),
+                meta: {permission: 'view_role_tab'}
+            },
+            {
+                path: 'clubs',
+                name: 'settings-club-management',
+                component: () => import('@/views/settings/ClubManagementTab.vue'),
+                meta: {permission: 'view_club_tab'}
+            },
+            {
+                path: 'teams',
+                name: 'settings-team-management',
+                component: () => import('@/views/settings/TeamTab.vue'),
+                meta: {permission: 'view_team_tab'}
+            },
+            {
+                path: 'access-denied',
+                name: 'settings-access-denied',
+                component: () => import('@/views/settings/AccessDeniedTab.vue')
+            },
+            {
+                path: ':pathMatch(.*)*',
+                redirect: {name: 'settings-profile'}
+            }
+        ]
     }
 ]
 
@@ -74,6 +114,10 @@ router.beforeEach(async (to) => {
 
     if (to.name === 'login' && auth.isLoggedIn) {
         return {name: 'dashboard'}
+    }
+
+    if (to.meta.permission && !auth.hasPermission(to.meta.permission)) {
+        return {name: 'settings-access-denied'}
     }
 
     if (to.meta.titleKey) {

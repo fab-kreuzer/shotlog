@@ -187,7 +187,9 @@
     "tabUserManagement": "User Management",
     "tabRoleManagement": "Role Management",
     "tabClubManagement": "Club Management",
-    "tabTeamManagement": "Team Management"
+    "tabTeamManagement": "Team Management",
+    "accessDeniedTitle": "Access denied",
+    "accessDeniedMessage": "You don't have permission to view this page. If you would like access, please contact your system administrator."
   },
   "profile": {
     "title": "My Profile",
