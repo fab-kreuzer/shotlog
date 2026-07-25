@@ -100,7 +100,7 @@ onMounted(loadData)
         <i class="pi pi-users text-primary-500"/>
         {{ $t('user.listTitle') }}
       </h1>
-      <Button :label="$t('user.newButton')" icon="pi pi-plus" @click="showCreateUserModal = true"/>
+      <Button v-if="auth.hasPermission('create_user')" :label="$t('user.newButton')" icon="pi pi-plus" @click="showCreateUserModal = true"/>
     </div>
 
     <DataTable :value="users" class="border border-surface-200 rounded-lg overflow-hidden" dataKey="id" stripedRows>
@@ -114,11 +114,11 @@ onMounted(loadData)
           </div>
         </template>
       </Column>
-      <Column :header="$t('common.actions')">
+      <Column v-if="auth.hasPermission('edit_user') || auth.hasPermission('delete_user')" :header="$t('common.actions')">
         <template #body="{ data }">
           <div class="flex justify-end gap-2">
-            <Button icon="pi pi-pencil" rounded severity="info" size="small" text @click="openEditUser(data)"/>
-            <Button icon="pi pi-trash" rounded severity="danger" size="small" text @click="handleDeleteUser(data.id)"/>
+            <Button v-if="auth.hasPermission('edit_user')" icon="pi pi-pencil" rounded severity="info" size="small" text @click="openEditUser(data)"/>
+            <Button v-if="auth.hasPermission('delete_user')" icon="pi pi-trash" rounded severity="danger" size="small" text @click="handleDeleteUser(data.id)"/>
           </div>
         </template>
       </Column>

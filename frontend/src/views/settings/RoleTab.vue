@@ -70,7 +70,7 @@ onMounted(loadData)
         <i class="pi pi-shield text-primary-500"/>
         {{ $t('role.listTitle') }}
       </h3>
-      <Button :label="$t('role.newButton')" icon="pi pi-plus" @click="showCreateRoleModal = true"/>
+      <Button v-if="auth.hasPermission('create_role')" :label="$t('role.newButton')" icon="pi pi-plus" @click="showCreateRoleModal = true"/>
     </div>
 
     <DataTable :value="roles" class="border border-surface-200 rounded-lg overflow-hidden" dataKey="id" stripedRows>
@@ -83,11 +83,11 @@ onMounted(loadData)
           </div>
         </template>
       </Column>
-      <Column :header="$t('common.actions')">
+      <Column v-if="auth.hasPermission('edit_role') || auth.hasPermission('delete_role')" :header="$t('common.actions')">
         <template #body="{ data }">
           <div class="flex justify-end gap-2">
-            <Button icon="pi pi-pencil" rounded severity="info" size="small" text @click="openEditRole(data)"/>
-            <Button icon="pi pi-trash" rounded severity="danger" size="small" text @click="handleDeleteRole(data.id)"/>
+            <Button v-if="auth.hasPermission('edit_role')" icon="pi pi-pencil" rounded severity="info" size="small" text @click="openEditRole(data)"/>
+            <Button v-if="auth.hasPermission('delete_role')" icon="pi pi-trash" rounded severity="danger" size="small" text @click="handleDeleteRole(data.id)"/>
           </div>
         </template>
       </Column>
