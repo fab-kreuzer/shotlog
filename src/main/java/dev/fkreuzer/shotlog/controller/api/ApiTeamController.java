@@ -140,6 +140,19 @@ public class ApiTeamController {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
 
+        // Each UserTeam join row is orphan-removed from both Team.userTeams and
+        // UserAccount.teams, both eagerly loaded. Deleting the team while its
+        // memberships are still referenced by the users' collections makes
+        // Hibernate re-persist them at flush, undoing the delete. Detach each
+        // membership from the user side first (same trap as removeMemberFromTeam).
+        for (UserTeam membership : List.copyOf(team.getUserTeams())) {
+            membership.getUser()
+                    .getTeams()
+                    .remove(membership);
+        }
+        team.getUserTeams()
+                .clear();
+
         teamRepository.delete(team);
     }
 }
