@@ -154,16 +154,31 @@ function deleteTeam(team) {
     icon: 'pi pi-exclamation-triangle',
     acceptLabel: t('team.deleteConfirm'),
     rejectLabel: t('common.cancel'),
-    accept: async () => {
-      try {
-        await api.delete(`/api/teams/${team.id}`)
-        teams.value = teams.value.filter(tm => tm.id !== team.id)
-        notification.success(t('team.teamDeleted'))
-      } catch (error) {
-        console.error('Error deleting team:', error)
-      }
-    }
+    accept: () => performTeamDelete(team, false)
   })
+}
+
+async function performTeamDelete(team, deleteSessions) {
+  try {
+    await api.delete(`/api/teams/${team.id}?deleteSessions=${deleteSessions}`, {notify: false})
+    teams.value = teams.value.filter(tm => tm.id !== team.id)
+    notification.success(t('team.teamDeleted'))
+  } catch (error) {
+    // The team still has sessions attached — ask whether to delete them too.
+    if (error?.status === 409 && !deleteSessions) {
+      confirm.require({
+        message: t('team.deleteWithSessionsMessage', {count: error.sessionCount ?? 0}),
+        header: t('team.deleteWithSessionsTitle'),
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: t('team.deleteWithSessionsConfirm'),
+        rejectLabel: t('common.cancel'),
+        accept: () => performTeamDelete(team, true)
+      })
+      return
+    }
+    console.error('Error deleting team:', error)
+    notification.error(t('team.deleteFailed'))
+  }
 }
 
 onMounted(loadData)

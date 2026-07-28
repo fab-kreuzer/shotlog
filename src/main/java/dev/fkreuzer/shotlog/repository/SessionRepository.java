@@ -1,6 +1,7 @@
 package dev.fkreuzer.shotlog.repository;
 
 import dev.fkreuzer.shotlog.domain.Session;
+import dev.fkreuzer.shotlog.domain.Team;
 import dev.fkreuzer.shotlog.domain.UserAccount;
 import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +14,7 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     Optional<Session> findByIdAndUser(Long id, UserAccount user);
     void deleteByIdAndUser(Long id, UserAccount user);
     List<Session> findAllByUser(UserAccount user);
+    List<Session> findAllByTeam(Team team);
 
     long countByEnemyId(Long enemyId);
 }

@@ -1,13 +1,16 @@
 package dev.fkreuzer.shotlog.controller.api;
 
+import dev.fkreuzer.shotlog.domain.Session;
 import dev.fkreuzer.shotlog.domain.Team;
 import dev.fkreuzer.shotlog.domain.UserAccount;
 import dev.fkreuzer.shotlog.domain.UserTeam;
 import dev.fkreuzer.shotlog.domain.datatypes.TeamRole;
+import dev.fkreuzer.shotlog.repository.SessionRepository;
 import dev.fkreuzer.shotlog.repository.TeamRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
 import dev.fkreuzer.shotlog.repository.UserTeamRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -25,11 +28,13 @@ public class ApiTeamController {
     private final TeamRepository teamRepository;
     private final UserAccountRepository userRepository;
     private final UserTeamRepository userTeamRepository;
+    private final SessionRepository sessionRepository;
 
-    public ApiTeamController(TeamRepository teamRepository, UserAccountRepository userRepository, UserTeamRepository userTeamRepository) {
+    public ApiTeamController(TeamRepository teamRepository, UserAccountRepository userRepository, UserTeamRepository userTeamRepository, SessionRepository sessionRepository) {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
         this.userTeamRepository = userTeamRepository;
+        this.sessionRepository = sessionRepository;
     }
 
     @GetMapping("/teams")
@@ -136,9 +141,19 @@ public class ApiTeamController {
     @DeleteMapping("/teams/{teamId}")
     @Transactional
     @PreAuthorize("hasAuthority('view_team_tab')")
-    public void deleteTeam(@PathVariable Long teamId) {
+    public ResponseEntity<?> deleteTeam(@PathVariable Long teamId,
+                                        @RequestParam(defaultValue = "false") boolean deleteSessions) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+
+        // Competition sessions reference the team via a foreign key. Unless the
+        // caller has explicitly confirmed cascading the delete, refuse and report
+        // how many sessions are attached so the UI can ask for confirmation.
+        List<Session> sessions = sessionRepository.findAllByTeam(team);
+        if (!sessions.isEmpty() && !deleteSessions) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("sessionCount", sessions.size()));
+        }
 
         // Each UserTeam join row is orphan-removed from both Team.userTeams and
         // UserAccount.teams, both eagerly loaded. Deleting the team while its
@@ -153,6 +168,14 @@ public class ApiTeamController {
         team.getUserTeams()
                 .clear();
 
+        // Delete the attached sessions (cascading to their series/shots) and
+        // flush before removing the team so the team_id foreign key is clear.
+        if (!sessions.isEmpty()) {
+            sessionRepository.deleteAll(sessions);
+            sessionRepository.flush();
+        }
+
         teamRepository.delete(team);
+        return ResponseEntity.noContent().build();
     }
 }
