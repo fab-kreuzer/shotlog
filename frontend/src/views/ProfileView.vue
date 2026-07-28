@@ -5,6 +5,36 @@
     <Card>
       <template #content>
         <div class="flex flex-col gap-4">
+          <div class="flex items-center gap-4">
+            <Avatar v-if="auth.avatarUrl" :image="auth.avatarUrl" shape="circle" size="xlarge"/>
+            <Avatar v-else :label="initials" class="bg-primary-500 font-semibold text-white" shape="circle"
+                    size="xlarge"/>
+            <div class="flex flex-col gap-2">
+              <input ref="fileInput" accept="image/*" class="hidden" type="file" @change="onAvatarSelected"/>
+              <div class="flex gap-2">
+                <Button
+                    :label="$t('profile.uploadAvatar')"
+                    :loading="uploadingAvatar"
+                    icon="pi pi-upload"
+                    severity="secondary"
+                    size="small"
+                    @click="fileInput.click()"
+                />
+                <Button
+                    v-if="auth.user?.hasAvatar"
+                    :disabled="uploadingAvatar"
+                    :label="$t('profile.removeAvatar')"
+                    icon="pi pi-trash"
+                    severity="secondary"
+                    size="small"
+                    text
+                    @click="removeAvatar"
+                />
+              </div>
+              <span class="text-xs text-surface-500">{{ $t('profile.avatarHint') }}</span>
+            </div>
+          </div>
+
           <div class="flex items-center gap-3">
             <span class="text-sm text-surface-500 w-32">{{ $t('user.username') }}:</span>
             <span class="text-sm font-medium text-surface-800">
@@ -87,6 +117,7 @@ import Card from 'primevue/card'
 import Select from 'primevue/select'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import Avatar from 'primevue/avatar'
 import Tag from 'primevue/tag'
 import {useAuthStore} from '@/stores/auth'
 import {useNotificationStore} from '@/stores/notifications.js'
@@ -96,6 +127,16 @@ import PageHeader from '@/components/PageHeader.vue'
 const {t} = useI18n()
 const auth = useAuthStore()
 const notify = useNotificationStore()
+
+const MAX_AVATAR_BYTES = 2 * 1024 * 1024
+
+const initials = computed(() => {
+  const name = auth.user?.displayName || auth.user?.username || '?'
+  return name.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase()
+})
+
+const fileInput = ref(null)
+const uploadingAvatar = ref(false)
 
 const displayName = ref(auth.user?.displayName ?? '')
 const savingName = ref(false)
@@ -141,6 +182,81 @@ async function saveDisplayName() {
   } finally {
     savingName.value = false
   }
+}
+
+const AVATAR_SIZE = 256
+
+// Downscale + center-crop to a small square before upload. A profile picture is
+// rendered tiny, so storing/serving/decoding a full-resolution phone photo just
+// wastes bandwidth and main-thread decode time on every render.
+async function downscaleImage(file) {
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = () => reject(reader.error)
+    reader.readAsDataURL(file)
+  })
+  const img = await new Promise((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => resolve(image)
+    image.onerror = () => reject(new Error('decode failed'))
+    image.src = dataUrl
+  })
+  const side = Math.min(img.width, img.height)
+  const sx = (img.width - side) / 2
+  const sy = (img.height - side) / 2
+  const canvas = document.createElement('canvas')
+  canvas.width = AVATAR_SIZE
+  canvas.height = AVATAR_SIZE
+  canvas.getContext('2d').drawImage(img, sx, sy, side, side, 0, 0, AVATAR_SIZE, AVATAR_SIZE)
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9))
+  return new File([blob], 'avatar.jpg', {type: 'image/jpeg'})
+}
+
+async function onAvatarSelected(event) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  if (!file.type.startsWith('image/')) {
+    notify.error(t('profile.avatarInvalidType'))
+    resetFileInput()
+    return
+  }
+  if (file.size > MAX_AVATAR_BYTES) {
+    notify.error(t('profile.avatarTooLarge'))
+    resetFileInput()
+    return
+  }
+  uploadingAvatar.value = true
+  try {
+    const resized = await downscaleImage(file)
+    // Success toast is emitted by the HTTP layer from the API response.
+    await api.uploadAvatar(resized)
+    await auth.fetchUser()
+    auth.refreshAvatar()
+  } catch (err) {
+    console.error('Error uploading avatar:', err)
+    notify.error(t('profile.avatarInvalidType'))
+  } finally {
+    uploadingAvatar.value = false
+    resetFileInput()
+  }
+}
+
+async function removeAvatar() {
+  uploadingAvatar.value = true
+  try {
+    await api.removeAvatar()
+    await auth.fetchUser()
+    auth.refreshAvatar()
+  } catch (err) {
+    console.error('Error removing avatar:', err)
+  } finally {
+    uploadingAvatar.value = false
+  }
+}
+
+function resetFileInput() {
+  if (fileInput.value) fileInput.value.value = ''
 }
 
 async function saveHomeClub() {

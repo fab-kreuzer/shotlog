@@ -2,6 +2,13 @@ spring:
   application:
     name: shotlog
 
+  servlet:
+    multipart:
+      # Framework-level ceiling; the avatar endpoint enforces a tighter 2 MB limit
+      # with a friendly message before this hard cap is reached.
+      max-file-size: 5MB
+      max-request-size: 5MB
+
   messages:
     basename: messages
     encoding: UTF-8

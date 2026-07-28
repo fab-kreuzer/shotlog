@@ -36,7 +36,8 @@
               type="button"
               @click="toggleUserMenu"
           >
-            <Avatar :label="initials" class="cursor-pointer bg-primary-500 font-semibold text-white" shape="circle"/>
+            <Avatar v-if="auth.avatarUrl" :image="auth.avatarUrl" class="cursor-pointer" shape="circle"/>
+            <Avatar v-else :label="initials" class="cursor-pointer bg-primary-500 font-semibold text-white" shape="circle"/>
           </button>
           <Menu ref="userMenu" :model="userMenuItems" :popup="true">
             <template #start>

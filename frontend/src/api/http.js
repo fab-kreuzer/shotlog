@@ -104,6 +104,12 @@ export const api = {
     }),
     me: () => request('GET', '/api/auth/me', null, {notify: false}),
     updateProfile: (data) => request('PUT', '/api/auth/me', data),
+    uploadAvatar: (file) => {
+        const formData = new FormData()
+        formData.append('file', file)
+        return request('POST', '/api/auth/me/avatar', formData)
+    },
+    removeAvatar: () => request('DELETE', '/api/auth/me/avatar'),
 
     // Sessions
     getSessions: () => request('GET', '/api/sessions'),

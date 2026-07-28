@@ -4,14 +4,19 @@ import dev.fkreuzer.shotlog.controller.DefaultShotLogController;
 import dev.fkreuzer.shotlog.domain.*;
 import dev.fkreuzer.shotlog.repository.RoleRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
+import dev.fkreuzer.shotlog.repository.UserAvatarRepository;
 import dev.fkreuzer.shotlog.service.ShootingPlaceService;
 import dev.fkreuzer.shotlog.web.ApiResponse;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,17 +25,20 @@ import java.util.stream.Collectors;
 public class ApiAuthController extends DefaultShotLogController {
 
     private final UserAccountRepository userAccountRepository;
+    private final UserAvatarRepository userAvatarRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final ShootingPlaceService shootingPlaceService;
     private final MessageSource messageSource;
 
     public ApiAuthController(UserAccountRepository userAccountRepository,
+                             UserAvatarRepository userAvatarRepository,
                              RoleRepository roleRepository,
                              PasswordEncoder passwordEncoder,
                              ShootingPlaceService shootingPlaceService,
                              MessageSource messageSource) {
         this.userAccountRepository = userAccountRepository;
+        this.userAvatarRepository = userAvatarRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.shootingPlaceService = shootingPlaceService;
@@ -74,6 +82,7 @@ public class ApiAuthController extends DefaultShotLogController {
         ShootingPlace homeClub = user.getHomeClub();
         userInfo.put("homeClubId", homeClub != null ? homeClub.getId() : null);
         userInfo.put("homeClubName", homeClub != null ? homeClub.getClub() : null);
+        userInfo.put("hasAvatar", userAvatarRepository.existsById(user.getId()));
 
         List<UserTeam> teams = user.getTeams();
         userInfo.put("teams", teams == null ? List.of() : teams.stream()
@@ -133,6 +142,76 @@ public class ApiAuthController extends DefaultShotLogController {
         userAccountRepository.save(user);
         response.addSuccess(msg("profile.updateSuccess"));
         return ResponseEntity.ok().body(response);
+    }
+
+    private static final long MAX_AVATAR_BYTES = 2L * 1024 * 1024;
+
+    @PostMapping("/me/avatar")
+    public ResponseEntity<?> uploadAvatar(@RequestParam("file") MultipartFile file) {
+        UserAccount current = getCurrentUser();
+        if (current == null) {
+            return ResponseEntity.status(401)
+                    .build();
+        }
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(msg("profile.avatarEmpty")));
+        }
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(msg("profile.avatarInvalidType")));
+        }
+        if (file.getSize() > MAX_AVATAR_BYTES) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(msg("profile.avatarTooLarge")));
+        }
+
+        byte[] data;
+        try {
+            data = file.getBytes();
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.error(msg("profile.avatarReadError")));
+        }
+        // Stored in a dedicated table so the blob never loads with the user
+        // principal or the /me payload.
+        userAvatarRepository.save(new UserAvatar(current.getId(), data, contentType));
+        return ResponseEntity.ok()
+                .body(ApiResponse.success(msg("profile.avatarUpdated")));
+    }
+
+    @GetMapping("/me/avatar")
+    public ResponseEntity<byte[]> getAvatar() {
+        UserAccount current = getCurrentUser();
+        if (current == null) {
+            return ResponseEntity.status(401)
+                    .build();
+        }
+        UserAvatar avatar = userAvatarRepository.findById(current.getId())
+                .orElse(null);
+        if (avatar == null) {
+            return ResponseEntity.notFound()
+                    .build();
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(avatar.getContentType()))
+                .cacheControl(CacheControl.noCache().cachePrivate())
+                .body(avatar.getData());
+    }
+
+    @DeleteMapping("/me/avatar")
+    public ResponseEntity<?> deleteAvatar() {
+        UserAccount current = getCurrentUser();
+        if (current == null) {
+            return ResponseEntity.status(401)
+                    .build();
+        }
+        if (userAvatarRepository.existsById(current.getId())) {
+            userAvatarRepository.deleteById(current.getId());
+        }
+        return ResponseEntity.ok()
+                .body(ApiResponse.success(msg("profile.avatarRemoved")));
     }
 
     @PostMapping("/register")

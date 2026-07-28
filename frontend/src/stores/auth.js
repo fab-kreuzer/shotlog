@@ -6,6 +6,16 @@ export const useAuthStore = defineStore('auth', () => {
     const user = ref(null)
     const loading = ref(true)
 
+    // Bumped after an avatar upload/removal to cache-bust the <img> src.
+    const avatarVersion = ref(0)
+    const avatarUrl = computed(() =>
+        user.value?.hasAvatar ? `/api/auth/me/avatar?v=${avatarVersion.value}` : null
+    )
+
+    function refreshAvatar() {
+        avatarVersion.value++
+    }
+
     const isLoggedIn = computed(() => user.value !== null)
 
     const isAdmin = computed(() => {
@@ -49,5 +59,5 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = null
     }
 
-    return {user, loading, isLoggedIn, isAdmin, isSportLeader, hasPermission, fetchUser, login, logout}
+    return {user, loading, avatarUrl, refreshAvatar, isLoggedIn, isAdmin, isSportLeader, hasPermission, fetchUser, login, logout}
 })
