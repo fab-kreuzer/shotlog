@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface TeamRepository extends JpaRepository<Team, Long> {
     List<Team> findAllBySeason(Season season);
+    long countBySeason(Season season);
 }

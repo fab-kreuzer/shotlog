@@ -188,6 +188,7 @@
     "tabRoleManagement": "Role Management",
     "tabClubManagement": "Club Management",
     "tabTeamManagement": "Team Management",
+    "tabSeasonManagement": "Season Management",
     "accessDeniedTitle": "Access denied",
     "accessDeniedMessage": "You don't have permission to view this page. If you would like access, please contact your system administrator."
   },
@@ -242,7 +243,8 @@
       "user": "Users",
       "role": "Roles",
       "club": "Clubs",
-      "team": "Teams"
+      "team": "Teams",
+      "season": "Seasons"
     },
     "action": {
       "view": "View",
@@ -293,5 +295,18 @@
     "teamDeleted": "Team deleted successfully",
     "memberAdded": "Member added to team",
     "memberRemoved": "Member removed from team"
+  },
+  "season": {
+    "listTitle": "All Seasons",
+    "newButton": "New Season",
+    "createTitle": "Create New Season",
+    "editTitle": "Edit Season",
+    "descriptionLabel": "Season Name",
+    "descriptionPlaceholder": "e.g. 2025/26",
+    "activeLabel": "Active",
+    "setActive": "Set active",
+    "deleteTitle": "Delete season",
+    "deleteMessage": "Are you sure you want to delete the season \"{name}\"?",
+    "deleteConfirm": "Yes, delete"
   }
 }

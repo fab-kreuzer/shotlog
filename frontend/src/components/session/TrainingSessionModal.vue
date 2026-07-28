@@ -39,13 +39,7 @@
 
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-medium text-surface-700">{{ $t('session.season') }}</label>
-          <Select
-              v-model="form.seasonId"
-              :options="seasons"
-              fluid
-              optionLabel="description"
-              optionValue="id"
-          />
+          <span class="py-2 text-sm font-medium text-surface-800">{{ seasonName || '—' }}</span>
         </div>
 
         <div class="flex items-end gap-5 sm:col-span-2">
@@ -72,7 +66,6 @@
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import DatePicker from 'primevue/datepicker'
-import Select from 'primevue/select'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import SessionSeriesEditor from '@/components/session/SessionSeriesEditor.vue'
@@ -82,7 +75,7 @@ const emit = defineEmits(['saved'])
 
 const {
   visible,
-  seasons,
+  seasonName,
   isEditing,
   form,
   sessionDateModel,

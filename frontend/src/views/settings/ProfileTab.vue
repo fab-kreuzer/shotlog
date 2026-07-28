@@ -54,17 +54,10 @@
       </div>
 
       <div class="flex items-center gap-3">
-        <label class="text-sm text-surface-500 w-32" for="activeSeason">{{ $t('profile.activeSeason') }}:</label>
-        <Select
-            id="activeSeason"
-            v-model="activeSeasonId"
-            :disabled="savingSeason"
-            :options="seasons"
-            class="w-64"
-            optionLabel="description"
-            optionValue="id"
-            @change="saveActiveSeason"
-        />
+        <span class="text-sm text-surface-500 w-32">{{ $t('profile.activeSeason') }}:</span>
+        <span class="text-sm font-medium text-surface-800">
+          {{ activeSeasonName || '—' }}
+        </span>
       </div>
     </div>
 
@@ -90,8 +83,7 @@ const homeClubId = ref(auth.user?.homeClubId ?? null)
 const saving = ref(false)
 
 const seasons = ref([])
-const activeSeasonId = ref(null)
-const savingSeason = ref(false)
+const activeSeasonName = computed(() => seasons.value.find(s => s.active)?.description ?? '')
 
 const teamRoles = ref([])
 const roleLabels = computed(() =>
@@ -119,17 +111,6 @@ async function saveHomeClub() {
   }
 }
 
-async function saveActiveSeason() {
-  savingSeason.value = true
-  try {
-    await api.setActiveSeason(activeSeasonId.value)
-  } catch (err) {
-    console.error('Error updating active season:', err)
-  } finally {
-    savingSeason.value = false
-  }
-}
-
 onMounted(async () => {
   try {
     clubs.value = await api.getLocations()
@@ -139,7 +120,6 @@ onMounted(async () => {
   }
   try {
     seasons.value = await api.getSeasons()
-    activeSeasonId.value = seasons.value.find(s => s.active)?.id ?? null
   } catch (err) {
     console.error('Error fetching seasons:', err)
   }

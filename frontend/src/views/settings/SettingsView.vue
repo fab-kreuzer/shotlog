@@ -19,6 +19,9 @@
             <Tab v-if="auth.hasPermission('view_team_tab')" value="settings-team-management">
               <i class="pi pi-sitemap mr-2"/>{{ $t('settings.tabTeamManagement') }}
             </Tab>
+            <Tab v-if="auth.hasPermission('view_season_tab')" value="settings-season-management">
+              <i class="pi pi-calendar mr-2"/>{{ $t('settings.tabSeasonManagement') }}
+            </Tab>
           </TabList>
         </Tabs>
         <div class="pt-4">

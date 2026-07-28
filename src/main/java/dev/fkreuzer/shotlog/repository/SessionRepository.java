@@ -1,5 +1,6 @@
 package dev.fkreuzer.shotlog.repository;
 
+import dev.fkreuzer.shotlog.domain.Season;
 import dev.fkreuzer.shotlog.domain.Session;
 import dev.fkreuzer.shotlog.domain.Team;
 import dev.fkreuzer.shotlog.domain.UserAccount;
@@ -15,6 +16,7 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     void deleteByIdAndUser(Long id, UserAccount user);
     List<Session> findAllByUser(UserAccount user);
     List<Session> findAllByTeam(Team team);
+    long countBySeason(Season season);
 
     long countByEnemyId(Long enemyId);
 }

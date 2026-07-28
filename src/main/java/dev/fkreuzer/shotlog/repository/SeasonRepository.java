@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface SeasonRepository extends JpaRepository<Season, Long> {
 
     Optional<Season> findByActiveTrue();
+
+    Optional<Season> findByDescription(String description);
 }

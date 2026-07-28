@@ -25,6 +25,9 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
     const visibleTeams = computed(() =>
         assignedTeams.value.filter(tm => tm.season?.id === activeSeasonId.value)
     )
+    // The session's season is fixed (active season on create, the session's own
+    // season on edit) and shown read-only, so expose just its label.
+    const seasonName = computed(() => seasons.value.find(s => s.id === form.seasonId)?.description ?? '')
 
     const form = reactive({
         sessionDate: '',
@@ -208,6 +211,7 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
         seasons,
         assignedTeams,
         visibleTeams,
+        seasonName,
         isEditing,
         form,
         sessionDateModel,

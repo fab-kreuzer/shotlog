@@ -84,6 +84,12 @@ const routes = [
                 meta: {permission: 'view_team_tab'}
             },
             {
+                path: 'seasons',
+                name: 'settings-season-management',
+                component: () => import('@/views/settings/SeasonTab.vue'),
+                meta: {permission: 'view_season_tab'}
+            },
+            {
                 path: 'access-denied',
                 name: 'settings-access-denied',
                 component: () => import('@/views/settings/AccessDeniedTab.vue')

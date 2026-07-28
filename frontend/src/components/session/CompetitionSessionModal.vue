@@ -50,13 +50,7 @@
 
         <div class="flex flex-col gap-1.5">
           <label class="text-sm font-medium text-surface-700">{{ $t('session.season') }}</label>
-          <Select
-              v-model="form.seasonId"
-              :options="seasons"
-              fluid
-              optionLabel="description"
-              optionValue="id"
-          />
+          <span class="py-2 text-sm font-medium text-surface-800">{{ seasonName || '—' }}</span>
         </div>
 
         <div class="flex flex-col gap-1.5">
@@ -109,7 +103,7 @@ const emit = defineEmits(['saved'])
 const {
   visible,
   locations,
-  seasons,
+  seasonName,
   visibleTeams,
   isEditing,
   form,

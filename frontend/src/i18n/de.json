@@ -188,6 +188,7 @@
     "tabRoleManagement": "Rollenverwaltung",
     "tabClubManagement": "Clubverwaltung",
     "tabTeamManagement": "Mannschaften",
+    "tabSeasonManagement": "Saisonverwaltung",
     "accessDeniedTitle": "Zugriff verweigert",
     "accessDeniedMessage": "Sie haben keine Berechtigung, diese Seite anzuzeigen. Wenn Sie Zugriff wünschen, wenden Sie sich bitte an Ihren Systemadministrator."
   },
@@ -242,7 +243,8 @@
       "user": "Benutzer",
       "role": "Rollen",
       "club": "Clubs",
-      "team": "Mannschaften"
+      "team": "Mannschaften",
+      "season": "Saisons"
     },
     "action": {
       "view": "Anzeigen",
@@ -293,5 +295,18 @@
     "teamDeleted": "Mannschaft erfolgreich gelöscht",
     "memberAdded": "Mitglied zur Mannschaft hinzugefügt",
     "memberRemoved": "Mitglied aus der Mannschaft entfernt"
+  },
+  "season": {
+    "listTitle": "Alle Saisons",
+    "newButton": "Neue Saison",
+    "createTitle": "Neue Saison erstellen",
+    "editTitle": "Saison bearbeiten",
+    "descriptionLabel": "Saisonname",
+    "descriptionPlaceholder": "z. B. 2025/26",
+    "activeLabel": "Aktiv",
+    "setActive": "Aktiv setzen",
+    "deleteTitle": "Saison löschen",
+    "deleteMessage": "Möchten Sie die Saison \"{name}\" wirklich löschen?",
+    "deleteConfirm": "Ja, löschen"
   }
 }
