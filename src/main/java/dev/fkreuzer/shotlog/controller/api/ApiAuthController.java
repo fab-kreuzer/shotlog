@@ -82,6 +82,12 @@ public class ApiAuthController extends DefaultShotLogController {
                     teamInfo.put("id", userTeam.getTeam().getId());
                     teamInfo.put("name", userTeam.getTeam().getName());
                     teamInfo.put("role", userTeam.getRole());
+                    var season = userTeam.getTeam().getSeason();
+                    if (season != null) {
+                        teamInfo.put("season", Map.of(
+                                "id", season.getId(),
+                                "description", season.getDescription()));
+                    }
                     return teamInfo;
                 })
                 .collect(Collectors.toList()));

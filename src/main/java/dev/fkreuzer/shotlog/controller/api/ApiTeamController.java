@@ -1,10 +1,12 @@
 package dev.fkreuzer.shotlog.controller.api;
 
+import dev.fkreuzer.shotlog.domain.Season;
 import dev.fkreuzer.shotlog.domain.Session;
 import dev.fkreuzer.shotlog.domain.Team;
 import dev.fkreuzer.shotlog.domain.UserAccount;
 import dev.fkreuzer.shotlog.domain.UserTeam;
 import dev.fkreuzer.shotlog.domain.datatypes.TeamRole;
+import dev.fkreuzer.shotlog.repository.SeasonRepository;
 import dev.fkreuzer.shotlog.repository.SessionRepository;
 import dev.fkreuzer.shotlog.repository.TeamRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
@@ -29,17 +31,24 @@ public class ApiTeamController {
     private final UserAccountRepository userRepository;
     private final UserTeamRepository userTeamRepository;
     private final SessionRepository sessionRepository;
+    private final SeasonRepository seasonRepository;
 
-    public ApiTeamController(TeamRepository teamRepository, UserAccountRepository userRepository, UserTeamRepository userTeamRepository, SessionRepository sessionRepository) {
+    public ApiTeamController(TeamRepository teamRepository, UserAccountRepository userRepository, UserTeamRepository userTeamRepository, SessionRepository sessionRepository, SeasonRepository seasonRepository) {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
         this.userTeamRepository = userTeamRepository;
         this.sessionRepository = sessionRepository;
+        this.seasonRepository = seasonRepository;
     }
 
     @GetMapping("/teams")
     @PreAuthorize("hasAuthority('view_team_tab')")
-    public List<Team> getTeams() {
+    public List<Team> getTeams(@RequestParam(required = false) Long seasonId) {
+        if (seasonId != null) {
+            Season season = seasonRepository.findById(seasonId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Season not found"));
+            return teamRepository.findAllBySeason(season);
+        }
         return teamRepository.findAll();
     }
 
@@ -69,15 +78,29 @@ public class ApiTeamController {
 
     @PostMapping("/teams")
     @PreAuthorize("hasAuthority('view_team_tab')")
-    public Team createTeam(@RequestBody Map<String, String> request) {
-        String name = request.get("name");
+    public Team createTeam(@RequestBody Map<String, Object> request) {
+        Object rawName = request.get("name");
+        String name = rawName != null ? rawName.toString() : null;
         if (name == null || name.trim()
                 .isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Team name is required");
         }
 
+        // Scope the team to the requested season, falling back to the active one.
+        Season season;
+        Object rawSeasonId = request.get("seasonId");
+        if (rawSeasonId != null) {
+            Long seasonId = Long.valueOf(rawSeasonId.toString());
+            season = seasonRepository.findById(seasonId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Season not found"));
+        } else {
+            season = seasonRepository.findByActiveTrue()
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No active season"));
+        }
+
         Team team = new Team();
         team.setName(name);
+        team.setSeason(season);
         return teamRepository.save(team);
     }
 

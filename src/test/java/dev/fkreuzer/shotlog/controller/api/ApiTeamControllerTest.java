@@ -1,10 +1,13 @@
 package dev.fkreuzer.shotlog.controller.api;
 
 import dev.fkreuzer.shotlog.domain.Role;
+import dev.fkreuzer.shotlog.domain.Season;
 import dev.fkreuzer.shotlog.domain.Team;
 import dev.fkreuzer.shotlog.domain.UserAccount;
 import dev.fkreuzer.shotlog.domain.UserTeam;
 import dev.fkreuzer.shotlog.domain.datatypes.TeamRole;
+import dev.fkreuzer.shotlog.repository.SeasonRepository;
+import dev.fkreuzer.shotlog.repository.SessionRepository;
 import dev.fkreuzer.shotlog.repository.TeamRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
 import dev.fkreuzer.shotlog.repository.UserTeamRepository;
@@ -37,6 +40,12 @@ class ApiTeamControllerTest {
     @Mock
     private UserTeamRepository userTeamRepository;
 
+    @Mock
+    private SessionRepository sessionRepository;
+
+    @Mock
+    private SeasonRepository seasonRepository;
+
     @InjectMocks
     private ApiTeamController controller;
 
@@ -57,12 +66,25 @@ class ApiTeamControllerTest {
     // --- getTeams ---
 
     @Test
-    void getTeams_shouldReturnAllTeams() {
+    void getTeams_shouldReturnAllTeams_whenNoSeasonGiven() {
         when(teamRepository.findAll()).thenReturn(List.of(teamWithId(1, "A"), teamWithId(2, "B")));
 
-        List<Team> result = controller.getTeams();
+        List<Team> result = controller.getTeams(null);
 
         assertEquals(2, result.size());
+    }
+
+    @Test
+    void getTeams_shouldReturnSeasonTeams_whenSeasonGiven() {
+        Season season = new Season("2025/26");
+        season.setId(5L);
+        when(seasonRepository.findById(5L)).thenReturn(Optional.of(season));
+        when(teamRepository.findAllBySeason(season)).thenReturn(List.of(teamWithId(1, "A")));
+
+        List<Team> result = controller.getTeams(5L);
+
+        assertEquals(1, result.size());
+        verify(teamRepository, never()).findAll();
     }
 
     // --- getTeamRoles ---
@@ -119,13 +141,34 @@ class ApiTeamControllerTest {
     // --- createTeam ---
 
     @Test
-    void createTeam_shouldSaveAndReturnTeam() {
+    void createTeam_shouldSaveAndReturnTeam_underActiveSeason() {
+        Season season = new Season("2025/26");
+        season.setId(5L);
+        when(seasonRepository.findByActiveTrue()).thenReturn(Optional.of(season));
         when(teamRepository.save(any(Team.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        Team result = controller.createTeam(Map.of("name", "New Team"));
+        Team result = controller.createTeam(Map.<String, Object>of("name", "New Team"));
 
         assertEquals("New Team", result.getName());
+        assertSame(season, result.getSeason());
         verify(teamRepository).save(any(Team.class));
+    }
+
+    @Test
+    void createTeam_shouldUseGivenSeason_whenSeasonIdProvided() {
+        Season season = new Season("2024/25");
+        season.setId(3L);
+        when(seasonRepository.findById(3L)).thenReturn(Optional.of(season));
+        when(teamRepository.save(any(Team.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("name", "New Team");
+        request.put("seasonId", 3);
+
+        Team result = controller.createTeam(request);
+
+        assertSame(season, result.getSeason());
+        verify(seasonRepository, never()).findByActiveTrue();
     }
 
     @Test
@@ -140,7 +183,7 @@ class ApiTeamControllerTest {
     @Test
     void createTeam_shouldThrowBadRequest_whenNameBlank() {
         ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-                () -> controller.createTeam(Map.of("name", "   ")));
+                () -> controller.createTeam(Map.<String, Object>of("name", "   ")));
 
         assertEquals(400, ex.getStatusCode().value());
     }
@@ -280,6 +323,7 @@ class ApiTeamControllerTest {
     void deleteTeam_shouldDeleteTeam_whenFound() {
         Team team = teamWithId(1, "Alpha");
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
+        when(sessionRepository.findAllByTeam(team)).thenReturn(List.of());
 
         controller.deleteTeam(1L, true);
 

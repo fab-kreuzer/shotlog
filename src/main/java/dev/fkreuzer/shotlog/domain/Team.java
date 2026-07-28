@@ -17,6 +17,11 @@ public class Team {
 
     private String name;
 
+    // Teams are scoped to a season; each season has its own set of teams.
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "season_id")
+    private Season season;
+
     // Link back to the junction entity
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<UserTeam> userTeams;

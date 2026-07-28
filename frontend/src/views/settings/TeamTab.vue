@@ -22,6 +22,8 @@ const {t} = useI18n()
 const notification = useNotificationStore()
 
 const teams = ref([])
+const seasons = ref([])
+const selectedSeasonId = ref(null)
 const allUsers = ref([])
 const teamRoles = ref([])
 const showAddMemberDialog = ref(false)
@@ -30,6 +32,10 @@ const selectedRole = ref('MEMBER')
 const searchQuery = ref('')
 const showCreateTeamDialog = ref(false)
 const newTeamName = ref('')
+
+const selectedSeasonName = computed(() =>
+    seasons.value.find(s => s.id === selectedSeasonId.value)?.description ?? ''
+)
 
 const roleLabels = computed(() =>
     Object.fromEntries(teamRoles.value.map(role => [role.name, role.type]))
@@ -58,13 +64,24 @@ async function loadData() {
     return
   }
 
-  console.log('loading teams data')
   try {
-    teams.value = await api.getTeams()
+    seasons.value = await api.getSeasons()
+    selectedSeasonId.value = (seasons.value.find(s => s.active) ?? seasons.value[0])?.id ?? null
     allUsers.value = await api.getUsers()
     teamRoles.value = await api.getTeamRoles()
-    console.log('teams data loaded')
-    console.log(teams.value)
+    await loadTeams()
+  } catch (error) {
+    console.error('Error loading teams:', error)
+  }
+}
+
+async function loadTeams() {
+  if (selectedSeasonId.value == null) {
+    teams.value = []
+    return
+  }
+  try {
+    teams.value = await api.getTeams(selectedSeasonId.value)
   } catch (error) {
     console.error('Error loading teams:', error)
   }
@@ -133,10 +150,10 @@ function openCreateTeamDialog() {
 }
 
 async function createTeam() {
-  if (!newTeamName.value.trim()) return
+  if (!newTeamName.value.trim() || selectedSeasonId.value == null) return
 
   try {
-    const newTeam = await api.createTeam({name: newTeamName.value})
+    const newTeam = await api.createTeam({name: newTeamName.value, seasonId: selectedSeasonId.value})
     newTeam.userTeams = []
     teams.value.push(newTeam)
     showCreateTeamDialog.value = false
@@ -191,7 +208,11 @@ onMounted(loadData)
         <i class="pi pi-sitemap text-primary-500"/>
         {{ $t('team.listTitle') }}
       </h3>
-      <Button v-if="auth.hasPermission('create_team')" :label="$t('team.newButton')" icon="pi pi-plus" @click="openCreateTeamDialog()"/>
+      <div class="flex items-center gap-3">
+        <Select v-model="selectedSeasonId" :options="seasons" :placeholder="$t('team.seasonLabel')"
+                class="w-48" optionLabel="description" optionValue="id" @change="loadTeams"/>
+        <Button v-if="auth.hasPermission('create_team')" :label="$t('team.newButton')" icon="pi pi-plus" @click="openCreateTeamDialog()"/>
+      </div>
     </div>
     <Accordion class="border border-surface-200 rounded-lg overflow-hidden">
       <AccordionPanel v-for="team in teams" :key="team.id" :value="String(team.id)">
@@ -274,6 +295,7 @@ onMounted(loadData)
           <InputText v-model="newTeamName" :placeholder="$t('team.namePlaceholder')" class="w-full"
                      @keyup.enter="createTeam()"/>
         </div>
+        <p class="text-sm text-surface-500">{{ $t('team.createSeasonHint', {season: selectedSeasonName}) }}</p>
       </div>
       <template #footer>
         <Button :label="$t('common.cancel')" severity="secondary" @click="showCreateTeamDialog = false"/>

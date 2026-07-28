@@ -31,7 +31,7 @@
         <span class="text-sm text-surface-500 w-32">{{ $t('user.teams') }}:</span>
         <div class="flex flex-wrap gap-1.5">
           <template v-if="auth.user?.teams?.length">
-            <Tag v-for="(team, i) in auth.user.teams" :key="i" :value="`${team.name} - ${roleLabel(team.role)}`" severity="info"/>
+            <Tag v-for="(team, i) in auth.user.teams" :key="i" :value="teamLabel(team)" severity="info"/>
           </template>
           <span v-else class="text-sm text-surface-500">{{ $t('profile.noTeams') }}</span>
         </div>
@@ -100,6 +100,11 @@ const roleLabels = computed(() =>
 
 function roleLabel(role) {
   return roleLabels.value[role] ?? role
+}
+
+function teamLabel(team) {
+  const base = `${team.name} - ${roleLabel(team.role)}`
+  return team.season?.description ? `${base} (${team.season.description})` : base
 }
 
 async function saveHomeClub() {

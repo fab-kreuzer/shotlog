@@ -143,7 +143,7 @@ export const api = {
     setActiveSeason: (id) => request('PUT', `/api/seasons/${id}/active`),
 
     //Teams
-    getTeams: () => request('GET', '/api/teams'),
+    getTeams: (seasonId) => request('GET', seasonId != null ? `/api/teams?seasonId=${seasonId}` : '/api/teams'),
     getTeamRoles: () => request('GET', '/api/teams/roles'),
     getAssignedTeams: (id) => request('GET', `/api/teams/${id}`),
     createTeam: (data) => request('POST', '/api/teams', data),

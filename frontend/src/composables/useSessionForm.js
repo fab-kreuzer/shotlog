@@ -19,6 +19,13 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
     const isEditing = ref(false)
     const editingId = ref(null)
 
+    // Teams are scoped to a season; the session dialog only offers the teams
+    // that belong to the currently active season.
+    const activeSeasonId = computed(() => seasons.value.find(s => s.active)?.id ?? null)
+    const visibleTeams = computed(() =>
+        assignedTeams.value.filter(tm => tm.season?.id === activeSeasonId.value)
+    )
+
     const form = reactive({
         sessionDate: '',
         sessionTime: '',
@@ -85,7 +92,7 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
         form.sessionTime = pad(now.getHours()) + ':' + pad(now.getMinutes())
         form.enemyId = locations.value.length > 0 ? locations.value[0].id : null
         form.seasonId = (seasons.value.find(s => s.active) ?? seasons.value[0])?.id ?? null
-        form.teamId = assignedTeams.value.length > 0 ? assignedTeams.value[0].id : null
+        form.teamId = visibleTeams.value.length > 0 ? visibleTeams.value[0].id : null
         form.title = ''
         form.sessionType = sessionType
         form.decimalScoring = false
@@ -200,6 +207,7 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
         locations,
         seasons,
         assignedTeams,
+        visibleTeams,
         isEditing,
         form,
         sessionDateModel,

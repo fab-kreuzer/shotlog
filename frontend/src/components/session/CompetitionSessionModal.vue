@@ -63,7 +63,7 @@
           <label class="text-sm font-medium text-surface-700">{{ $t('session.team') }}</label>
           <Select
               v-model="form.teamId"
-              :options="assignedTeams"
+              :options="visibleTeams"
               fluid
               optionLabel="name"
               optionValue="id"
@@ -110,7 +110,7 @@ const {
   visible,
   locations,
   seasons,
-  assignedTeams,
+  visibleTeams,
   isEditing,
   form,
   sessionDateModel,

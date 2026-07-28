@@ -267,7 +267,9 @@
   "team": {
     "listTitle": "All Teams",
     "newButton": "New Team",
+    "seasonLabel": "Season",
     "createTitle": "Create New Team",
+    "createSeasonHint": "This team will be created for the season: {season}",
     "nameLabel": "Team Name",
     "namePlaceholder": "Enter team name...",
     "addMemberTitle": "Add member to {teamName}",
