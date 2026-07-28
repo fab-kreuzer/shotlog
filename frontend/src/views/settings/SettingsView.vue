@@ -4,28 +4,26 @@
 
     <Card>
       <template #content>
-        <Tabs v-model:value="activeTab">
-          <TabList>
-            <Tab value="settings-profile"><i class="pi pi-user mr-2"/>{{ $t('settings.tabProfile') }}</Tab>
-            <Tab v-if="auth.hasPermission('view_user_tab')" value="settings-user-management">
-              <i class="pi pi-users mr-2"/>{{ $t('settings.tabUserManagement') }}
-            </Tab>
-            <Tab v-if="auth.hasPermission('view_role_tab')" value="settings-role-management">
-              <i class="pi pi-shield mr-2"/>{{ $t('settings.tabRoleManagement') }}
-            </Tab>
-            <Tab v-if="auth.hasPermission('view_club_tab')" value="settings-club-management">
-              <i class="pi pi-building mr-2"/>{{ $t('settings.tabClubManagement') }}
-            </Tab>
-            <Tab v-if="auth.hasPermission('view_team_tab')" value="settings-team-management">
-              <i class="pi pi-sitemap mr-2"/>{{ $t('settings.tabTeamManagement') }}
-            </Tab>
-            <Tab v-if="auth.hasPermission('view_season_tab')" value="settings-season-management">
-              <i class="pi pi-calendar mr-2"/>{{ $t('settings.tabSeasonManagement') }}
-            </Tab>
-          </TabList>
-        </Tabs>
-        <div class="pt-4">
-          <router-view/>
+        <div class="flex flex-col gap-6 md:flex-row">
+          <nav class="shrink-0 md:w-56">
+            <ul class="flex gap-1 overflow-x-auto md:flex-col md:overflow-visible">
+              <li v-for="item in visibleItems" :key="item.name">
+                <router-link
+                    :class="route.name === item.name
+                      ? 'bg-surface-100 font-semibold text-primary-500'
+                      : 'text-surface-800 hover:bg-surface-100'"
+                    :to="{name: item.name}"
+                    class="flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm transition-colors"
+                >
+                  <i :class="item.icon"/>
+                  <span>{{ $t(item.label) }}</span>
+                </router-link>
+              </li>
+            </ul>
+          </nav>
+          <div class="min-w-0 flex-1">
+            <router-view/>
+          </div>
         </div>
       </template>
     </Card>
@@ -34,20 +32,24 @@
 
 <script setup>
 import {computed} from 'vue'
-import {useRoute, useRouter} from 'vue-router'
+import {useRoute} from 'vue-router'
 import Card from 'primevue/card'
-import Tabs from 'primevue/tabs'
-import TabList from 'primevue/tablist'
-import Tab from 'primevue/tab'
 import {useAuthStore} from '@/stores/auth'
 import PageHeader from '@/components/PageHeader.vue'
 
 const auth = useAuthStore()
 const route = useRoute()
-const router = useRouter()
 
-const activeTab = computed({
-  get: () => route.name,
-  set: (name) => router.push({name})
-})
+const navItems = [
+  {name: 'settings-profile', icon: 'pi pi-user', label: 'settings.tabProfile'},
+  {name: 'settings-user-management', icon: 'pi pi-users', label: 'settings.tabUserManagement', permission: 'view_user_tab'},
+  {name: 'settings-role-management', icon: 'pi pi-shield', label: 'settings.tabRoleManagement', permission: 'view_role_tab'},
+  {name: 'settings-club-management', icon: 'pi pi-building', label: 'settings.tabClubManagement', permission: 'view_club_tab'},
+  {name: 'settings-team-management', icon: 'pi pi-sitemap', label: 'settings.tabTeamManagement', permission: 'view_team_tab'},
+  {name: 'settings-season-management', icon: 'pi pi-calendar', label: 'settings.tabSeasonManagement', permission: 'view_season_tab'}
+]
+
+const visibleItems = computed(() =>
+    navItems.filter(item => !item.permission || auth.hasPermission(item.permission))
+)
 </script>
