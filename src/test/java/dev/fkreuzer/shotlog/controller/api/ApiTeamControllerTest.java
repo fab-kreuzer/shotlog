@@ -281,7 +281,7 @@ class ApiTeamControllerTest {
         Team team = teamWithId(1, "Alpha");
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
 
-        controller.deleteTeam(1L);
+        controller.deleteTeam(1L, true);
 
         verify(teamRepository).delete(team);
     }
@@ -291,7 +291,7 @@ class ApiTeamControllerTest {
         when(teamRepository.findById(1L)).thenReturn(Optional.empty());
 
         ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-                () -> controller.deleteTeam(1L));
+                () -> controller.deleteTeam(1L, false));
 
         assertEquals(404, ex.getStatusCode().value());
         verify(teamRepository, never()).delete(any());
