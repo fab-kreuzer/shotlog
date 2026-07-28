@@ -30,13 +30,22 @@
         <div class="flex items-center gap-1">
           <LanguageToggle/>
           <ThemeToggle/>
-          <Button
-              icon="pi pi-sign-out"
-              :label="$t('nav.logout')"
-              severity="secondary"
-              text
-              @click="handleLogout"
-          />
+          <button
+              aria-haspopup="true"
+              class="ml-1 flex items-center"
+              type="button"
+              @click="toggleUserMenu"
+          >
+            <Avatar :label="initials" class="cursor-pointer bg-primary-500 font-semibold text-white" shape="circle"/>
+          </button>
+          <Menu ref="userMenu" :model="userMenuItems" :popup="true">
+            <template #start>
+              <div class="border-b border-surface-200 px-3 py-2">
+                <div class="text-sm font-semibold text-surface-800">{{ auth.user?.displayName }}</div>
+                <div class="text-xs text-surface-500">@{{ auth.user?.username }}</div>
+              </div>
+            </template>
+          </Menu>
         </div>
       </template>
     </Menubar>
@@ -52,13 +61,14 @@
 </template>
 
 <script setup>
-import {computed} from 'vue'
+import {computed, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {useRouter} from 'vue-router'
 import {useToast} from 'primevue/usetoast'
 import Toast from 'primevue/toast'
 import Menubar from 'primevue/menubar'
-import Button from 'primevue/button'
+import Avatar from 'primevue/avatar'
+import Menu from 'primevue/menu'
 import {useAuthStore} from '@/stores/auth'
 import {useNotificationStore} from '@/stores/notifications'
 import ThemeToggle from '@/components/ThemeToggle.vue'
@@ -80,13 +90,35 @@ const navLinks = [
   {to: '/training', labelKey: 'nav.training', icon: 'pi pi-bullseye'},
   {to: '/competition', labelKey: 'nav.competition', icon: 'pi pi-trophy'},
   {to: '/calender', labelKey: 'nav.calender', icon: 'pi pi-calendar'},
-  {to: '/profile', labelKey: 'nav.profile', icon: 'pi pi-user'},
-  {to: '/settings', labelKey: 'nav.settings', icon: 'pi pi-cog', permissions: SETTINGS_PERMISSIONS},
 ]
 
-const items = computed(() => navLinks
-    .filter(l => !l.permissions || l.permissions.some(p => auth.hasPermission(p)))
-    .map(l => ({label: t(l.labelKey), route: l.to, icon: l.icon})))
+const items = computed(() => navLinks.map(l => ({label: t(l.labelKey), route: l.to, icon: l.icon})))
+
+// Account actions live in the top-right avatar menu rather than the main nav.
+const initials = computed(() => {
+  const name = auth.user?.displayName || auth.user?.username || '?'
+  return name.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase()
+})
+
+const canViewSettings = computed(() => SETTINGS_PERMISSIONS.some(p => auth.hasPermission(p)))
+
+const userMenuItems = computed(() => {
+  const menu = [
+    {label: t('nav.profile'), icon: 'pi pi-user', command: () => router.push('/profile')}
+  ]
+  if (canViewSettings.value) {
+    menu.push({label: t('nav.settings'), icon: 'pi pi-cog', command: () => router.push('/settings')})
+  }
+  menu.push({separator: true})
+  menu.push({label: t('nav.logout'), icon: 'pi pi-sign-out', command: handleLogout})
+  return menu
+})
+
+const userMenu = ref(null)
+
+function toggleUserMenu(event) {
+  userMenu.value.toggle(event)
+}
 
 async function handleLogout() {
   await auth.logout()
