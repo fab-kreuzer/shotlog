@@ -9,6 +9,22 @@ import CompetitionPage from '@/views/CompetitionPage.vue'
 import CalenderView from '@/views/CalenderView.vue'
 import SettingsView from "@/views/settings/SettingsView.vue";
 
+// Land on the first settings tab the current user is allowed to see; if none,
+// fall back to the access-denied page (regular users normally reach settings
+// only via a permission-gated nav link, so this is an edge case).
+function firstSettingsTab() {
+    const auth = useAuthStore()
+    const tabs = [
+        {name: 'settings-user-management', permission: 'view_user_tab'},
+        {name: 'settings-role-management', permission: 'view_role_tab'},
+        {name: 'settings-club-management', permission: 'view_club_tab'},
+        {name: 'settings-team-management', permission: 'view_team_tab'},
+        {name: 'settings-season-management', permission: 'view_season_tab'}
+    ]
+    const first = tabs.find(t => auth.hasPermission(t.permission))
+    return first ? {name: first.name} : {name: 'settings-access-denied'}
+}
+
 const routes = [
     {
         path: '/login',
@@ -49,16 +65,17 @@ const routes = [
         meta: {titleKey: 'nav.calender'}
     },
     {
+        path: '/profile',
+        name: 'profile',
+        component: () => import('@/views/ProfileView.vue'),
+        meta: {titleKey: 'nav.profile'}
+    },
+    {
         path: '/settings',
         component: SettingsView,
         meta: {titleKey: 'nav.settings', requiresAdmin: false},
-        redirect: {name: 'settings-profile'},
+        redirect: firstSettingsTab,
         children: [
-            {
-                path: 'profile',
-                name: 'settings-profile',
-                component: () => import('@/views/settings/ProfileTab.vue')
-            },
             {
                 path: 'users',
                 name: 'settings-user-management',
@@ -96,7 +113,7 @@ const routes = [
             },
             {
                 path: ':pathMatch(.*)*',
-                redirect: {name: 'settings-profile'}
+                redirect: '/settings'
             }
         ]
     }

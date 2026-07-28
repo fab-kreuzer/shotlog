@@ -41,7 +41,6 @@ const auth = useAuthStore()
 const route = useRoute()
 
 const navItems = [
-  {name: 'settings-profile', icon: 'pi pi-user', label: 'settings.tabProfile'},
   {name: 'settings-user-management', icon: 'pi pi-users', label: 'settings.tabUserManagement', permission: 'view_user_tab'},
   {name: 'settings-role-management', icon: 'pi pi-shield', label: 'settings.tabRoleManagement', permission: 'view_role_tab'},
   {name: 'settings-club-management', icon: 'pi pi-building', label: 'settings.tabClubManagement', permission: 'view_club_tab'},

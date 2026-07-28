@@ -104,6 +104,16 @@ public class ApiAuthController extends DefaultShotLogController {
                     .build();
         }
 
+        if (body.containsKey("displayName")) {
+            Object displayNameObj = body.get("displayName");
+            String displayName = displayNameObj == null ? "" : displayNameObj.toString().trim();
+            if (displayName.isBlank()) {
+                return ResponseEntity.badRequest()
+                        .body(ApiResponse.error(msg("auth.displayNameRequired")));
+            }
+            user.setDisplayName(displayName);
+        }
+
         if (body.containsKey("homeClubId")) {
             Object homeClubId = body.get("homeClubId");
             if (homeClubId == null) {

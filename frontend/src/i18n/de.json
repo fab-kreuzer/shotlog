@@ -5,6 +5,7 @@
     "competition": "Wettkampf",
     "settings": "Einstellungen",
     "calender": "Kalender",
+    "profile": "Profil",
     "logout": "Abmelden"
   },
   "login": {
@@ -182,8 +183,7 @@
   },
   "settings": {
     "title": "Einstellungen",
-    "subtitle": "Verwalten Sie Ihr Profil und Systemeinstellungen",
-    "tabProfile": "Profil",
+    "subtitle": "Verwalten Sie die Systemeinstellungen",
     "tabUserManagement": "Benutzerverwaltung",
     "tabRoleManagement": "Rollenverwaltung",
     "tabClubManagement": "Clubverwaltung",
@@ -194,12 +194,15 @@
   },
   "profile": {
     "title": "Mein Profil",
+    "subtitle": "Verwalte deine persönlichen Einstellungen",
+    "save": "Speichern",
+    "displayNameRequired": "Anzeigename darf nicht leer sein",
     "homeClub": "Stammverein",
     "noHomeClub": "Kein Stammverein",
     "activeSeason": "Aktive Saison",
-    "futureNote": "In zukünftigen Versionen können Sie hier Ihr Profil bearbeiten.",
     "myTeams": "Meine Mannschaften",
-    "noTeams": "Sie sind keiner Mannschaft zugewiesen"
+    "noTeams": "Sie sind keiner Mannschaft zugewiesen",
+    "noRoles": "Ihnen wurde keine Rolle zugewiesen"
   },
   "user": {
     "id": "ID",

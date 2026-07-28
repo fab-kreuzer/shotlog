@@ -5,6 +5,7 @@
     "competition": "Competition",
     "settings": "Settings",
     "calender": "Calendar",
+    "profile": "Profile",
     "logout": "Log Out"
   },
   "login": {
@@ -182,8 +183,7 @@
   },
   "settings": {
     "title": "Settings",
-    "subtitle": "Manage your profile and system settings",
-    "tabProfile": "Profile",
+    "subtitle": "Manage system settings",
     "tabUserManagement": "User Management",
     "tabRoleManagement": "Role Management",
     "tabClubManagement": "Club Management",
@@ -194,12 +194,15 @@
   },
   "profile": {
     "title": "My Profile",
+    "subtitle": "Manage your personal settings",
+    "save": "Save",
+    "displayNameRequired": "Display name must not be empty",
     "homeClub": "Home Club",
     "noHomeClub": "No home club",
     "activeSeason": "Active Season",
-    "futureNote": "In future versions you will be able to edit your profile here.",
     "myTeams": "My Teams",
-    "noTeams": "You are not assigned to any team"
+    "noTeams": "You are not assigned to any team",
+    "noRoles": "You have not been assigned any role"
   },
   "user": {
     "id": "ID",

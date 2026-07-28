@@ -73,15 +73,20 @@ const toast = useToast()
 // Route all app notifications through PrimeVue's Toast service.
 notify.register((options) => toast.add(options))
 
+const SETTINGS_PERMISSIONS = ['view_user_tab', 'view_role_tab', 'view_club_tab', 'view_team_tab', 'view_season_tab']
+
 const navLinks = [
   {to: '/dashboard', labelKey: 'nav.dashboard', icon: 'pi pi-home'},
   {to: '/training', labelKey: 'nav.training', icon: 'pi pi-bullseye'},
   {to: '/competition', labelKey: 'nav.competition', icon: 'pi pi-trophy'},
-  {to: '/settings', labelKey: 'nav.settings', icon: 'pi pi-cog'},
   {to: '/calender', labelKey: 'nav.calender', icon: 'pi pi-calendar'},
+  {to: '/profile', labelKey: 'nav.profile', icon: 'pi pi-user'},
+  {to: '/settings', labelKey: 'nav.settings', icon: 'pi pi-cog', permissions: SETTINGS_PERMISSIONS},
 ]
 
-const items = computed(() => navLinks.map(l => ({label: t(l.labelKey), route: l.to, icon: l.icon})))
+const items = computed(() => navLinks
+    .filter(l => !l.permissions || l.permissions.some(p => auth.hasPermission(p)))
+    .map(l => ({label: t(l.labelKey), route: l.to, icon: l.icon})))
 
 async function handleLogout() {
   await auth.logout()
