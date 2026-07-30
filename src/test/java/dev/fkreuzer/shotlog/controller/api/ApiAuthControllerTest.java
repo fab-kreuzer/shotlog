@@ -4,6 +4,7 @@ import dev.fkreuzer.shotlog.domain.Role;
 import dev.fkreuzer.shotlog.domain.UserAccount;
 import dev.fkreuzer.shotlog.repository.RoleRepository;
 import dev.fkreuzer.shotlog.repository.UserAccountRepository;
+import dev.fkreuzer.shotlog.repository.UserAvatarRepository;
 import dev.fkreuzer.shotlog.security.SecurityUser;
 import dev.fkreuzer.shotlog.service.ShootingPlaceService;
 import org.junit.jupiter.api.AfterEach;
@@ -43,6 +44,9 @@ class ApiAuthControllerTest {
 
     @Mock
     private MessageSource messageSource;
+
+    @Mock
+    private UserAvatarRepository userAvatarRepository;
 
     @InjectMocks
     private ApiAuthController controller;
