@@ -5,28 +5,23 @@
         <div
             v-for="session in items"
             :key="session.id"
-            class="group relative bg-card rounded-xl border border-surface-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
+            class="group relative bg-card rounded-xl border border-surface-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden cursor-pointer"
+            role="button"
+            tabindex="0"
+            @click="emit('edit', session.id)"
+            @keydown.enter="emit('edit', session.id)"
         >
           <!-- Actions overlay -->
           <div
               class="absolute top-2 right-2 flex items-center rounded-lg bg-card shadow-md gap-1 opacity-0 group-hover:opacity-100 transition-opacity max-sm:opacity-100">
             <Button
-                icon="pi pi-pencil"
-                rounded
-                severity="warn"
-                size="small"
-                text
-                :title="$t('common.edit')"
-                @click="emit('edit', session.id)"
-            />
-            <Button
                 icon="pi pi-trash"
-                rounded
                 severity="danger"
                 size="small"
                 text
+                class="!rounded-lg"
                 :title="$t('common.delete')"
-                @click="emit('delete', session.id)"
+                @click.stop="emit('delete', session.id)"
             />
           </div>
 
