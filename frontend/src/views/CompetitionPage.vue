@@ -7,6 +7,10 @@
         icon="pi pi-trophy"
     >
       <template #actions>
+        <IconField>
+          <InputIcon class="pi pi-search"/>
+          <InputText v-model="searchTerm" :placeholder="$t('shooting.searchPlaceholder')"/>
+        </IconField>
         {{ $t('shooting.season') }}:
         <Multiselect
             v-model="selected"
@@ -60,9 +64,13 @@ import CompetitionSessionModal from '@/components/session/CompetitionSessionModa
 import ConfirmModal from '@/components/ConfirmModal.vue'
 import {useSessionList} from '@/composables/useSessionList'
 import {useSeasonFilter} from '@/composables/useSeasonFilter'
+import {useSessionSearch} from '@/composables/useSessionSearch'
 import Multiselect from "@/components/Multiselect.vue";
 import Button from "primevue/button";
 import FileUpload from 'primevue/fileupload'
+import IconField from 'primevue/iconfield'
+import InputIcon from 'primevue/inputicon'
+import InputText from 'primevue/inputtext'
 import {api} from '@/api/http'
 import {useNotificationStore} from '@/stores/notifications'
 
@@ -80,7 +88,8 @@ const {
   confirmDeleteSession
 } = useSessionList('COMPETITION')
 
-const {selected, options, filteredSessions, loadSeasons} = useSeasonFilter(sessions)
+const {selected, options, filteredSessions: seasonFilteredSessions, loadSeasons} = useSeasonFilter(sessions)
+const {searchTerm, filteredSessions} = useSessionSearch(seasonFilteredSessions)
 
 onMounted(loadSeasons);
 

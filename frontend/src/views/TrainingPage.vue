@@ -7,6 +7,10 @@
         icon="pi pi-bullseye"
     >
       <template #actions>
+        <IconField>
+          <InputIcon class="pi pi-search"/>
+          <InputText v-model="searchTerm" :placeholder="$t('shooting.searchPlaceholder')"/>
+        </IconField>
         {{ $t('shooting.season') }}:
         <Multiselect
             v-model="selected"
@@ -45,8 +49,12 @@ import TrainingSessionModal from '@/components/session/TrainingSessionModal.vue'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 import {useSessionList} from '@/composables/useSessionList'
 import {useSeasonFilter} from '@/composables/useSeasonFilter'
+import {useSessionSearch} from '@/composables/useSessionSearch'
 import Multiselect from '@/components/Multiselect.vue'
 import Button from 'primevue/button'
+import IconField from 'primevue/iconfield'
+import InputIcon from 'primevue/inputicon'
+import InputText from 'primevue/inputtext'
 import {onMounted} from 'vue'
 
 const {
@@ -60,7 +68,8 @@ const {
   confirmDeleteSession
 } = useSessionList('TRAINING')
 
-const {selected, options, filteredSessions, loadSeasons} = useSeasonFilter(sessions)
+const {selected, options, filteredSessions: seasonFilteredSessions, loadSeasons} = useSeasonFilter(sessions)
+const {searchTerm, filteredSessions} = useSessionSearch(seasonFilteredSessions)
 
 onMounted(loadSeasons)
 </script>

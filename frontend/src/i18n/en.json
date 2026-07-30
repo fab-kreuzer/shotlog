@@ -172,6 +172,7 @@
   "shooting": {
     "sessionsFound": "{count} session found | {count} sessions found",
     "season": "Season",
+    "searchPlaceholder": "Search sessions...",
     "confirmDeleteText": "Yes, delete",
     "deleteMessage": "Do you really want to delete this entry?",
     "deleteTitle": "Delete entry"
