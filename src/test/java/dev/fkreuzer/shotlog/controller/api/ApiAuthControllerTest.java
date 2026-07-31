@@ -312,6 +312,106 @@ class ApiAuthControllerTest {
         verify(userAccountRepository, never()).save(any());
     }
 
+    // --- changePassword ---
+
+    @Test
+    void changePassword_shouldReturn401_whenNotAuthenticated() {
+        // Act
+        ResponseEntity<?> response = controller.changePassword(Map.of("currentPassword", "old", "newPassword", "newPassword123"));
+
+        // Assert
+        assertEquals(401, response.getStatusCode()
+                .value());
+    }
+
+    @Test
+    void changePassword_shouldUpdatePasswordHash_whenCurrentPasswordCorrectAndNewPasswordValid() {
+        // Arrange
+        UserAccount account = new UserAccount("testUser", "oldHash", "Test Display", new HashSet<>());
+        account.setId(1L);
+        setAuthentication(account);
+        when(passwordEncoder.matches("oldPassword", "oldHash")).thenReturn(true);
+        when(passwordEncoder.encode("newPassword123")).thenReturn("newHash");
+
+        // Act
+        ResponseEntity<?> response = controller.changePassword(Map.of("currentPassword", "oldPassword", "newPassword", "newPassword123"));
+
+        // Assert
+        assertEquals(200, response.getStatusCode()
+                .value());
+        assertEquals("newHash", account.getPasswordHash());
+        verify(userAccountRepository).save(account);
+    }
+
+    @Test
+    void changePassword_shouldReturnBadRequest_whenCurrentPasswordIncorrect() {
+        // Arrange
+        UserAccount account = new UserAccount("testUser", "oldHash", "Test Display", new HashSet<>());
+        account.setId(1L);
+        setAuthentication(account);
+        when(passwordEncoder.matches("wrongPassword", "oldHash")).thenReturn(false);
+
+        // Act
+        ResponseEntity<?> response = controller.changePassword(Map.of("currentPassword", "wrongPassword", "newPassword", "newPassword123"));
+
+        // Assert
+        assertEquals(400, response.getStatusCode()
+                .value());
+        assertEquals("oldHash", account.getPasswordHash());
+        verify(userAccountRepository, never()).save(any());
+    }
+
+    @Test
+    void changePassword_shouldReturnBadRequest_whenCurrentPasswordMissing() {
+        // Arrange
+        UserAccount account = new UserAccount("testUser", "oldHash", "Test Display", new HashSet<>());
+        account.setId(1L);
+        setAuthentication(account);
+
+        // Act
+        ResponseEntity<?> response = controller.changePassword(Map.of("newPassword", "newPassword123"));
+
+        // Assert
+        assertEquals(400, response.getStatusCode()
+                .value());
+        verify(userAccountRepository, never()).save(any());
+    }
+
+    @Test
+    void changePassword_shouldReturnBadRequest_whenNewPasswordTooShort() {
+        // Arrange
+        UserAccount account = new UserAccount("testUser", "oldHash", "Test Display", new HashSet<>());
+        account.setId(1L);
+        setAuthentication(account);
+        when(passwordEncoder.matches("oldPassword", "oldHash")).thenReturn(true);
+
+        // Act
+        ResponseEntity<?> response = controller.changePassword(Map.of("currentPassword", "oldPassword", "newPassword", "short"));
+
+        // Assert
+        assertEquals(400, response.getStatusCode()
+                .value());
+        assertEquals("oldHash", account.getPasswordHash());
+        verify(userAccountRepository, never()).save(any());
+    }
+
+    @Test
+    void changePassword_shouldReturnBadRequest_whenNewPasswordMissing() {
+        // Arrange
+        UserAccount account = new UserAccount("testUser", "oldHash", "Test Display", new HashSet<>());
+        account.setId(1L);
+        setAuthentication(account);
+        when(passwordEncoder.matches("oldPassword", "oldHash")).thenReturn(true);
+
+        // Act
+        ResponseEntity<?> response = controller.changePassword(Map.of("currentPassword", "oldPassword"));
+
+        // Assert
+        assertEquals(400, response.getStatusCode()
+                .value());
+        verify(userAccountRepository, never()).save(any());
+    }
+
     // --- uploadAvatar ---
 
     @Test

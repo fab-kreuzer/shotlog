@@ -104,9 +104,48 @@
               {{ activeSeasonName || '—' }}
             </span>
           </div>
+
+          <div class="pt-2">
+            <Button
+                :label="$t('profile.changePassword')"
+                icon="pi pi-lock"
+                severity="secondary"
+                size="small"
+                @click="openChangePasswordDialog"
+            />
+          </div>
         </div>
       </template>
     </Card>
+
+    <Dialog v-model:visible="showChangePasswordDialog" :header="$t('profile.changePassword')" class="w-full max-w-sm"
+            modal>
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm text-surface-500" for="currentPassword">{{ $t('profile.currentPassword') }}</label>
+          <Password v-model="currentPassword" :disabled="changingPassword" :feedback="false" fluid
+                    inputId="currentPassword" toggleMask/>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm text-surface-500" for="newPassword">{{ $t('profile.newPassword') }}</label>
+          <Password v-model="newPassword" :disabled="changingPassword" :feedback="false" fluid
+                    inputId="newPassword" toggleMask/>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm text-surface-500" for="confirmNewPassword">{{
+              $t('profile.confirmNewPassword')
+            }}</label>
+          <Password v-model="confirmNewPassword" :disabled="changingPassword" :feedback="false" fluid
+                    inputId="confirmNewPassword" toggleMask @keyup.enter="submitChangePassword"/>
+        </div>
+      </div>
+      <template #footer>
+        <Button :disabled="changingPassword" :label="$t('common.cancel')" severity="secondary"
+                @click="showChangePasswordDialog = false"/>
+        <Button :label="$t('profile.changePassword')" :loading="changingPassword" icon="pi pi-lock"
+                @click="submitChangePassword"/>
+      </template>
+    </Dialog>
   </div>
 </template>
 
@@ -116,9 +155,11 @@ import {useI18n} from 'vue-i18n'
 import Card from 'primevue/card'
 import Select from 'primevue/select'
 import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import Tag from 'primevue/tag'
+import Dialog from 'primevue/dialog'
 import {useAuthStore} from '@/stores/auth'
 import {useNotificationStore} from '@/stores/notifications.js'
 import {api} from '@/api/http'
@@ -257,6 +298,48 @@ async function removeAvatar() {
 
 function resetFileInput() {
   if (fileInput.value) fileInput.value.value = ''
+}
+
+const showChangePasswordDialog = ref(false)
+const currentPassword = ref('')
+const newPassword = ref('')
+const confirmNewPassword = ref('')
+const changingPassword = ref(false)
+
+function openChangePasswordDialog() {
+  currentPassword.value = ''
+  newPassword.value = ''
+  confirmNewPassword.value = ''
+  showChangePasswordDialog.value = true
+}
+
+async function submitChangePassword() {
+  if (!currentPassword.value) {
+    notify.error(t('profile.currentPasswordRequired'))
+    return
+  }
+  if (newPassword.value.length < 6) {
+    notify.error(t('validation.passwordMinLength'))
+    return
+  }
+  if (newPassword.value !== confirmNewPassword.value) {
+    notify.error(t('validation.passwordsMismatch'))
+    return
+  }
+
+  changingPassword.value = true
+  try {
+    // Success toast is emitted by the HTTP layer from the API response.
+    await api.changePassword({currentPassword: currentPassword.value, newPassword: newPassword.value})
+    currentPassword.value = ''
+    newPassword.value = ''
+    confirmNewPassword.value = ''
+    showChangePasswordDialog.value = false
+  } catch (err) {
+    console.error('Error changing password:', err)
+  } finally {
+    changingPassword.value = false
+  }
 }
 
 async function saveHomeClub() {

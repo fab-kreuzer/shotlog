@@ -104,6 +104,7 @@ export const api = {
     }),
     me: () => request('GET', '/api/auth/me', null, {notify: false}),
     updateProfile: (data) => request('PUT', '/api/auth/me', data),
+    changePassword: (data) => request('PUT', '/api/auth/me/password', data),
     uploadAvatar: (file) => {
         const formData = new FormData()
         formData.append('file', file)

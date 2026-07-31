@@ -144,6 +144,32 @@ public class ApiAuthController extends DefaultShotLogController {
         return ResponseEntity.ok().body(response);
     }
 
+    @PutMapping("/me/password")
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> body) {
+        UserAccount user = getCurrentUser();
+        if (user == null) {
+            return ResponseEntity.status(401)
+                    .build();
+        }
+
+        String currentPassword = body.get("currentPassword");
+        if (currentPassword == null || !passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(msg("profile.currentPasswordIncorrect")));
+        }
+
+        String newPassword = body.get("newPassword");
+        if (newPassword == null || newPassword.length() < 6) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(msg("auth.passwordTooShort")));
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userAccountRepository.save(user);
+        return ResponseEntity.ok()
+                .body(ApiResponse.success(msg("profile.passwordChanged")));
+    }
+
     private static final long MAX_AVATAR_BYTES = 2L * 1024 * 1024;
 
     @PostMapping("/me/avatar")

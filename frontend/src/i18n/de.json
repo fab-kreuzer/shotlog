@@ -234,7 +234,12 @@
     "activeSeason": "Aktive Saison",
     "myTeams": "Meine Mannschaften",
     "noTeams": "Sie sind keiner Mannschaft zugewiesen",
-    "noRoles": "Ihnen wurde keine Rolle zugewiesen"
+    "noRoles": "Ihnen wurde keine Rolle zugewiesen",
+    "changePassword": "Passwort ändern",
+    "currentPassword": "Aktuelles Passwort",
+    "newPassword": "Neues Passwort",
+    "confirmNewPassword": "Neues Passwort bestätigen",
+    "currentPasswordRequired": "Bitte gib dein aktuelles Passwort ein."
   },
   "user": {
     "id": "ID",

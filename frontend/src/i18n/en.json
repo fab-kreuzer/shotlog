@@ -234,7 +234,12 @@
     "activeSeason": "Active Season",
     "myTeams": "My Teams",
     "noTeams": "You are not assigned to any team",
-    "noRoles": "You have not been assigned any role"
+    "noRoles": "You have not been assigned any role",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "currentPasswordRequired": "Please enter your current password."
   },
   "user": {
     "id": "ID",
