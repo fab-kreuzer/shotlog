@@ -62,7 +62,7 @@
               </div>
 
               <div class="flex items-center gap-2.5 text-sm">
-                <i class="pi pi-circle text-surface-400"/>
+                <i class="pi pi-chevron-right text-surface-400"/>
                 <span class="font-semibold text-surface-800">{{ $t('session.total') }} {{ session.formattedShotSum }}
                   <span class="font-normal text-surface-500">({{ session.formattedShotSumOfTestShots }})</span>
                 </span>
