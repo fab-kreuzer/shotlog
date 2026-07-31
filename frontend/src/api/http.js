@@ -156,4 +156,7 @@ export const api = {
     getTeamRoles: () => request('GET', '/api/teams/roles'),
     getAssignedTeams: (id) => request('GET', `/api/teams/${id}`),
     createTeam: (data) => request('POST', '/api/teams', data),
+
+    // Leaderboard
+    getLeaderboard: (teamId) => request('GET', `/api/leaderboard/${teamId}`),
 }

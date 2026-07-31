@@ -53,7 +53,7 @@ public class Session {
     @OrderBy("seriesNumber ASC")
     private List<Series> series = new ArrayList<>();
 
-    double getShotSum() {
+    public double getShotSum() {
         return series.stream()
                 .map(Series::calculateShotSum)
                 .reduce(0.0, Double::sum);

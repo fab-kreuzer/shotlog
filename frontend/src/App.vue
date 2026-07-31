@@ -112,12 +112,15 @@ notify.register((options) => toast.add(options))
 
 const SETTINGS_PERMISSIONS = ['view_user_tab', 'view_role_tab', 'view_club_tab', 'view_team_tab', 'view_season_tab']
 
-const navLinks = [
+const ALL_NAV_LINKS = [
   {to: '/dashboard', labelKey: 'nav.dashboard', icon: 'pi pi-home'},
   {to: '/training', labelKey: 'nav.training', icon: 'pi pi-bullseye'},
   {to: '/competition', labelKey: 'nav.competition', icon: 'pi pi-trophy'},
   {to: '/calender', labelKey: 'nav.calender', icon: 'pi pi-calendar'},
+  {to: '/leaderboard', labelKey: 'nav.leaderboard', icon: 'pi pi-chart-bar', permission: 'view_leaderboard'},
 ]
+
+const navLinks = computed(() => ALL_NAV_LINKS.filter(link => !link.permission || auth.hasPermission(link.permission)))
 
 // Account actions live in the top-right avatar menu rather than the main nav.
 const initials = computed(() => {

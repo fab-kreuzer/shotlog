@@ -7,6 +7,7 @@ import DashboardView from '@/views/DashboardView.vue'
 import TrainingPage from '@/views/TrainingPage.vue'
 import CompetitionPage from '@/views/CompetitionPage.vue'
 import CalenderView from '@/views/CalenderView.vue'
+import LeaderboardView from '@/views/LeaderboardView.vue'
 import SettingsView from "@/views/settings/SettingsView.vue";
 
 // Land on the first settings tab the current user is allowed to see; if none,
@@ -63,6 +64,12 @@ const routes = [
         name: 'calender',
         component: CalenderView,
         meta: {titleKey: 'nav.calender'}
+    },
+    {
+        path: '/leaderboard',
+        name: 'leaderboard',
+        component: LeaderboardView,
+        meta: {titleKey: 'nav.leaderboard', permission: 'view_leaderboard'}
     },
     {
         path: '/profile',

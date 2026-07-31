@@ -5,6 +5,7 @@
     "competition": "Competition",
     "settings": "Settings",
     "calender": "Calendar",
+    "leaderboard": "Leaderboard",
     "profile": "Profile",
     "logout": "Log Out",
     "openMenu": "Open menu"
@@ -189,6 +190,24 @@
     "subtitle": "All sessions at a glance",
     "today": "Today"
   },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "subtitle": "See how your team stacks up",
+    "teamLabel": "Team",
+    "noTeams": "You are not assigned to any team yet.",
+    "empty": "No members with sessions yet",
+    "rank": "Rank",
+    "sessions": "Sessions",
+    "total": "Total",
+    "average": "Average",
+    "best": "Best session",
+    "gapToLeader": "behind leader",
+    "leader": "Leader",
+    "you": "You",
+    "trendUp": "Above your average",
+    "trendDown": "Below your average",
+    "trendFlat": "At your average"
+  },
   "settings": {
     "title": "Settings",
     "subtitle": "Manage system settings",
@@ -260,7 +279,8 @@
       "role": "Roles",
       "club": "Clubs",
       "team": "Teams",
-      "season": "Seasons"
+      "season": "Seasons",
+      "leaderboard": "Leaderboard"
     },
     "action": {
       "view": "View",
