@@ -10,7 +10,8 @@
       <Skeleton height="0.9rem" width="40%"/>
     </div>
   </div>
-  <DataView v-else :value="sessions" layout="grid">
+  <DataView v-else :alwaysShowPaginator="false" :paginator="sessions.length > pageSize" :rows="pageSize"
+            :value="sessions" layout="grid">
     <template #grid="{ items }">
       <TransitionGroup appear class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
                        name="list-item" tag="div">
@@ -96,6 +97,8 @@ defineProps({
 })
 
 const emit = defineEmits(['edit', 'delete', 'create'])
+
+const pageSize = 20
 
 function formatDate(dateStr) {
   if (!dateStr) return ''
