@@ -29,7 +29,8 @@
       </template>
     </PageHeader>
 
-    <SessionGrid :sessions="filteredSessions" @create="openCreate" @delete="handleDelete" @edit="editSession"/>
+    <SessionGrid :loading="loading" :sessions="filteredSessions" @create="openCreate" @delete="handleDelete"
+                 @edit="editSession"/>
 
     <TrainingSessionModal ref="sessionModal" @saved="loadSessions"/>
     <ConfirmModal
@@ -59,6 +60,7 @@ import {onMounted} from 'vue'
 
 const {
   sessions,
+  loading,
   sessionModal,
   showDeleteConfirm,
   loadSessions,

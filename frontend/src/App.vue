@@ -1,29 +1,46 @@
 <template>
   <div class="min-h-screen flex flex-col">
     <!-- Navigation -->
-    <Menubar v-if="auth.isLoggedIn" :model="items" class="rounded-none border-x-0 border-t-0 px-4 sm:px-6 lg:px-8">
+    <Menubar v-if="auth.isLoggedIn" class="rounded-none border-x-0 border-t-0 px-4 sm:px-6 lg:px-8">
       <template #start>
-        <router-link
-            class="flex items-center gap-2.5 text-xl font-bold tracking-tight mr-4"
-            to="/dashboard"
-        >
-          <img alt="ShotLog" class="h-9 w-9 rounded-full object-cover" src="/logo.png"/>
-          ShotLog
-        </router-link>
-      </template>
-
-      <template #item="{ item, props }">
-        <router-link v-slot="{ href, navigate, isActive }" :to="item.route" custom>
-          <a
-              :class="{ 'font-semibold text-primary-500': isActive }"
-              :href="href"
-              v-bind="props.action"
-              @click="navigate"
+        <div class="flex items-center gap-2">
+          <Button
+              :aria-label="$t('nav.openMenu')"
+              class="md:hidden"
+              icon="pi pi-bars"
+              rounded
+              severity="secondary"
+              text
+              type="button"
+              @click="mobileNavOpen = true"
+          />
+          <router-link
+              class="flex items-center gap-2.5 text-xl font-bold tracking-tight mr-4"
+              to="/dashboard"
           >
-            <i :class="item.icon" class="mr-1.5"/>
-            <span>{{ item.label }}</span>
-          </a>
-        </router-link>
+            <img alt="ShotLog" class="h-9 w-9 rounded-full object-cover" src="/logo.png"/>
+            ShotLog
+          </router-link>
+          <div class="hidden items-center gap-1 md:flex">
+            <router-link
+                v-for="link in navLinks"
+                :key="link.to"
+                v-slot="{ href, navigate, isActive }"
+                :to="link.to"
+                custom
+            >
+              <a
+                  :class="[isActive ? 'font-semibold text-primary-500 nav-link-active' : 'text-surface-800']"
+                  :href="href"
+                  class="nav-link-underline flex items-center rounded-lg px-3 py-2 text-sm transition-colors hover:bg-surface-100"
+                  @click="navigate"
+              >
+                <i :class="link.icon" class="mr-1.5"/>
+                <span>{{ t(link.labelKey) }}</span>
+              </a>
+            </router-link>
+          </div>
+        </div>
       </template>
 
       <template #end>
@@ -53,11 +70,17 @@
 
     <!-- Main content -->
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <router-view/>
+      <router-view v-slot="{ Component }">
+        <Transition mode="out-in" name="page">
+          <component :is="Component" :key="$route.fullPath"/>
+        </Transition>
+      </router-view>
     </main>
 
     <!-- Notifications -->
     <Toast position="bottom-right"/>
+
+    <MobileNavDrawer v-model="mobileNavOpen" :nav-links="navLinks" :user-menu-items="userMenuItems"/>
   </div>
 </template>
 
@@ -70,12 +93,15 @@ import Toast from 'primevue/toast'
 import Menubar from 'primevue/menubar'
 import Avatar from 'primevue/avatar'
 import Menu from 'primevue/menu'
+import Button from 'primevue/button'
 import {useAuthStore} from '@/stores/auth'
 import {useNotificationStore} from '@/stores/notifications'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import LanguageToggle from '@/components/LanguageToggle.vue'
+import MobileNavDrawer from '@/components/MobileNavDrawer.vue'
 
 const {t} = useI18n()
+const mobileNavOpen = ref(false)
 const router = useRouter()
 const auth = useAuthStore()
 const notify = useNotificationStore()
@@ -92,8 +118,6 @@ const navLinks = [
   {to: '/competition', labelKey: 'nav.competition', icon: 'pi pi-trophy'},
   {to: '/calender', labelKey: 'nav.calender', icon: 'pi pi-calendar'},
 ]
-
-const items = computed(() => navLinks.map(l => ({label: t(l.labelKey), route: l.to, icon: l.icon})))
 
 // Account actions live in the top-right avatar menu rather than the main nav.
 const initials = computed(() => {

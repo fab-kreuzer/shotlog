@@ -95,6 +95,100 @@
     --color-primary-50: #13302c;   /* fc-day-today highlight + light teal tints */
 }
 
+/* ── Spacing & radius conventions (reuse, don't invent new values) ──
+   containers / cards        → rounded-xl
+   controls / list rows      → rounded-lg
+   badges / avatars / pills  → rounded-full
+   section spacing           → gap-4 / gap-6
+   card / tile padding       → p-3.5 / p-4 */
+
+/* ── Motion tokens ── */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slide-in-right {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@layer components {
+    /* One-shot page/section entrance fade — dashboard sections, static content mounts */
+    .animate-fade-in {
+        animation: fade-in 0.2s ease-out both;
+    }
+
+    /* One-shot rise-in — stat tiles, card mounts that don't add/remove reactively */
+    .animate-slide-up {
+        animation: slide-up 0.2s ease-out both;
+    }
+
+    /* One-shot pop-in — auth cards, dialogs entering without PrimeVue's own transition */
+    .animate-scale-in {
+        animation: scale-in 0.2s ease-out both;
+    }
+
+    /* Canonical elevated-surface treatment — the single "card" look used everywhere */
+    .card-surface {
+        @apply bg-card rounded-xl border border-surface-200 shadow-sm transition-all duration-200;
+    }
+
+    /* Canonical clickable card — same as .card-surface, plus a hover lift */
+    .card-surface-interactive {
+        @apply bg-card rounded-xl border border-surface-200 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 cursor-pointer;
+    }
+
+    /* Every bare PrimeVue <Card> picks up the same shadow/border/radius as .card-surface,
+       so dashboard/settings/auth cards match SessionGrid's manually-styled cards. */
+    .p-card {
+        @apply bg-card rounded-xl border border-surface-200 shadow-sm;
+    }
+
+    /* Subtle press feedback app-wide; PrimeVue's Aura theme already covers hover/focus. */
+    .p-button:not(:disabled):active {
+        @apply scale-[0.98];
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
 /* ── Base Styles ── */
 @layer base {
     body {
@@ -127,6 +221,12 @@
 
     .fc-daygrid-day-frame {
         min-height: 7rem;
+    }
+
+    @media (max-width: 640px) {
+        .fc-daygrid-day-frame {
+            min-height: 5rem;
+        }
     }
 
     .fc .fc-button {
@@ -176,4 +276,123 @@ button {
 
 .z-modal {
     z-index: 1300;
+}
+
+/* ── Vue <Transition>/<TransitionGroup> classes ── */
+
+/* Route change — App.vue's <router-view> */
+.page-enter-active, .page-leave-active {
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.page-enter-from {
+    opacity: 0;
+    transform: translateY(4px);
+}
+
+.page-leave-to {
+    opacity: 0;
+}
+
+/* Sub-navigation fade — SettingsView tab switch, auth Login/Signup tab switch */
+.tab-fade-enter-active, .tab-fade-leave-active {
+    transition: opacity 0.15s ease;
+}
+
+.tab-fade-enter-from, .tab-fade-leave-to {
+    opacity: 0;
+}
+
+/* Mobile nav drawer backdrop */
+.drawer-overlay-enter-active, .drawer-overlay-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.drawer-overlay-enter-from, .drawer-overlay-leave-to {
+    opacity: 0;
+}
+
+/* Mobile nav drawer panel */
+.drawer-slide-enter-active, .drawer-slide-leave-active {
+    transition: transform 0.2s ease;
+}
+
+.drawer-slide-enter-from, .drawer-slide-leave-to {
+    transform: translateX(-100%);
+}
+
+/* Card grid / list row enter-exit — SessionGrid, dashboard lists, SessionSeriesEditor rows */
+.list-item-enter-active {
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.list-item-enter-from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+}
+
+.list-item-leave-active {
+    transition: opacity 0.15s ease;
+    position: absolute;
+}
+
+.list-item-leave-to {
+    opacity: 0;
+}
+
+.list-item-move {
+    transition: transform 0.25s ease;
+}
+
+/* Wave-like stagger for card grids/lists entering together (initial load via TransitionGroup's
+   `appear`, or a filter/search result swap). Driven by a --stagger-index custom property set
+   per item in the template, so it scales to any list length — not just the first N items.
+   Capped at 10 steps (300ms) so a long list's last items don't wait seconds to animate. */
+.list-item-enter-active {
+    transition-delay: calc(min(var(--stagger-index, 0), 10) * 30ms);
+}
+
+/* Desktop nav link underline sweep */
+.nav-link-underline {
+    position: relative;
+}
+
+.nav-link-underline::after {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0;
+    height: 2px;
+    border-radius: 9999px;
+    background: var(--color-primary-500);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.2s ease;
+}
+
+.nav-link-underline:hover::after, .nav-link-underline.nav-link-active::after {
+    transform: scaleX(1);
+}
+
+/* Login/Signup tab switch — PrimeVue TabPanel toggles visibility via v-show, so this
+   plain CSS rule (keyed off its own data-p-active attribute) fades it in on each display,
+   without needing a Vue-level Transition around PrimeVue's internal panel rendering. */
+[data-pc-name="tabpanel"][data-p-active="true"] {
+    animation: fade-in 0.2s ease-out;
+}
+
+/* Theme toggle icon swap */
+.icon-swap-enter-active, .icon-swap-leave-active {
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.icon-swap-enter-from {
+    opacity: 0;
+    transform: rotate(-90deg);
+}
+
+.icon-swap-leave-to {
+    opacity: 0;
+    transform: rotate(90deg);
 }

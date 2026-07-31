@@ -7,11 +7,12 @@
       </div>
     </template>
     <template #content>
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         <div
-            v-for="stat in stats"
+            v-for="(stat, index) in stats"
             :key="stat.label"
-            class="flex items-center gap-3 rounded-xl border border-surface-200 p-3.5"
+            :style="{animationDelay: `${index * 40}ms`}"
+            class="animate-slide-up flex items-center gap-3 rounded-xl border border-surface-200 p-3.5"
         >
           <div
               :class="[stat.iconBg, stat.iconColor]"

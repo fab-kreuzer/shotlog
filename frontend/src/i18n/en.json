@@ -6,7 +6,8 @@
     "settings": "Settings",
     "calender": "Calendar",
     "profile": "Profile",
-    "logout": "Log Out"
+    "logout": "Log Out",
+    "openMenu": "Open menu"
   },
   "login": {
     "signInPrompt": "Sign in to continue",
@@ -17,6 +18,12 @@
   },
   "language": {
     "switch": "Switch language"
+  },
+  "theme": {
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "switchLabel": "Theme: {mode} (click to switch)"
   },
   "common": {
     "save": "Save",

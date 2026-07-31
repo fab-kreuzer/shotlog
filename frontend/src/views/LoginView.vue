@@ -7,7 +7,7 @@
         <ThemeToggle/>
       </div>
 
-      <Card>
+      <Card class="animate-scale-in">
         <template #content>
           <!-- Header -->
           <div class="text-center mb-6">

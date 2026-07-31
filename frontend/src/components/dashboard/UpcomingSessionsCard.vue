@@ -14,16 +14,26 @@
       </div>
     </template>
     <template #content>
-      <div v-if="sessions.length === 0" class="text-center py-10">
+      <div v-if="loading" class="flex flex-col gap-3">
+        <div v-for="n in 3" :key="n" class="flex items-center gap-3 py-1 px-2 -mx-2">
+          <Skeleton borderRadius="9999px" height="2.25rem" width="2.25rem"/>
+          <div class="flex-1 flex flex-col gap-2">
+            <Skeleton height="0.9rem" width="60%"/>
+            <Skeleton height="0.75rem" width="35%"/>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="sessions.length === 0" class="text-center py-10">
         <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-surface-100 mb-3">
           <i class="pi pi-calendar text-surface-400" style="font-size: 1.5rem"/>
         </div>
         <p class="text-surface-500 text-sm">{{ $t('dashboard.noUpcoming') }}</p>
       </div>
-      <div v-else class="flex flex-col">
+      <TransitionGroup v-else-if="sessions.length > 0" appear class="flex flex-col" name="list-item" tag="div">
         <div
-            v-for="session in sessions"
+            v-for="(session, index) in sessions"
             :key="session.id"
+            :style="{'--stagger-index': index}"
             class="group flex items-center gap-3 py-2.5 px-2 -mx-2 rounded-lg cursor-pointer hover:bg-surface-50 transition-colors"
             @click="goTo(session)"
         >
@@ -40,7 +50,7 @@
           <div class="text-sm text-surface-500 whitespace-nowrap">{{ formatTime(session.sessionTime) }}</div>
           <i class="pi pi-chevron-right text-surface-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity"/>
         </div>
-      </div>
+      </TransitionGroup>
     </template>
   </Card>
 </template>
@@ -50,9 +60,11 @@ import {useI18n} from 'vue-i18n'
 import {useRouter} from 'vue-router'
 import Card from 'primevue/card'
 import Tag from 'primevue/tag'
+import Skeleton from 'primevue/skeleton'
 
 defineProps({
-  sessions: {type: Array, required: true}
+  sessions: {type: Array, required: true},
+  loading: {type: Boolean, default: false}
 })
 
 const {t} = useI18n()

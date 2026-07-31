@@ -1,7 +1,8 @@
 <template>
   <div class="flex flex-col gap-6">
-    <div ref="seriesContainerRef" class="flex flex-col gap-4">
+    <TransitionGroup ref="seriesContainerRef" appear class="flex flex-col gap-4" name="list-item" tag="div">
       <div v-for="(series, sIndex) in series" :key="sIndex"
+           :style="{'--stagger-index': sIndex}"
            class="bg-surface-50 rounded-xl border border-surface-200 overflow-hidden">
         <!-- Series header -->
         <div class="flex items-center justify-between px-4 py-3 bg-surface-100 border-b border-surface-200">
@@ -46,7 +47,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </TransitionGroup>
 
     <!-- Add series button -->
     <Button
@@ -79,7 +80,7 @@ const seriesContainerRef = ref(null)
 watch(() => props.series.length, (next, prev) => {
   if (next > prev) {
     nextTick(() => {
-      seriesContainerRef.value?.lastElementChild?.scrollIntoView({behavior: 'smooth', block: 'end'})
+      seriesContainerRef.value?.$el?.lastElementChild?.scrollIntoView({behavior: 'smooth', block: 'end'})
     })
   }
 })

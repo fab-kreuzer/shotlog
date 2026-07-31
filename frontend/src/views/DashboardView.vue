@@ -6,8 +6,8 @@
       <SeasonStatsCard :season-name="activeSeasonName" :sessions="seasonSessions"/>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentSessionsCard :sessions="recentSessions"/>
-        <UpcomingSessionsCard :sessions="upcomingSessions"/>
+        <RecentSessionsCard :loading="loading" :sessions="recentSessions"/>
+        <UpcomingSessionsCard :loading="loading" :sessions="upcomingSessions"/>
       </div>
     </div>
   </div>
@@ -28,6 +28,7 @@ const {t, locale} = useI18n()
 const auth = useAuthStore()
 
 const sessions = ref([])
+const loading = ref(true)
 const {options: seasons, filteredSessions: seasonSessions, loadSeasons} = useSeasonFilter(sessions)
 
 const activeSeasonName = computed(() => seasons.value.find(s => s.active)?.description ?? '')
@@ -53,12 +54,14 @@ const upcomingSessions = computed(() => {
 })
 
 async function loadDashboardData() {
+  loading.value = true
   try {
     sessions.value = await api.getSessions()
   } catch (err) {
     console.error('Error loading sessions:', err)
   }
   await loadSeasons()
+  loading.value = false
 }
 
 onMounted(loadDashboardData)

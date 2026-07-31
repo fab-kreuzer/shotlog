@@ -1,11 +1,24 @@
 <template>
-  <DataView :value="sessions" layout="grid">
+  <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+    <div v-for="n in 4" :key="n" class="card-surface p-4 flex flex-col gap-3">
+      <div class="flex items-center gap-2.5">
+        <Skeleton borderRadius="9999px" height="2rem" width="2rem"/>
+        <Skeleton height="1.25rem" width="60%"/>
+      </div>
+      <Skeleton height="0.9rem" width="45%"/>
+      <Skeleton height="0.9rem" width="55%"/>
+      <Skeleton height="0.9rem" width="40%"/>
+    </div>
+  </div>
+  <DataView v-else :value="sessions" layout="grid">
     <template #grid="{ items }">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <TransitionGroup appear class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+                       name="list-item" tag="div">
         <div
-            v-for="session in items"
+            v-for="(session, index) in items"
             :key="session.id"
-            class="group relative bg-card rounded-xl border border-surface-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden cursor-pointer"
+            :style="{'--stagger-index': index}"
+            class="card-surface-interactive group relative overflow-hidden"
             role="button"
             tabindex="0"
             @click="emit('edit', session.id)"
@@ -13,7 +26,7 @@
         >
           <!-- Actions overlay -->
           <div
-              class="absolute top-2 right-2 flex items-center rounded-lg bg-card shadow-md gap-1 opacity-0 group-hover:opacity-100 transition-opacity max-sm:opacity-100">
+              class="absolute top-2 right-2 flex items-center rounded-lg bg-card shadow-md gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 max-sm:opacity-100">
             <Button
                 icon="pi pi-trash"
                 severity="danger"
@@ -55,7 +68,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </TransitionGroup>
     </template>
 
     <!-- Empty state -->
@@ -75,9 +88,11 @@
 <script setup>
 import DataView from 'primevue/dataview'
 import Button from 'primevue/button'
+import Skeleton from 'primevue/skeleton'
 
 defineProps({
-  sessions: {type: Array, required: true}
+  sessions: {type: Array, required: true},
+  loading: {type: Boolean, default: false}
 })
 
 const emit = defineEmits(['edit', 'delete', 'create'])

@@ -6,7 +6,8 @@
     "settings": "Einstellungen",
     "calender": "Kalender",
     "profile": "Profil",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "openMenu": "Menü öffnen"
   },
   "login": {
     "signInPrompt": "Melden Sie sich an, um fortzufahren",
@@ -17,6 +18,12 @@
   },
   "language": {
     "switch": "Sprache wechseln"
+  },
+  "theme": {
+    "system": "System",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "switchLabel": "Design: {mode} (klicken zum Wechseln)"
   },
   "common": {
     "save": "Speichern",

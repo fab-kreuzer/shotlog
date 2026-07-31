@@ -14,16 +14,20 @@ export function useSessionList(type) {
     const notify = useNotificationStore()
 
     const sessions = ref([])
+    const loading = ref(true)
     const sessionModal = ref(null)
     const showDeleteConfirm = ref(false)
     const sessionToDelete = ref(null)
 
     async function loadSessions() {
+        loading.value = true
         try {
             sessions.value = await api.getSessionsByType(type.toLowerCase())
         } catch (err) {
             console.error('Error loading sessions:', err)
             if (!err._notified) notify.error(t('session.loadError'))
+        } finally {
+            loading.value = false
         }
     }
 
@@ -60,6 +64,7 @@ export function useSessionList(type) {
 
     return {
         sessions,
+        loading,
         sessionModal,
         showDeleteConfirm,
         loadSessions,

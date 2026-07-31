@@ -42,7 +42,8 @@
       </template>
     </PageHeader>
 
-    <SessionGrid :sessions="filteredSessions" @create="openCreate" @delete="handleDelete" @edit="editSession"/>
+    <SessionGrid :loading="loading" :sessions="filteredSessions" @create="openCreate" @delete="handleDelete"
+                 @edit="editSession"/>
 
     <CompetitionSessionModal ref="sessionModal" @saved="loadSessions"/>
     <ConfirmModal
@@ -79,6 +80,7 @@ const notify = useNotificationStore()
 
 const {
   sessions,
+  loading,
   sessionModal,
   showDeleteConfirm,
   loadSessions,

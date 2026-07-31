@@ -22,7 +22,11 @@
             </ul>
           </nav>
           <div class="min-w-0 flex-1">
-            <router-view/>
+            <router-view v-slot="{ Component }">
+              <Transition mode="out-in" name="tab-fade">
+                <component :is="Component"/>
+              </Transition>
+            </router-view>
           </div>
         </div>
       </template>

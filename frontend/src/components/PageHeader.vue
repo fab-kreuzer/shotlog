@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+  <div class="animate-slide-up flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
     <div class="flex items-center gap-4">
       <div :class="[COLORS[color].bg, COLORS[color].text]"
            class="flex items-center justify-center w-12 h-12 rounded-xl shrink-0">
@@ -10,7 +10,7 @@
         <p v-if="subtitle" class="mt-1 text-surface-500">{{ subtitle }}</p>
       </div>
     </div>
-    <div v-if="$slots.actions" class="flex items-center gap-2">
+    <div v-if="$slots.actions" class="flex flex-wrap items-center gap-2">
       <slot name="actions"/>
     </div>
   </div>
