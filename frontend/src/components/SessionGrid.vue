@@ -10,7 +10,8 @@
       <Skeleton height="0.9rem" width="40%"/>
     </div>
   </div>
-  <DataView v-else :alwaysShowPaginator="false" :paginator="sessions.length > pageSize" :rows="pageSize"
+  <DataView v-else v-model:first="first" v-model:rows="rows"
+            :paginator="sessions.length > DEFAULT_PAGE_SIZE" :rowsPerPageOptions="[10, 20, 30]"
             :value="sessions" layout="grid">
     <template #grid="{ items }">
       <TransitionGroup appear class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
@@ -90,15 +91,25 @@
 import DataView from 'primevue/dataview'
 import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
+import {ref, watch} from 'vue'
 
-defineProps({
+const props = defineProps({
   sessions: {type: Array, required: true},
   loading: {type: Boolean, default: false}
 })
 
 const emit = defineEmits(['edit', 'delete', 'create'])
 
-const pageSize = 20
+const DEFAULT_PAGE_SIZE = 20
+const first = ref(0)
+const rows = ref(DEFAULT_PAGE_SIZE)
+
+// Jump back to page 1 whenever the (filtered) session list changes, so a
+// search/season filter change can't leave the user stranded on an
+// out-of-range page.
+watch(() => props.sessions, () => {
+  first.value = 0
+})
 
 function formatDate(dateStr) {
   if (!dateStr) return ''
