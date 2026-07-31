@@ -40,11 +40,12 @@
       </div>
 
       <!-- Leaderboard -->
-      <div v-else class="space-y-2">
+      <TransitionGroup v-else appear class="space-y-2" name="list-item" tag="div">
         <div
-            v-for="entry in entries"
-            :key="entry.userId"
+            v-for="(entry, index) in entries"
+            :key="`${selectedTeamId}-${entry.userId}`"
             :class="entry.currentUser ? 'bg-primary-50 border-primary-200' : 'bg-surface-50 border-surface-200'"
+            :style="{'--stagger-index': index}"
             class="flex flex-wrap items-center gap-4 p-3 rounded-lg border"
         >
           <div :class="rankBadgeClasses(entry.rank)"
@@ -96,7 +97,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </TransitionGroup>
     </template>
   </div>
 </template>
