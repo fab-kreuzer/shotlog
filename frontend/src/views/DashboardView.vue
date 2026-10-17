@@ -1,6 +1,12 @@
 <template>
   <div>
-    <PageHeader :subtitle="$t('dashboard.welcome')" :title="greeting" color="primary" icon="pi pi-home"/>
+    <PageHeader :subtitle="$t('dashboard.welcome')" :title="greeting" color="primary" icon="pi pi-home">
+      <template #actions>
+        <Button v-if="auth.hasPermission('scan_result')" :label="$t('dashboard.scan.button')" icon="pi pi-qrcode"
+                @click="scanVisible = true"/>
+      </template>
+    </PageHeader>
+    <ScanResultDialog v-model:visible="scanVisible" @saved="loadDashboardData"/>
 
     <div class="flex flex-col gap-6">
       <SeasonStatsCard :season-name="activeSeasonName" :sessions="seasonSessions"/>
@@ -19,6 +25,8 @@ import {useI18n} from 'vue-i18n'
 import {api} from '@/api/http'
 import {useAuthStore} from '@/stores/auth'
 import {useSeasonFilter} from '@/composables/useSeasonFilter'
+import Button from 'primevue/button'
+import ScanResultDialog from '@/components/dashboard/ScanResultDialog.vue'
 import PageHeader from '@/components/PageHeader.vue'
 import SeasonStatsCard from '@/components/dashboard/SeasonStatsCard.vue'
 import RecentSessionsCard from '@/components/dashboard/RecentSessionsCard.vue'
@@ -27,6 +35,7 @@ import UpcomingSessionsCard from '@/components/dashboard/UpcomingSessionsCard.vu
 const {t, locale} = useI18n()
 const auth = useAuthStore()
 
+const scanVisible = ref(false)
 const sessions = ref([])
 const loading = ref(true)
 const {options: seasons, filteredSessions: seasonSessions, loadSeasons} = useSeasonFilter(sessions)

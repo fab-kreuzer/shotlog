@@ -1,5 +1,6 @@
 package dev.fkreuzer.shotlog.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
 import jakarta.persistence.*;
@@ -38,6 +39,10 @@ public class Session {
     private boolean isHome;
 
     private String title;
+
+    // Id of the external system result (e.g. DISAG QR uuid) this session was imported from.
+    @JsonIgnore
+    private String externalId;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "season_id")

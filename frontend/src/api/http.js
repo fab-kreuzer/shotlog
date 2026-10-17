@@ -119,6 +119,8 @@ export const api = {
     createSession: (data) => request('POST', '/api/sessions', data),
     updateSession: (id, data) => request('PUT', `/api/sessions/${id}`, data),
     deleteSession: (id) => request('DELETE', `/api/sessions/${id}`),
+    previewScan: (url) => request('POST', '/api/sessions/scan/preview', {url}, {notify: false}),
+    submitScan: (data) => request('POST', '/api/sessions/scan', data, {notify: false}),
     importSessions: (file) => {
         const formData = new FormData()
         formData.append('file', file)

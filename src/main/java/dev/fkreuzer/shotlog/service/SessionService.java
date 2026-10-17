@@ -4,6 +4,7 @@ import dev.fkreuzer.shotlog.domain.Session;
 import dev.fkreuzer.shotlog.domain.UserAccount;
 import dev.fkreuzer.shotlog.domain.datatypes.SessionType;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,5 +15,7 @@ public interface SessionService {
     Optional<Session> findByIdAndUser(Long id, UserAccount user);
     void deleteByIdAndUser(Long id, UserAccount user);
     List<Session> findAllByUser(UserAccount user);
+    List<Session> findAllByUserAndDate(UserAccount user, LocalDate date);
+    boolean existsByUserAndExternalId(UserAccount user, String externalId);
 
 }

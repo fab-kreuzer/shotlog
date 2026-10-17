@@ -10,6 +10,7 @@ import dev.fkreuzer.shotlog.service.SessionService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,5 +119,15 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public List<Session> findAllByUser(UserAccount user) {
         return sessionRepository.findAllByUser(user);
+    }
+
+    @Override
+    public List<Session> findAllByUserAndDate(UserAccount user, LocalDate date) {
+        return sessionRepository.findAllByUserAndSessionDate(user, date);
+    }
+
+    @Override
+    public boolean existsByUserAndExternalId(UserAccount user, String externalId) {
+        return sessionRepository.existsByUserAndExternalId(user, externalId);
     }
 }

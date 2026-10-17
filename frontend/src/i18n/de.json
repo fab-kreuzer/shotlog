@@ -162,6 +162,22 @@
       "avgScore": "Ø Wettkampfscore",
       "bestScore": "Bester Wettkampfscore",
       "homeAway": "Heim / Auswärts"
+    },
+    "scan": {
+      "button": "Ergebnis scannen",
+      "title": "Ergebnis scannen",
+      "hint": "Halte den QR-Code deines Ergebnisses vor die Kamera.",
+      "cameraError": "Kamera nicht verfügbar. Füge stattdessen den QR-Link unten ein.",
+      "manualPlaceholder": "QR-Link",
+      "summary": "{count} Schuss, Gesamt {total}",
+      "alreadyImported": "Dieses Ergebnis wurde bereits importiert. Wähle eine Session zum Überschreiben.",
+      "type": "Speichern als",
+      "place": "Schießstand",
+      "team": "Mannschaft",
+      "existing": "An diesem Datum existiert bereits eine Session:",
+      "createNew": "Neue Session anlegen",
+      "overwrite": "\"{title}\" ({total}) überschreiben",
+      "error": "Das Ergebnis konnte nicht gelesen werden"
     }
   },
   "training": {

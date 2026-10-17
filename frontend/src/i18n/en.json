@@ -162,6 +162,22 @@
       "avgScore": "Avg. competition score",
       "bestScore": "Best competition score",
       "homeAway": "Home / Away"
+    },
+    "scan": {
+      "button": "Scan result",
+      "title": "Scan result",
+      "hint": "Hold the QR code of your result in front of the camera.",
+      "cameraError": "Camera not available. Paste the QR link below instead.",
+      "manualPlaceholder": "QR link",
+      "summary": "{count} shots, total {total}",
+      "alreadyImported": "This result was already imported. Choose a session to overwrite.",
+      "type": "Save as",
+      "place": "Shooting place",
+      "team": "Team",
+      "existing": "A session already exists on this date:",
+      "createNew": "Create a new session",
+      "overwrite": "Overwrite \"{title}\" ({total})",
+      "error": "The result could not be read"
     }
   },
   "training": {

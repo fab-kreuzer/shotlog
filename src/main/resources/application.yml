@@ -1,4 +1,8 @@
 spring:
+  config:
+    # Local, git-ignored secrets file (see secrets.example.yml); env vars still work as fallback.
+    import: optional:file:./secrets.yml
+
   application:
     name: shotlog
 
@@ -13,3 +17,9 @@ spring:
     basename: messages
     encoding: UTF-8
     fallback-to-system-locale: false
+
+shotlog:
+  disag:
+    # n8n webhook that decodes DISAG ShotsApp QR codes (see docs/disag-shotsapp-qr-webhook.md)
+    webhook-url: ${DISAG_WEBHOOK_URL:https://n8n.fkreuzer.dev/webhook/disag-result}
+    webhook-secret: ${DISAG_WEBHOOK_SECRET:}
