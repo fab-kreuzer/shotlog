@@ -301,13 +301,15 @@
       "club": "Clubs",
       "team": "Mannschaften",
       "season": "Saisons",
-      "leaderboard": "Bestenliste"
+      "leaderboard": "Bestenliste",
+      "session": "Sessions"
     },
     "action": {
       "view": "Anzeigen",
       "create": "Erstellen",
       "edit": "Bearbeiten",
-      "delete": "Löschen"
+      "delete": "Löschen",
+      "scan": "Scannen"
     }
   },
   "club": {

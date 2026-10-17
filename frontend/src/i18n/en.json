@@ -301,13 +301,15 @@
       "club": "Clubs",
       "team": "Teams",
       "season": "Seasons",
-      "leaderboard": "Leaderboard"
+      "leaderboard": "Leaderboard",
+      "session": "Sessions"
     },
     "action": {
       "view": "View",
       "create": "Create",
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "scan": "Scan"
     }
   },
   "club": {

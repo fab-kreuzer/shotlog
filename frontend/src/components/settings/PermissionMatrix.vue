@@ -56,7 +56,7 @@ function actionLabel(action) {
 </script>
 
 <template>
-  <div class="border border-surface-200 rounded-lg overflow-hidden">
+  <div class="border border-surface-200 rounded-lg overflow-x-auto">
     <table class="w-full text-sm">
       <thead>
       <tr class="bg-surface-50">

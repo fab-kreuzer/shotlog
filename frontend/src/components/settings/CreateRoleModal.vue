@@ -1,7 +1,7 @@
 <template>
   <Dialog
       :draggable="false"
-      :style="{ width: '32rem' }"
+      :style="{ width: '40rem', maxWidth: '95vw' }"
       :visible="modelValue"
       :header="$t('role.createTitle')"
       modal

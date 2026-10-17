@@ -103,7 +103,7 @@ onMounted(loadData)
   <!-- Edit role dialog -->
   <Dialog
       :draggable="false"
-      :style="{ width: '32rem' }"
+      :style="{ width: '40rem', maxWidth: '95vw' }"
       :visible="!!editingRole"
       :header="$t('role.editTitle')"
       modal
