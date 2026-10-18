@@ -3,7 +3,9 @@ package dev.fkreuzer.shotlog.domain;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -161,5 +163,25 @@ class SeriesTest {
 
         // Assert
         assertEquals(0, result);
+    }
+
+    @Test
+    void calculateShotSum_ShouldCountWholeRings_WhenSessionHasNoDecimalScoring() {
+        // Arrange
+        Session session = new Session();
+        session.setDecimalScoring(false);
+        Series series = new Series();
+        series.setSession(session);
+        Shot a = new Shot();
+        a.setValue(new BigDecimal("9.6"));
+        Shot b = new Shot();
+        b.setValue(new BigDecimal("10.4"));
+        series.setShots(new ArrayList<>(List.of(a, b)));
+
+        // Act
+        double result = series.calculateShotSum();
+
+        // Assert
+        assertEquals(19.0, result);
     }
 }

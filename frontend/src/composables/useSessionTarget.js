@@ -10,6 +10,9 @@ import {render, summarize} from '@/lib/shotsapp-target'
 export function useSessionTarget(sessionRef) {
     const {locale} = useI18n()
 
+    // Without decimal scoring (Zehntelwertung) a shot counts as its whole ring: 9.6 -> 9.
+    const ringValue = (v) => (toValue(sessionRef)?.decimalScoring ? Number(v) : Math.floor(Number(v)))
+
     const countedSeries = computed(() => (toValue(sessionRef)?.series ?? []).filter(s => !s.testShot))
     const shots = computed(() => countedSeries.value.flatMap(s => s.shots ?? []).filter(sh => sh.value != null))
 
@@ -17,7 +20,7 @@ export function useSessionTarget(sessionRef) {
         return {
             data: {
                 meta: {diskType: toValue(sessionRef)?.diskType || 'lg', seriesShots: 10},
-                results: list.map(sh => ({valid: 2, flag: 2, x: sh.x ?? 0, y: sh.y ?? 0, value: Math.round(Number(sh.value) * 10)}))
+                results: list.map(sh => ({valid: 2, flag: 2, x: sh.x ?? 0, y: sh.y ?? 0, value: Math.round(ringValue(sh.value) * 10)}))
             }
         }
     }
@@ -27,7 +30,7 @@ export function useSessionTarget(sessionRef) {
 
     // Per-series sums are computed from the stored series (not re-sliced) so they match the session as entered.
     const series = computed(() => (toValue(sessionRef)?.series ?? []).map(s => {
-        const values = (s.shots ?? []).map(sh => Number(sh.value ?? 0))
+        const values = (s.shots ?? []).map(sh => ringValue(sh.value ?? 0))
         return {
             number: s.seriesNumber,
             testShot: s.testShot,

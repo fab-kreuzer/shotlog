@@ -52,10 +52,12 @@ public class Series {
     }
 
     private double sumShots() {
+        // Without decimal scoring ("Zehntelwertung") every shot counts as its whole ring, so 9.6 counts as 9.
+        boolean wholeRings = session != null && !session.isDecimalScoring();
         return shots.stream()
                 .map(Shot::getValue)
                 .filter(Objects::nonNull)
-                .mapToDouble(BigDecimal::doubleValue)
+                .mapToDouble(v -> wholeRings ? Math.floor(v.doubleValue()) : v.doubleValue())
                 .sum();
     }
 
