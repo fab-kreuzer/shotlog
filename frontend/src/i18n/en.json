@@ -164,6 +164,11 @@
         "pause": "Pause",
         "speed": "Speed"
       }
+    },
+    "page": {
+      "notFound": "Session not found",
+      "timeHeading": "Time",
+      "playbackHeading": "Playback"
     }
   },
   "dashboard": {

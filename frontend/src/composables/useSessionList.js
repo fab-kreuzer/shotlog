@@ -1,5 +1,6 @@
 import {onMounted, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
+import {useRouter} from 'vue-router'
 import {api} from '@/api/http'
 import {useNotificationStore} from '@/stores/notifications'
 
@@ -12,11 +13,10 @@ import {useNotificationStore} from '@/stores/notifications'
 export function useSessionList(type) {
     const {t} = useI18n()
     const notify = useNotificationStore()
+    const router = useRouter()
 
     const sessions = ref([])
     const loading = ref(true)
-    const sessionModal = ref(null)
-    const detailDialog = ref(null)
     const showDeleteConfirm = ref(false)
     const sessionToDelete = ref(null)
 
@@ -32,23 +32,8 @@ export function useSessionList(type) {
         }
     }
 
-    async function editSession(id) {
-        try {
-            const session = await api.getSession(id)
-            sessionModal.value?.openEdit(session)
-        } catch (err) {
-            console.error('Error loading session:', err)
-            if (!err._notified) notify.error(t('session.loadOneError'))
-        }
-    }
-
-    function viewSession(id) {
-        const session = sessions.value.find(s => s.id === id)
-        if (session) detailDialog.value?.open(session)
-    }
-
     function openCreate() {
-        sessionModal.value?.openCreate(type)
+        router.push(`/${type.toLowerCase()}/new`)
     }
 
     function handleDelete(id) {
@@ -71,12 +56,8 @@ export function useSessionList(type) {
     return {
         sessions,
         loading,
-        sessionModal,
-        detailDialog,
         showDeleteConfirm,
         loadSessions,
-        editSession,
-        viewSession,
         openCreate,
         handleDelete,
         confirmDeleteSession

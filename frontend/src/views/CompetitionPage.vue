@@ -42,11 +42,8 @@
       </template>
     </PageHeader>
 
-    <SessionGrid :loading="loading" :sessions="filteredSessions" @create="openCreate" @delete="handleDelete"
-                 @edit="editSession" @view="viewSession"/>
+    <SessionGrid :loading="loading" :sessions="filteredSessions" @create="openCreate" @delete="handleDelete"/>
 
-    <SessionDetailDialog ref="detailDialog"/>
-    <CompetitionSessionModal ref="sessionModal" @saved="loadSessions"/>
     <ConfirmModal
         v-model="showDeleteConfirm"
         :confirmText="$t('shooting.confirmDeleteText')"
@@ -62,8 +59,6 @@ import {onMounted, ref} from "vue";
 import {useI18n} from 'vue-i18n'
 import PageHeader from '@/components/PageHeader.vue'
 import SessionGrid from '@/components/SessionGrid.vue'
-import SessionDetailDialog from '@/components/session/SessionDetailDialog.vue'
-import CompetitionSessionModal from '@/components/session/CompetitionSessionModal.vue'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 import {useSessionList} from '@/composables/useSessionList'
 import {useSeasonFilter} from '@/composables/useSeasonFilter'
@@ -83,12 +78,8 @@ const notify = useNotificationStore()
 const {
   sessions,
   loading,
-  sessionModal,
-  detailDialog,
   showDeleteConfirm,
   loadSessions,
-  editSession,
-  viewSession,
   openCreate,
   handleDelete,
   confirmDeleteSession

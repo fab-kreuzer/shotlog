@@ -70,6 +70,7 @@
 
     <!-- Main content -->
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <AppBreadcrumb v-if="auth.isLoggedIn"/>
       <router-view v-slot="{ Component }">
         <Transition mode="out-in" name="page">
           <component :is="Component" :key="$route.fullPath"/>
@@ -99,6 +100,7 @@ import {useNotificationStore} from '@/stores/notifications'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import LanguageToggle from '@/components/LanguageToggle.vue'
 import MobileNavDrawer from '@/components/MobileNavDrawer.vue'
+import AppBreadcrumb from '@/components/AppBreadcrumb.vue'
 
 const {t} = useI18n()
 const mobileNavOpen = ref(false)

@@ -23,8 +23,8 @@
             class="card-surface-interactive group relative overflow-hidden"
             role="button"
             tabindex="0"
-            @click="emit('view', session.id)"
-            @keydown.enter="emit('view', session.id)"
+            @click="openSession(session)"
+            @keydown.enter="openSession(session)"
         >
           <!-- Actions overlay -->
           <div
@@ -35,7 +35,7 @@
                 text
                 class="!rounded-lg"
                 :title="$t('common.edit')"
-                @click.stop="emit('edit', session.id)"
+                @click.stop="openSession(session, '/edit')"
             />
             <Button
                 icon="pi pi-trash"
@@ -104,13 +104,20 @@ import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
 import SessionTarget from '@/components/session/SessionTarget.vue'
 import {ref, watch} from 'vue'
+import {useRouter} from 'vue-router'
 
 const props = defineProps({
   sessions: {type: Array, required: true},
   loading: {type: Boolean, default: false}
 })
 
-const emit = defineEmits(['edit', 'delete', 'create', 'view'])
+const emit = defineEmits(['delete', 'create'])
+
+const router = useRouter()
+
+function openSession(session, suffix = '') {
+  router.push(`${session.sessionType === 'COMPETITION' ? '/competition' : '/training'}/${session.id}${suffix}`)
+}
 
 function hasPositions(session) {
   return session.series?.some(s => s.shots?.some(sh => sh.x != null && sh.y != null))

@@ -47,13 +47,55 @@ const routes = [
         path: '/training',
         name: 'training',
         component: TrainingPage,
-        meta: {titleKey: 'nav.training'}
+        meta: {titleKey: 'nav.training', parent: 'dashboard'}
     },
     {
         path: '/competition',
         name: 'competition',
         component: CompetitionPage,
-        meta: {titleKey: 'nav.competition'}
+        meta: {titleKey: 'nav.competition', parent: 'dashboard'}
+    },
+    {
+        path: '/training/new',
+        name: 'training-session-new',
+        component: () => import('@/views/SessionFormView.vue'),
+        props: {type: 'TRAINING'},
+        meta: {titleKey: 'session.createTrainingTitle', parent: 'training'}
+    },
+    {
+        path: '/training/:id',
+        name: 'training-session',
+        component: () => import('@/views/SessionDetailView.vue'),
+        props: route => ({id: route.params.id, type: 'TRAINING'}),
+        meta: {parent: 'training', dynamic: true}
+    },
+    {
+        path: '/training/:id/edit',
+        name: 'training-session-edit',
+        component: () => import('@/views/SessionFormView.vue'),
+        props: route => ({id: route.params.id, type: 'TRAINING'}),
+        meta: {titleKey: 'common.edit', parent: 'training-session', parentParams: true}
+    },
+    {
+        path: '/competition/new',
+        name: 'competition-session-new',
+        component: () => import('@/views/SessionFormView.vue'),
+        props: {type: 'COMPETITION'},
+        meta: {titleKey: 'session.createCompetitionTitle', parent: 'competition'}
+    },
+    {
+        path: '/competition/:id',
+        name: 'competition-session',
+        component: () => import('@/views/SessionDetailView.vue'),
+        props: route => ({id: route.params.id, type: 'COMPETITION'}),
+        meta: {parent: 'competition', dynamic: true}
+    },
+    {
+        path: '/competition/:id/edit',
+        name: 'competition-session-edit',
+        component: () => import('@/views/SessionFormView.vue'),
+        props: route => ({id: route.params.id, type: 'COMPETITION'}),
+        meta: {titleKey: 'common.edit', parent: 'competition-session', parentParams: true}
     },
     {
         path: '/overview',
@@ -63,55 +105,56 @@ const routes = [
         path: '/calender',
         name: 'calender',
         component: CalenderView,
-        meta: {titleKey: 'nav.calender'}
+        meta: {titleKey: 'nav.calender', parent: 'dashboard'}
     },
     {
         path: '/leaderboard',
         name: 'leaderboard',
         component: LeaderboardView,
-        meta: {titleKey: 'nav.leaderboard', permission: 'view_leaderboard'}
+        meta: {titleKey: 'nav.leaderboard', permission: 'view_leaderboard', parent: 'dashboard'}
     },
     {
         path: '/profile',
         name: 'profile',
         component: () => import('@/views/ProfileView.vue'),
-        meta: {titleKey: 'nav.profile'}
+        meta: {titleKey: 'nav.profile', parent: 'dashboard'}
     },
     {
         path: '/settings',
+        name: 'settings',
         component: SettingsView,
-        meta: {titleKey: 'nav.settings', requiresAdmin: false},
+        meta: {titleKey: 'nav.settings', requiresAdmin: false, parent: 'dashboard'},
         redirect: firstSettingsTab,
         children: [
             {
                 path: 'users',
                 name: 'settings-user-management',
                 component: () => import('@/views/settings/UserTab.vue'),
-                meta: {permission: 'view_user_tab'}
+                meta: {permission: 'view_user_tab', titleKey: 'settings.tabUserManagement', parent: 'settings'}
             },
             {
                 path: 'roles',
                 name: 'settings-role-management',
                 component: () => import('@/views/settings/RoleTab.vue'),
-                meta: {permission: 'view_role_tab'}
+                meta: {permission: 'view_role_tab', titleKey: 'settings.tabRoleManagement', parent: 'settings'}
             },
             {
                 path: 'clubs',
                 name: 'settings-club-management',
                 component: () => import('@/views/settings/ClubManagementTab.vue'),
-                meta: {permission: 'view_club_tab'}
+                meta: {permission: 'view_club_tab', titleKey: 'settings.tabClubManagement', parent: 'settings'}
             },
             {
                 path: 'teams',
                 name: 'settings-team-management',
                 component: () => import('@/views/settings/TeamTab.vue'),
-                meta: {permission: 'view_team_tab'}
+                meta: {permission: 'view_team_tab', titleKey: 'settings.tabTeamManagement', parent: 'settings'}
             },
             {
                 path: 'seasons',
                 name: 'settings-season-management',
                 component: () => import('@/views/settings/SeasonTab.vue'),
-                meta: {permission: 'view_season_tab'}
+                meta: {permission: 'view_season_tab', titleKey: 'settings.tabSeasonManagement', parent: 'settings'}
             },
             {
                 path: 'access-denied',

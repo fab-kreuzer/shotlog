@@ -22,33 +22,24 @@
       </template>
     </Card>
 
-    <!-- Session Modals (one per type; the matching one opens on edit) -->
-    <TrainingSessionModal ref="trainingModal" @saved="refreshCalendar"/>
-    <CompetitionSessionModal ref="competitionModal" @saved="refreshCalendar"/>
   </div>
 </template>
 
 <script setup>
 import {onBeforeUnmount, onMounted, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
+import {useRouter} from 'vue-router'
 import {Calendar} from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import Card from 'primevue/card'
 import {api} from '@/api/http'
 import PageHeader from '@/components/PageHeader.vue'
-import TrainingSessionModal from '@/components/session/TrainingSessionModal.vue'
-import CompetitionSessionModal from '@/components/session/CompetitionSessionModal.vue'
 
 const {t} = useI18n()
+const router = useRouter()
 
 const calendarEl = ref(null)
-const trainingModal = ref(null)
-const competitionModal = ref(null)
 let calendar = null
-
-function modalForType(type) {
-  return type === 'COMPETITION' ? competitionModal.value : trainingModal.value
-}
 
 function colorForSessionType(type) {
   switch (type) {
@@ -58,12 +49,6 @@ function colorForSessionType(type) {
       return '#f44336'
     default:
       return '#9e9e9e'
-  }
-}
-
-function refreshCalendar() {
-  if (calendar) {
-    calendar.refetchEvents()
   }
 }
 
@@ -103,14 +88,9 @@ onMounted(() => {
         failureCallback(err)
       }
     },
-    eventClick: async function (info) {
-      const sessionId = info.event.id
-      try {
-        const session = await api.getSession(sessionId)
-        modalForType(session.sessionType)?.openEdit(session)
-      } catch (err) {
-        console.error('Error fetching session:', err)
-      }
+    eventClick: function (info) {
+      const type = info.event.extendedProps.sessionType
+      router.push(`${type === 'COMPETITION' ? '/competition' : '/training'}/${info.event.id}`)
     }
   })
 

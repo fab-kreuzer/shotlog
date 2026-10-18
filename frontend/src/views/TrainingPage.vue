@@ -29,11 +29,8 @@
       </template>
     </PageHeader>
 
-    <SessionGrid :loading="loading" :sessions="filteredSessions" @create="openCreate" @delete="handleDelete"
-                 @edit="editSession" @view="viewSession"/>
+    <SessionGrid :loading="loading" :sessions="filteredSessions" @create="openCreate" @delete="handleDelete"/>
 
-    <SessionDetailDialog ref="detailDialog"/>
-    <TrainingSessionModal ref="sessionModal" @saved="loadSessions"/>
     <ConfirmModal
         v-model="showDeleteConfirm"
         :confirmText="$t('shooting.confirmDeleteText')"
@@ -47,8 +44,6 @@
 <script setup>
 import PageHeader from '@/components/PageHeader.vue'
 import SessionGrid from '@/components/SessionGrid.vue'
-import SessionDetailDialog from '@/components/session/SessionDetailDialog.vue'
-import TrainingSessionModal from '@/components/session/TrainingSessionModal.vue'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 import {useSessionList} from '@/composables/useSessionList'
 import {useSeasonFilter} from '@/composables/useSeasonFilter'
@@ -63,12 +58,8 @@ import {onMounted} from 'vue'
 const {
   sessions,
   loading,
-  sessionModal,
-  detailDialog,
   showDeleteConfirm,
   loadSessions,
-  editSession,
-  viewSession,
   openCreate,
   handleDelete,
   confirmDeleteSession

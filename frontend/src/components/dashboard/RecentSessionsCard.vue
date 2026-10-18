@@ -85,6 +85,6 @@ function formatDate(dateStr) {
 }
 
 function goTo(session) {
-  router.push(session.sessionType === 'COMPETITION' ? '/competition' : '/training')
+  router.push(`${session.sessionType === 'COMPETITION' ? '/competition' : '/training'}/${session.id}`)
 }
 </script>

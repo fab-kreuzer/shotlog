@@ -4,15 +4,15 @@ import {api} from '@/api/http'
 import {useAuthStore} from '@/stores/auth'
 
 /**
- * Shared state + logic for a session create/edit modal of a fixed type
- * ('TRAINING' | 'COMPETITION'). The training and competition modals both use
- * this and only differ in the type-specific fields they render.
+ * Shared state + logic for the session create/edit form of a fixed type
+ * ('TRAINING' | 'COMPETITION'). `SessionFormView` uses it for both modes; call
+ * `startCreate()` or `startEdit(session)` once `ready` is true (the option lists are loaded).
  */
 export function useSessionForm(sessionType, {onSaved} = {}) {
     const {t} = useI18n()
     const auth = useAuthStore()
 
-    const visible = ref(false)
+    const ready = ref(false)
     const locations = ref([])
     const seasons = ref([])
     const assignedTeams = ref([])
@@ -105,12 +105,11 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
         editingId.value = null
     }
 
-    function openCreate() {
+    function startCreate() {
         resetForm()
-        visible.value = true
     }
 
-    function openEdit(session) {
+    function startEdit(session) {
         isEditing.value = true
         editingId.value = session.id
         form.sessionDate = session.sessionDate
@@ -137,16 +136,6 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
                 s.shots.push({shotNumber: s.shots.length + 1, value: 0})
             }
         })
-
-        visible.value = true
-    }
-
-    function close() {
-        visible.value = false
-    }
-
-    function onVisibleChange(value) {
-        visible.value = value
     }
 
     async function handleSubmit() {
@@ -171,13 +160,10 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
         }
 
         try {
-            if (isEditing.value) {
-                await api.updateSession(editingId.value, data)
-            } else {
-                await api.createSession(data)
-            }
-            close()
-            onSaved?.()
+            const saved = isEditing.value
+                ? await api.updateSession(editingId.value, data)
+                : await api.createSession(data)
+            onSaved?.(saved)
         } catch (err) {
             console.error('Error saving session:', err)
             alert(t('session.saveError'))
@@ -203,10 +189,11 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
         } catch (err) {
             console.error('Error fetching assigned teams:', err)
         }
+        ready.value = true
     })
 
     return {
-        visible,
+        ready,
         locations,
         seasons,
         assignedTeams,
@@ -218,10 +205,8 @@ export function useSessionForm(sessionType, {onSaved} = {}) {
         sessionTimeModel,
         addSeries,
         removeSeries,
-        openCreate,
-        openEdit,
-        close,
-        onVisibleChange,
+        startCreate,
+        startEdit,
         handleSubmit
     }
 }
