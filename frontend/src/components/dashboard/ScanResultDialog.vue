@@ -39,7 +39,7 @@
       <div v-if="preview.existingSessions.length" class="flex flex-col gap-2">
         <p class="font-medium">{{ $t('dashboard.scan.existing') }}</p>
         <div class="flex items-center gap-2">
-          <RadioButton v-model="overwriteId" :value="null" inputId="scan-new"/>
+          <RadioButton v-model="overwriteId" :value="NEW" inputId="scan-new"/>
           <label for="scan-new">{{ $t('dashboard.scan.createNew') }}</label>
         </div>
         <div v-for="s in preview.existingSessions" :key="s.id" class="flex items-center gap-2">
@@ -55,7 +55,7 @@
 
     <template #footer>
       <Button :label="$t('common.cancel')" severity="secondary" text @click="visible = false"/>
-      <Button v-if="step === 'confirm'" :disabled="!form.enemyId || saving || (preview?.alreadyImported && overwriteId == null)"
+      <Button v-if="step === 'confirm'" :disabled="!form.enemyId || saving || (preview?.alreadyImported && overwriteId === NEW)"
               :label="$t('common.save')" :loading="saving" @click="submit"/>
     </template>
   </Dialog>
@@ -86,7 +86,8 @@ const error = ref('')
 const manualUrl = ref('')
 const saving = ref(false)
 const preview = ref(null)
-const overwriteId = ref(null)
+const NEW = 'new' // sentinel for "create a new session" (PrimeVue radios don't handle a null value reliably)
+const overwriteId = ref(NEW)
 const locations = ref([])
 const seasons = ref([])
 const assignedTeams = ref([])
@@ -144,7 +145,7 @@ async function handleLink(url) {
   try {
     preview.value = await api.previewScan(url)
     scannedUrl = url
-    overwriteId.value = null
+    overwriteId.value = NEW
     step.value = 'confirm'
   } catch (err) {
     error.value = err?.errors?.[0] || t('dashboard.scan.error')
@@ -163,7 +164,7 @@ async function submit() {
       seasonId: activeSeason.value?.id,
       enemyId: form.enemyId,
       teamId: form.sessionType === 'COMPETITION' ? form.teamId : null,
-      overwriteSessionId: overwriteId.value
+      overwriteSessionId: overwriteId.value === NEW ? null : overwriteId.value
     })
     try { localStorage.setItem(LAST_PLACE_KEY, String(form.enemyId)) } catch { /* ignore */ }
     visible.value = false
