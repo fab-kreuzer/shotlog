@@ -141,7 +141,29 @@
       "autoZoom": "Automatischer Zoom",
       "distribution": "Schüsse pro Ring",
       "ring": "Ring",
-      "count": "Anzahl"
+      "count": "Anzahl",
+      "tabs": {
+        "result": "Ergebnis",
+        "time": "Zeit",
+        "playback": "Wiedergabe"
+      },
+      "time": {
+        "chart": "Sekunden seit dem Vorschuss",
+        "total": "Gesamtdauer",
+        "average": "Ø pro Schuss",
+        "median": "Median",
+        "fastest": "Kürzester Abstand",
+        "slowest": "Längster Abstand",
+        "averageLine": "Durchschnitt",
+        "medianLine": "Median",
+        "hint": "Abstand zum Vorschuss; Klick auf einen Punkt wählt den Schuss.",
+        "perSeries": "Dauer je Serie"
+      },
+      "playback": {
+        "play": "Abspielen",
+        "pause": "Pause",
+        "speed": "Tempo"
+      }
     }
   },
   "dashboard": {

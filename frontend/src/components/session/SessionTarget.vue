@@ -22,7 +22,9 @@ const props = defineProps({
   // draw only this shot (index among the drawn shots)
   only: {type: Number, default: undefined},
   // zoom the view onto the drawn shots (or the selected shot)
-  autoZoom: {type: Boolean, default: false}
+  autoZoom: {type: Boolean, default: false},
+  // draw only the first N shots (playback)
+  upTo: {type: Number, default: undefined}
 })
 
 const {hasPositions, positioned, svg} = useSessionTarget(() => props.session)
@@ -52,7 +54,8 @@ const markup = computed(() => zoomed(svg({
   shotNumbers: props.shotNumbers,
   shotColor: props.shotColor,
   highlight: props.highlight,
-  only: props.only
+  only: props.only,
+  upTo: props.upTo
 })))
 </script>
 

@@ -12,6 +12,14 @@
         </div>
       </div>
 
+      <Tabs v-model:value="tab">
+        <TabList v-if="hasTimes || hasPositions">
+          <Tab value="result">{{ $t('session.detail.tabs.result') }}</Tab>
+          <Tab v-if="hasTimes" value="time">{{ $t('session.detail.tabs.time') }}</Tab>
+          <Tab v-if="hasPositions" value="playback">{{ $t('session.detail.tabs.playback') }}</Tab>
+        </TabList>
+        <TabPanels class="!px-0">
+        <TabPanel value="result">
       <div :class="hasPositions ? 'grid gap-5 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] items-start' : 'flex flex-col gap-5'">
       <!-- Left: target with toggles -->
       <div v-if="hasPositions" class="flex flex-col gap-3">
@@ -102,6 +110,63 @@
       </div>
       </div>
       </div>
+
+        </TabPanel>
+
+        <!-- Time: shots over time -->
+        <TabPanel v-if="hasTimes" value="time">
+          <div class="flex flex-col gap-4">
+            <dl class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-sm">
+              <div><dt class="text-surface-500">{{ $t('session.detail.time.total') }}</dt><dd class="font-medium">{{ fmtDuration(timeStats.total) }}</dd></div>
+              <div><dt class="text-surface-500">{{ $t('session.detail.time.average') }}</dt><dd class="font-medium">{{ fmt(timeStats.average, 1) }} s</dd></div>
+              <div><dt class="text-surface-500">{{ $t('session.detail.time.median') }}</dt><dd class="font-medium">{{ fmt(timeStats.median, 1) }} s</dd></div>
+              <div><dt class="text-surface-500">{{ $t('session.detail.time.fastest') }}</dt><dd class="font-medium">{{ timeStats.min }} s</dd></div>
+              <div><dt class="text-surface-500">{{ $t('session.detail.time.slowest') }}</dt><dd class="font-medium">{{ timeStats.max }} s</dd></div>
+            </dl>
+            <ShotTimeChart :average="timeStats.average" :highlight="highlight" :median="timeStats.median"
+                           :points="timePoints" :selected="selected" @hover="highlight = $event"
+                           @select="toggleSelected"/>
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-surface-500">
+              <span class="flex items-center gap-1.5"><span class="inline-block h-0.5 w-5" style="background: var(--color-primary-500, #2a9d8f)"/>{{ $t('session.detail.time.averageLine') }}</span>
+              <span class="flex items-center gap-1.5"><span class="inline-block w-5 border-t-2 border-dashed border-current"/>{{ $t('session.detail.time.medianLine') }}</span>
+              <span>{{ $t('session.detail.time.hint') }}</span>
+            </div>
+            <div>
+              <h4 class="mb-2 text-sm font-semibold text-surface-700">{{ $t('session.detail.time.perSeries') }}</h4>
+              <div class="flex flex-wrap gap-2">
+                <span v-for="ps in timeStats.perSeries" :key="ps.number"
+                      class="rounded-lg border border-surface-200 bg-surface-50 px-3 py-1.5 text-sm">
+                  {{ $t('session.seriesLabel', {number: ps.number}) }}:
+                  <span class="font-medium">{{ fmtDuration(ps.seconds) }}</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </TabPanel>
+
+        <!-- Playback: shot by shot -->
+        <TabPanel v-if="hasPositions" value="playback">
+          <div class="mx-auto flex max-w-[460px] flex-col gap-4">
+            <SessionTarget :session="session" :up-to="playback.shown.value" :max-width="460" shot-numbers/>
+            <div class="flex items-center gap-3">
+              <Button :icon="playback.playing.value ? 'pi pi-pause' : 'pi pi-play'" rounded size="small"
+                      :aria-label="playback.playing.value ? $t('session.detail.playback.pause') : $t('session.detail.playback.play')"
+                      @click="playback.toggle()"/>
+              <Slider :max="playback.count.value" :min="0" :model-value="playback.shown.value" :step="1" class="flex-1"
+                      @update:model-value="playback.seek($event)"/>
+              <span class="w-14 text-right text-sm tabular-nums">{{ playback.shown.value }} / {{ playback.count.value }}</span>
+            </div>
+            <div class="flex items-center justify-center gap-2 text-sm">
+              <span class="text-surface-500">{{ $t('session.detail.playback.speed') }}</span>
+              <SelectButton :allow-empty="false" :model-value="playback.speed.value" :options="PLAYBACK_SPEEDS"
+                            size="small" @update:model-value="playback.setSpeed($event)">
+                <template #option="{option}">{{ option }}x</template>
+              </SelectButton>
+            </div>
+          </div>
+        </TabPanel>
+        </TabPanels>
+      </Tabs>
     </div>
   </Dialog>
 </template>
@@ -112,7 +177,17 @@ import {useI18n} from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import ToggleSwitch from 'primevue/toggleswitch'
-import {THEME} from '@/lib/shotsapp-target'
+import Tabs from 'primevue/tabs'
+import TabList from 'primevue/tablist'
+import Tab from 'primevue/tab'
+import TabPanels from 'primevue/tabpanels'
+import TabPanel from 'primevue/tabpanel'
+import Slider from 'primevue/slider'
+import SelectButton from 'primevue/selectbutton'
+import ShotTimeChart from '@/components/session/ShotTimeChart.vue'
+import {useShotTimes} from '@/composables/useShotTimes'
+import {PLAYBACK_SPEEDS, usePlayback} from '@/composables/usePlayback'
+import {shotColor} from '@/lib/shotColor'
 import SessionTarget from '@/components/session/SessionTarget.vue'
 import {useSessionTarget} from '@/composables/useSessionTarget'
 
@@ -126,7 +201,9 @@ const showGroup = ref(false)
 const showMean = ref(false)
 const shotNumbers = ref(false)
 
-const {hasPositions, distribution, series, summary, positionSummary, fmt} = useSessionTarget(session)
+const tab = ref('result')
+const {points: timePoints, hasTimes, stats: timeStats, fmtDuration} = useShotTimes(session)
+const {hasPositions, positioned, distribution, series, summary, positionSummary, fmt} = useSessionTarget(session)
 
 const dateLabel = computed(() => {
   const s = session.value
@@ -155,11 +232,7 @@ const meanPointText = computed(() => {
   return `${fmt(Math.abs(p.x_mm), 2)} mm ${horiz}, ${fmt(Math.abs(p.y_mm), 2)} mm ${vert}`
 })
 
-// Same colour scale as the target (DISAG app): >= 10.0 red, >= 9.0 gold, otherwise green.
-function dotColor(v) {
-  return v >= 10 ? THEME.danger : v >= 9 ? THEME.warning : THEME.success
-}
-
+const dotColor = shotColor
 function selectable(s) {
   return hasPositions.value && !s.testShot
 }
@@ -170,10 +243,14 @@ function toggleSelected(index) {
   selected.value = selected.value === index ? undefined : index
 }
 
+const playback = usePlayback(() => positioned.value.length)
+
 function open(s) {
   session.value = s
   highlight.value = undefined
   selected.value = undefined
+  tab.value = 'result'
+  playback.reset()
   visible.value = true
 }
 

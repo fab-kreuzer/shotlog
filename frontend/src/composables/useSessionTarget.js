@@ -55,9 +55,10 @@ export function useSessionTarget(sessionRef) {
         return counts
     })
 
-    function svg({only, ...opts} = {}) {
+    function svg({only, upTo, ...opts} = {}) {
         if (!hasPositions.value) return ''
-        const list = only != null && positioned.value[only] ? [positioned.value[only]] : positioned.value
+        let list = only != null && positioned.value[only] ? [positioned.value[only]] : positioned.value
+        if (upTo != null) list = list.slice(0, upTo)
         return render(toResult(list), only != null ? {...opts, highlight: undefined} : opts)
     }
 

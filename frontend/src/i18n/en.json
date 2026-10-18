@@ -141,7 +141,29 @@
       "autoZoom": "Auto zoom",
       "distribution": "Shots per ring",
       "ring": "Ring",
-      "count": "Shots"
+      "count": "Shots",
+      "tabs": {
+        "result": "Result",
+        "time": "Time",
+        "playback": "Playback"
+      },
+      "time": {
+        "chart": "Seconds since the previous shot",
+        "total": "Total duration",
+        "average": "Average per shot",
+        "median": "Median",
+        "fastest": "Shortest gap",
+        "slowest": "Longest gap",
+        "averageLine": "Average",
+        "medianLine": "Median",
+        "hint": "Gap to the previous shot; click a point to select the shot.",
+        "perSeries": "Duration per series"
+      },
+      "playback": {
+        "play": "Play",
+        "pause": "Pause",
+        "speed": "Speed"
+      }
     }
   },
   "dashboard": {

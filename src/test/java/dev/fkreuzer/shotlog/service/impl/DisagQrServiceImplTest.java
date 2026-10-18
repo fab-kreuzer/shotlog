@@ -28,7 +28,7 @@ class DisagQrServiceImplTest {
         // Arrange
         List<DisagResult.Shot> shots = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
-            shots.add(new DisagResult.Shot(100 + i, 2, 2, i, -i));
+            shots.add(new DisagResult.Shot(100 + i, 2, 2, i, -i, i == 0 ? 0 : 30 + i));
         }
         DisagResult result = new DisagResult("abc",
                 new DisagResult.Data("abc", "2026-10-14T20:26:47Z", null, null, shots));
@@ -48,12 +48,14 @@ class DisagQrServiceImplTest {
         assertEquals("lg", session.getDiskType());
         assertEquals(3, session.getSeries().get(0).getShots().get(3).getX());
         assertEquals(-3, session.getSeries().get(0).getShots().get(3).getY());
+        assertEquals(0, session.getSeries().get(0).getShots().get(0).getSecondsSincePrevious());
+        assertEquals(33, session.getSeries().get(0).getShots().get(3).getSecondsSincePrevious());
     }
 
     @Test
     void toSession_dropsUnusableShotsAndReadsDiskTypeFromMeta() {
         // Arrange
-        List<DisagResult.Shot> shots = List.of(new DisagResult.Shot(100, 2, 2, 0, 0), new DisagResult.Shot(90, 0, 2, 1, 1));
+        List<DisagResult.Shot> shots = List.of(new DisagResult.Shot(100, 2, 2, 0, 0, 0), new DisagResult.Shot(90, 0, 2, 1, 1, 40));
         DisagResult result = new DisagResult("abc", new DisagResult.Data("abc", "2026-10-14T20:26:47Z", null,
                 new DisagResult.Meta("KK"), shots));
 

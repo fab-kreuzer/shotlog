@@ -35,4 +35,7 @@ public class Shot {
     // Position relative to the target centre in 1/100 mm (+x right, +y up); only set for scanned results.
     private Integer x;
     private Integer y;
+
+    // Seconds since the previous shot (0 for the first); only set for scanned results.
+    private Integer secondsSincePrevious;
 }

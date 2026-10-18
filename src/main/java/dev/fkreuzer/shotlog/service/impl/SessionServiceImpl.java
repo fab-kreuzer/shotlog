@@ -76,6 +76,7 @@ public class SessionServiceImpl implements SessionService {
                                             && updatedShot.getValue().compareTo(existingShot.getValue()) == 0) {
                                         updatedShot.setX(existingShot.getX());
                                         updatedShot.setY(existingShot.getY());
+                                        updatedShot.setSecondsSincePrevious(existingShot.getSecondsSincePrevious());
                                     }
                                 }
 

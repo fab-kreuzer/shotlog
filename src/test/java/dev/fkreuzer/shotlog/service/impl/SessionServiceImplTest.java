@@ -278,6 +278,7 @@ class SessionServiceImplTest {
     void save_update_keepsPositionWhenValueUnchanged() {
         // Arrange
         Session existing = sessionWithShot(1L, "9.6", -238, -236);
+        existing.getSeries().get(0).getShots().get(0).setSecondsSincePrevious(37);
         existing.setDiskType("lg");
         when(sessionRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(sessionRepository.save(any(Session.class))).thenAnswer(i -> i.getArgument(0));
@@ -290,6 +291,7 @@ class SessionServiceImplTest {
         Shot shot = saved.getSeries().get(0).getShots().get(0);
         assertEquals(-238, shot.getX());
         assertEquals(-236, shot.getY());
+        assertEquals(37, shot.getSecondsSincePrevious());
         assertEquals("lg", saved.getDiskType());
     }
 

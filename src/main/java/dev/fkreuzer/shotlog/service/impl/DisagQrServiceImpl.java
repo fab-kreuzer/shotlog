@@ -84,6 +84,7 @@ public class DisagQrServiceImpl implements DisagQrService {
                 shot.setValue(BigDecimal.valueOf(shots.get(j).value(), 1));
                 shot.setX(shots.get(j).x());
                 shot.setY(shots.get(j).y());
+                shot.setSecondsSincePrevious(shots.get(j).offset());
                 shot.setSeries(series);
                 shotEntities.add(shot);
             }
