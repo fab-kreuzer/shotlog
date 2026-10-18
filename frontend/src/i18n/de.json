@@ -137,7 +137,8 @@
       "low": "tief",
       "onlyShot": "Nur Schuss {number} wird angezeigt",
       "showAll": "Alle anzeigen",
-      "shotTitle": "Schuss {number}"
+      "shotTitle": "Schuss {number}",
+      "autoZoom": "Automatischer Zoom"
     }
   },
   "dashboard": {

@@ -137,7 +137,8 @@
       "low": "low",
       "onlyShot": "Showing only shot {number}",
       "showAll": "Show all",
-      "shotTitle": "Shot {number}"
+      "shotTitle": "Shot {number}",
+      "autoZoom": "Auto zoom"
     }
   },
   "dashboard": {

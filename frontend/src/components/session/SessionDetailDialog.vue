@@ -15,13 +15,14 @@
       <div :class="hasPositions ? 'grid gap-5 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] items-start' : 'flex flex-col gap-5'">
       <!-- Left: target with toggles -->
       <div v-if="hasPositions" class="flex flex-col gap-3">
-        <SessionTarget :highlight="highlight" :only="selected" :session="session" :show-group="showGroup" :show-mean="showMean"
+        <SessionTarget :highlight="highlight" :only="selected" :auto-zoom="autoZoom" :session="session" :show-group="showGroup" :show-mean="showMean"
                        :shot-numbers="shotNumbers" :max-width="460" class="mx-auto"/>
         <div v-if="selected != null" class="flex items-center justify-center gap-2 text-sm">
           <span>{{ $t('session.detail.onlyShot', {number: selected + 1}) }}</span>
           <Button :label="$t('session.detail.showAll')" size="small" text @click="selected = undefined"/>
         </div>
         <div class="flex flex-wrap gap-4 justify-center text-sm">
+          <label class="flex items-center gap-2"><ToggleSwitch v-model="autoZoom"/>{{ $t('session.detail.autoZoom') }}</label>
           <label class="flex items-center gap-2"><ToggleSwitch v-model="showGroup"/>{{ $t('session.detail.group') }}</label>
           <label class="flex items-center gap-2"><ToggleSwitch v-model="showMean"/>{{ $t('session.detail.mean') }}</label>
           <label class="flex items-center gap-2"><ToggleSwitch v-model="shotNumbers"/>{{ $t('session.detail.numbers') }}</label>
@@ -99,6 +100,7 @@ const visible = ref(false)
 const session = ref(null)
 const highlight = ref(undefined)
 const selected = ref(undefined)
+const autoZoom = ref(true)
 const showGroup = ref(false)
 const showMean = ref(false)
 const shotNumbers = ref(false)
