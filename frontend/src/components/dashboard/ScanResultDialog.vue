@@ -122,6 +122,21 @@ function stopScanner() {
   scanner = null
 }
 
+// The default region is only the centre two thirds of the frame, downscaled to 400 px - too coarse for the
+// dense DISAG code, so the paper had to be held in the middle. Use the full short side of the (square)
+// preview in higher resolution instead.
+function fullFrameRegion(video) {
+  const side = Math.min(video.videoWidth, video.videoHeight)
+  return {
+    x: Math.round((video.videoWidth - side) / 2),
+    y: Math.round((video.videoHeight - side) / 2),
+    width: side,
+    height: side,
+    downScaledWidth: Math.min(side, 800),
+    downScaledHeight: Math.min(side, 800)
+  }
+}
+
 async function startScanner() {
   await nextTick()
   if (!videoEl.value) return
@@ -129,7 +144,8 @@ async function startScanner() {
   scanner = new QrScanner(videoEl.value, r => handleLink(r.data), {
     preferredCamera: 'environment',
     highlightScanRegion: true,
-    returnDetailedScanResult: true
+    returnDetailedScanResult: true,
+    calculateScanRegion: fullFrameRegion
   })
   try {
     await scanner.start()
