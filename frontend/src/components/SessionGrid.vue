@@ -23,12 +23,20 @@
             class="card-surface-interactive group relative overflow-hidden"
             role="button"
             tabindex="0"
-            @click="emit('edit', session.id)"
-            @keydown.enter="emit('edit', session.id)"
+            @click="emit('view', session.id)"
+            @keydown.enter="emit('view', session.id)"
         >
           <!-- Actions overlay -->
           <div
               class="absolute top-2 right-2 flex items-center rounded-lg bg-card shadow-md gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 max-sm:opacity-100">
+            <Button
+                icon="pi pi-pencil"
+                size="small"
+                text
+                class="!rounded-lg"
+                :title="$t('common.edit')"
+                @click.stop="emit('edit', session.id)"
+            />
             <Button
                 icon="pi pi-trash"
                 severity="danger"
@@ -48,6 +56,9 @@
               </div>
               <h3 class="text-base font-semibold text-surface-800 leading-tight">{{ session.title }}</h3>
             </div>
+
+            <SessionTarget v-if="hasPositions(session)" :session="session" :size="96" :max-width="96"
+                           :show-numbers="false" class="float-right ml-2 mb-2"/>
 
             <!-- Session details -->
             <div class="flex flex-col gap-2.5">
@@ -91,6 +102,7 @@
 import DataView from 'primevue/dataview'
 import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
+import SessionTarget from '@/components/session/SessionTarget.vue'
 import {ref, watch} from 'vue'
 
 const props = defineProps({
@@ -98,7 +110,11 @@ const props = defineProps({
   loading: {type: Boolean, default: false}
 })
 
-const emit = defineEmits(['edit', 'delete', 'create'])
+const emit = defineEmits(['edit', 'delete', 'create', 'view'])
+
+function hasPositions(session) {
+  return session.series?.some(s => s.shots?.some(sh => sh.x != null && sh.y != null))
+}
 
 const DEFAULT_PAGE_SIZE = 20
 const first = ref(0)

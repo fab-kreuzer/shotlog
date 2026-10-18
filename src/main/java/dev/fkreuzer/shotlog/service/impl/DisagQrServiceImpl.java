@@ -69,7 +69,9 @@ public class DisagQrServiceImpl implements DisagQrService {
         session.setDecimalScoring(true);
         session.setExternalId(result.id() != null ? result.id() : result.data().uuid());
 
-        List<DisagResult.Shot> shots = result.data().results();
+        session.setDiskType(diskType(result.data()));
+
+        List<DisagResult.Shot> shots = result.data().results().stream().filter(DisagResult.Shot::usable).toList();
         List<Series> seriesList = new ArrayList<>();
         for (int i = 0; i < shots.size(); i += SERIES_SIZE) {
             Series series = new Series();
@@ -80,6 +82,8 @@ public class DisagQrServiceImpl implements DisagQrService {
                 Shot shot = new Shot();
                 shot.setShotNumber(j - i + 1);
                 shot.setValue(BigDecimal.valueOf(shots.get(j).value(), 1));
+                shot.setX(shots.get(j).x());
+                shot.setY(shots.get(j).y());
                 shot.setSeries(series);
                 shotEntities.add(shot);
             }
@@ -88,5 +92,19 @@ public class DisagQrServiceImpl implements DisagQrService {
         }
         session.setSeries(seriesList);
         return session;
+    }
+
+    /** Disk type from {@code meta}, else from the U+001F separated {@code startTimeRaw}; defaults to {@code lg}. */
+    private static String diskType(DisagResult.Data data) {
+        if (data.meta() != null && data.meta().diskType() != null && !data.meta().diskType().isBlank()) {
+            return data.meta().diskType().trim().toLowerCase();
+        }
+        if (data.startTimeRaw() != null) {
+            String[] parts = data.startTimeRaw().split("\u001f");
+            if (parts.length > 4 && !parts[3].isBlank()) {
+                return parts[3].trim().toLowerCase();
+            }
+        }
+        return "lg";
     }
 }

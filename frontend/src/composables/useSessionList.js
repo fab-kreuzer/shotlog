@@ -16,6 +16,7 @@ export function useSessionList(type) {
     const sessions = ref([])
     const loading = ref(true)
     const sessionModal = ref(null)
+    const detailDialog = ref(null)
     const showDeleteConfirm = ref(false)
     const sessionToDelete = ref(null)
 
@@ -39,6 +40,11 @@ export function useSessionList(type) {
             console.error('Error loading session:', err)
             if (!err._notified) notify.error(t('session.loadOneError'))
         }
+    }
+
+    function viewSession(id) {
+        const session = sessions.value.find(s => s.id === id)
+        if (session) detailDialog.value?.open(session)
     }
 
     function openCreate() {
@@ -66,9 +72,11 @@ export function useSessionList(type) {
         sessions,
         loading,
         sessionModal,
+        detailDialog,
         showDeleteConfirm,
         loadSessions,
         editSession,
+        viewSession,
         openCreate,
         handleDelete,
         confirmDeleteSession

@@ -31,4 +31,8 @@ public class Shot {
 
     @Column(precision = 4, scale = 1)
     private BigDecimal value;
+
+    // Position relative to the target centre in 1/100 mm (+x right, +y up); only set for scanned results.
+    private Integer x;
+    private Integer y;
 }

@@ -9,10 +9,19 @@ import java.util.List;
 public record DisagResult(String id, Data data) {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Data(String uuid, String startTime, List<Shot> results) {
+    public record Data(String uuid, String startTime, String startTimeRaw, Meta meta, List<Shot> results) {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Shot(int value) {
+    public record Meta(String diskType) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Shot(int value, Integer valid, Integer flag, Integer x, Integer y) {
+
+        /** The app only draws and counts shots with flag 2 and valid 2. */
+        public boolean usable() {
+            return Integer.valueOf(2).equals(flag) && Integer.valueOf(2).equals(valid);
+        }
     }
 }

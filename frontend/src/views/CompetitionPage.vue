@@ -43,8 +43,9 @@
     </PageHeader>
 
     <SessionGrid :loading="loading" :sessions="filteredSessions" @create="openCreate" @delete="handleDelete"
-                 @edit="editSession"/>
+                 @edit="editSession" @view="viewSession"/>
 
+    <SessionDetailDialog ref="detailDialog"/>
     <CompetitionSessionModal ref="sessionModal" @saved="loadSessions"/>
     <ConfirmModal
         v-model="showDeleteConfirm"
@@ -61,6 +62,7 @@ import {onMounted, ref} from "vue";
 import {useI18n} from 'vue-i18n'
 import PageHeader from '@/components/PageHeader.vue'
 import SessionGrid from '@/components/SessionGrid.vue'
+import SessionDetailDialog from '@/components/session/SessionDetailDialog.vue'
 import CompetitionSessionModal from '@/components/session/CompetitionSessionModal.vue'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 import {useSessionList} from '@/composables/useSessionList'
@@ -82,9 +84,11 @@ const {
   sessions,
   loading,
   sessionModal,
+  detailDialog,
   showDeleteConfirm,
   loadSessions,
   editSession,
+  viewSession,
   openCreate,
   handleDelete,
   confirmDeleteSession

@@ -44,6 +44,9 @@ public class Session {
     @JsonIgnore
     private String externalId;
 
+    // Target disk of a scanned result (e.g. "lg"); null for manually entered sessions.
+    private String diskType;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "season_id")
     private Season season;

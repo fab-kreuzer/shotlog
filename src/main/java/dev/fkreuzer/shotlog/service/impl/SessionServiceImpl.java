@@ -35,6 +35,10 @@ public class SessionServiceImpl implements SessionService {
             if (existingSessionOpt.isPresent()) {
                 Session existingSession = existingSessionOpt.get();
 
+                if (session.getDiskType() == null) {
+                    session.setDiskType(existingSession.getDiskType());
+                }
+
                 // Create a map of existing series by seriesNumber for quick lookup
                 Map<Integer, Series> existingSeriesMap = new HashMap<>();
                 for (Series existingSeries : existingSession.getSeries()) {
@@ -65,6 +69,14 @@ public class SessionServiceImpl implements SessionService {
                                 if (existingShot != null) {
                                     // Update existing shot - preserve its ID
                                     updatedShot.setId(existingShot.getId());
+
+                                    // Keep the recorded position unless the value was edited (then it no longer matches)
+                                    if (updatedShot.getX() == null && updatedShot.getY() == null
+                                            && updatedShot.getValue() != null && existingShot.getValue() != null
+                                            && updatedShot.getValue().compareTo(existingShot.getValue()) == 0) {
+                                        updatedShot.setX(existingShot.getX());
+                                        updatedShot.setY(existingShot.getY());
+                                    }
                                 }
 
                                 // Set the series reference

@@ -115,7 +115,27 @@
     "loadError": "Error loading sessions!",
     "loadOneError": "Error loading session!",
     "deleteError": "Error deleting session!",
-    "team": "Team"
+    "team": "Team",
+    "detail": {
+      "open": "Show details and target",
+      "title": "Session details",
+      "whole": "{count} whole rings",
+      "group": "Group circle",
+      "mean": "Mean point",
+      "numbers": "Shot numbers",
+      "noPositions": "No shot positions are stored for this session (only scanned results have them).",
+      "series": "Series",
+      "shots": "Shots",
+      "best": "Best shot",
+      "worst": "Worst shot",
+      "average": "Average",
+      "meanRadius": "Mean distance",
+      "meanPoint": "Mean point of impact",
+      "left": "left",
+      "right": "right",
+      "high": "high",
+      "low": "low"
+    }
   },
   "dashboard": {
     "title": "Dashboard",

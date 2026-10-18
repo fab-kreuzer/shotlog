@@ -256,4 +256,57 @@ class SessionServiceImplTest {
         assertSame(expected, result);
         verify(sessionRepository).findAllByUser(user);
     }
+
+    // --- save: keeping scanned shot positions on edit ---
+
+    private Session sessionWithShot(Long id, String value, Integer x, Integer y) {
+        Shot shot = new Shot();
+        shot.setShotNumber(1);
+        shot.setValue(new BigDecimal(value));
+        shot.setX(x);
+        shot.setY(y);
+        Series series = new Series();
+        series.setSeriesNumber(1);
+        series.setShots(new ArrayList<>(List.of(shot)));
+        Session session = new Session();
+        session.setId(id);
+        session.setSeries(new ArrayList<>(List.of(series)));
+        return session;
+    }
+
+    @Test
+    void save_update_keepsPositionWhenValueUnchanged() {
+        // Arrange
+        Session existing = sessionWithShot(1L, "9.6", -238, -236);
+        existing.setDiskType("lg");
+        when(sessionRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(sessionRepository.save(any(Session.class))).thenAnswer(i -> i.getArgument(0));
+        Session edited = sessionWithShot(1L, "9.6", null, null);
+
+        // Act
+        Session saved = sessionService.save(edited);
+
+        // Assert
+        Shot shot = saved.getSeries().get(0).getShots().get(0);
+        assertEquals(-238, shot.getX());
+        assertEquals(-236, shot.getY());
+        assertEquals("lg", saved.getDiskType());
+    }
+
+    @Test
+    void save_update_dropsPositionWhenValueChanged() {
+        // Arrange
+        Session existing = sessionWithShot(1L, "9.6", -238, -236);
+        when(sessionRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(sessionRepository.save(any(Session.class))).thenAnswer(i -> i.getArgument(0));
+        Session edited = sessionWithShot(1L, "10.2", null, null);
+
+        // Act
+        Session saved = sessionService.save(edited);
+
+        // Assert
+        Shot shot = saved.getSeries().get(0).getShots().get(0);
+        assertNull(shot.getX());
+        assertNull(shot.getY());
+    }
 }

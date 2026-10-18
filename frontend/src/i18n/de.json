@@ -115,7 +115,27 @@
     "loadError": "Fehler beim Laden der Sessions!",
     "loadOneError": "Fehler beim Laden der Session!",
     "deleteError": "Fehler beim Löschen der Session!",
-    "team": "Mannschaft"
+    "team": "Mannschaft",
+    "detail": {
+      "open": "Details und Scheibe anzeigen",
+      "title": "Session-Details",
+      "whole": "{count} ganze Ringe",
+      "group": "Streukreis",
+      "mean": "Mittlerer Treffpunkt",
+      "numbers": "Schussnummern",
+      "noPositions": "Für diese Session sind keine Schusspositionen gespeichert (nur gescannte Ergebnisse haben sie).",
+      "series": "Serie",
+      "shots": "Schüsse",
+      "best": "Bester Schuss",
+      "worst": "Schlechtester Schuss",
+      "average": "Durchschnitt",
+      "meanRadius": "Mittlerer Abstand",
+      "meanPoint": "Mittlerer Treffpunkt",
+      "left": "links",
+      "right": "rechts",
+      "high": "hoch",
+      "low": "tief"
+    }
   },
   "dashboard": {
     "title": "Dashboard",
