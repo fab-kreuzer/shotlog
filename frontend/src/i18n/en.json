@@ -138,7 +138,10 @@
       "onlyShot": "Showing only shot {number}",
       "showAll": "Show all",
       "shotTitle": "Shot {number}",
-      "autoZoom": "Auto zoom"
+      "autoZoom": "Auto zoom",
+      "distribution": "Shots per ring",
+      "ring": "Ring",
+      "count": "Shots"
     }
   },
   "dashboard": {

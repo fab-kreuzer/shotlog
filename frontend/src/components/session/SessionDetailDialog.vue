@@ -79,6 +79,27 @@
           </div>
         </template>
       </dl>
+
+      <div v-if="summary.count">
+        <h4 class="mb-2 text-sm font-semibold text-surface-700">{{ $t('session.detail.distribution') }}</h4>
+        <div class="overflow-x-auto rounded-xl border border-surface-200">
+          <table class="w-full text-center text-sm">
+            <thead>
+            <tr class="bg-surface-100 text-surface-500">
+              <th class="px-2 py-1.5 text-left font-medium">{{ $t('session.detail.ring') }}</th>
+              <th v-for="d in distribution" :key="d.ring" class="px-1 py-1.5 font-medium">{{ d.ring }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="border-t border-surface-200">
+              <td class="px-2 py-1.5 text-left text-surface-500">{{ $t('session.detail.count') }}</td>
+              <td v-for="d in distribution" :key="d.ring" class="px-1 py-1.5 tabular-nums"
+                  :class="d.count ? 'font-semibold text-surface-800' : 'text-surface-300'">{{ d.count }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
       </div>
       </div>
     </div>
@@ -105,7 +126,7 @@ const showGroup = ref(false)
 const showMean = ref(false)
 const shotNumbers = ref(false)
 
-const {hasPositions, series, summary, positionSummary, fmt} = useSessionTarget(session)
+const {hasPositions, distribution, series, summary, positionSummary, fmt} = useSessionTarget(session)
 
 const dateLabel = computed(() => {
   const s = session.value

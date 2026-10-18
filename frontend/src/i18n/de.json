@@ -138,7 +138,10 @@
       "onlyShot": "Nur Schuss {number} wird angezeigt",
       "showAll": "Alle anzeigen",
       "shotTitle": "Schuss {number}",
-      "autoZoom": "Automatischer Zoom"
+      "autoZoom": "Automatischer Zoom",
+      "distribution": "Schüsse pro Ring",
+      "ring": "Ring",
+      "count": "Anzahl"
     }
   },
   "dashboard": {

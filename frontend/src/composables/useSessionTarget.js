@@ -45,6 +45,16 @@ export function useSessionTarget(sessionRef) {
     const positionSummary = computed(() => (hasPositions.value ? summarize(toResult(positioned.value)) : null))
 
     // `only` = index (into the positioned shots) of the single shot to draw; undefined draws all of them.
+    // Number of (counted) shots per whole ring 1..10; 10.x counts as 10.
+    const distribution = computed(() => {
+        const counts = Array.from({length: 10}, (_, i) => ({ring: i + 1, count: 0}))
+        for (const sh of shots.value) {
+            const ring = Math.floor(ringValue(sh.value))
+            if (ring >= 1) counts[Math.min(ring, 10) - 1].count++
+        }
+        return counts
+    })
+
     function svg({only, ...opts} = {}) {
         if (!hasPositions.value) return ''
         const list = only != null && positioned.value[only] ? [positioned.value[only]] : positioned.value
@@ -55,5 +65,5 @@ export function useSessionTarget(sessionRef) {
         return new Intl.NumberFormat(locale.value, {minimumFractionDigits: digits, maximumFractionDigits: digits}).format(n)
     }
 
-    return {hasPositions, positioned, series, summary, positionSummary, svg, fmt}
+    return {hasPositions, positioned, distribution, series, summary, positionSummary, svg, fmt}
 }
