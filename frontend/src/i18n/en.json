@@ -134,7 +134,10 @@
       "left": "left",
       "right": "right",
       "high": "high",
-      "low": "low"
+      "low": "low",
+      "onlyShot": "Showing only shot {number}",
+      "showAll": "Show all",
+      "shotTitle": "Shot {number}"
     }
   },
   "dashboard": {

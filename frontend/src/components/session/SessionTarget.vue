@@ -17,7 +17,9 @@ const props = defineProps({
   shotNumbers: {type: Boolean, default: false},
   // 'app' = DISAG ShotsApp colours: >= 10.0 red, >= 9.0 gold, otherwise green
   shotColor: {type: String, default: 'app'},
-  highlight: {type: Number, default: undefined}
+  highlight: {type: Number, default: undefined},
+  // draw only this shot (index among the drawn shots)
+  only: {type: Number, default: undefined}
 })
 
 const {hasPositions, svg} = useSessionTarget(() => props.session)
@@ -29,7 +31,8 @@ const markup = computed(() => svg({
   showMean: props.showMean,
   shotNumbers: props.shotNumbers,
   shotColor: props.shotColor,
-  highlight: props.highlight
+  highlight: props.highlight,
+  only: props.only
 }))
 </script>
 

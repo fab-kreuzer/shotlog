@@ -134,7 +134,10 @@
       "left": "links",
       "right": "rechts",
       "high": "hoch",
-      "low": "tief"
+      "low": "tief",
+      "onlyShot": "Nur Schuss {number} wird angezeigt",
+      "showAll": "Alle anzeigen",
+      "shotTitle": "Schuss {number}"
     }
   },
   "dashboard": {

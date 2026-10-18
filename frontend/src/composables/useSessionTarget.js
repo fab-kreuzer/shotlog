@@ -41,9 +41,11 @@ export function useSessionTarget(sessionRef) {
     const summary = computed(() => summarize(toResult(shots.value.map(sh => ({...sh, x: sh.x ?? 0, y: sh.y ?? 0})))))
     const positionSummary = computed(() => (hasPositions.value ? summarize(toResult(positioned.value)) : null))
 
-    function svg(opts = {}) {
+    // `only` = index (into the positioned shots) of the single shot to draw; undefined draws all of them.
+    function svg({only, ...opts} = {}) {
         if (!hasPositions.value) return ''
-        return render(toResult(positioned.value), opts)
+        const list = only != null && positioned.value[only] ? [positioned.value[only]] : positioned.value
+        return render(toResult(list), only != null ? {...opts, highlight: undefined} : opts)
     }
 
     function fmt(n, digits = 1) {
